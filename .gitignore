@@ -100,5 +100,9 @@ ENV/
 # mypy
 .mypy_cache/
 
+<<<<<<< HEAD
 #PyCharm project files.
+=======
+# pycharm related projects
+>>>>>>> 3550ddb4da1b9570b6791d90de766012a99d5e73
 .idea/
