@@ -3,6 +3,7 @@ Scaffold abstract base class.
 Describes methods each scaffold must or may override.
 """
 
+
 class Scaffold_base:
     '''
     Base class for scaffolds / mesh generator scripts.
@@ -24,7 +25,7 @@ class Scaffold_base:
         Always have first set name 'Default'. Do not use name 'Custom' as clients may use internally.
         '''
         return ['Default']
- 
+
     @classmethod
     def getDefaultOptions(cls, parameterSetName='Default'):
         '''
@@ -33,9 +34,9 @@ class Scaffold_base:
         :return: Dictionary of parameter name value pairs, of integer, real or boolean type.
         '''
         return {
-            'Integer option' : 1,
-            'Real option' : 1.0,
-            'Boolean option' : True
+            'Integer option': 1,
+            'Real option': 1.0,
+            'Boolean option': True
         }
 
     @staticmethod
@@ -64,7 +65,8 @@ class Scaffold_base:
         Override may cut and paste this code to handle any types using their standard
         parameter set names.
         '''
-        assert scaffoldType in cls.getOptionValidScaffoldTypes(optionName), cls.__name__ + '.getOptionScaffoldTypeParameterSetNames.  Invalid option ' + optionName + ' scaffold type ' + scaffoldType.getName()
+        assert scaffoldType in cls.getOptionValidScaffoldTypes(
+            optionName), cls.__name__ + '.getOptionScaffoldTypeParameterSetNames.  Invalid option ' + optionName + ' scaffold type ' + scaffoldType.getName()
         return scaffoldType.getParameterSetNames()
 
     @classmethod

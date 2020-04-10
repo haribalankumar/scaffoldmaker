@@ -233,6 +233,7 @@ def getCoordinatesFromInner(xInner, d1Inner, d2Inner, d3Inner,
 
     return xList, d1List, d2List, d3List, curvatureList
 
+
 def createFlatAndTextureCoordinates(xiList, lengthAroundList,
     totalLengthAlong, wallThickness, elementsCountAround,
     elementsCountAlong, elementsCountThroughWall, transitElementList):
@@ -645,3 +646,37 @@ def getCylindricalSegmentInnerPoints(region, elementsCountAround, elementsCountA
         xiList.append(xiFace)
 
     return xFinal, d1Final, d2Final, transitElementList, xiList, flatWidthList, segmentAxis
+
+
+
+
+def TubeBifurcationMesh(xCL, d1CL, radiusCL,
+    elementsCountAround,
+    elementsCountAlong):
+    """
+    Generates coordinates from inner to outer surface using coordinates
+    and derivatives of inner surface.
+    :param xCL: Coordinates on inner surface
+    :param d1CL: Derivatives on inner surface around tube
+
+    :param elementsCountAround: Number of elements around tube
+    :param elementsCountAlong: Number of elements along tube
+    """
+
+    xOuter = []
+    curvatureAroundInner = []
+    curvatureAlong = []
+    curvatureList = []
+    xList = []
+    d1List = []
+    d2List = []
+    d3List = []
+
+    for n2 in range(elementsCountAlong + 1):
+        wallThickness = wallThicknessList[n2]
+        for n1 in range(elementsCountAround):
+            n = n2*elementsCountAround + n1
+            norm = d3Inner[n]
+            # Calculate outer coordinates
+
+

@@ -877,6 +877,7 @@ class MeshType_3d_heartatria1(Scaffold_base):
 
         # create left pulmonary vein ostium
         lpvOstiumPosition = laTrackSurface.createPositionProportion(lpvOstiumPositionOver, lpvOstiumPositionLeft)
+
         # get absolute direction on surface corresponding to chosen angle
         cx, cd1, cd2 = laTrackSurface.evaluateCoordinates(lpvOstiumPosition, derivatives = True)
         td1, td2, td3 = calculate_surface_axes(cd1, cd2, [ 0.0, 1.0, 0.0 ])

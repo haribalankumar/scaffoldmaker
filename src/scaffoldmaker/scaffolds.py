@@ -9,6 +9,7 @@ from scaffoldmaker.meshtypes.meshtype_2d_platehole1 import MeshType_2d_platehole
 from scaffoldmaker.meshtypes.meshtype_2d_sphere1 import MeshType_2d_sphere1
 from scaffoldmaker.meshtypes.meshtype_2d_tube1 import MeshType_2d_tube1
 from scaffoldmaker.meshtypes.meshtype_3d_box1 import MeshType_3d_box1
+from scaffoldmaker.meshtypes.meshtype_3d_bladder1 import MeshType_3d_bladder1
 from scaffoldmaker.meshtypes.meshtype_3d_boxhole1 import MeshType_3d_boxhole1
 from scaffoldmaker.meshtypes.meshtype_3d_colon1 import MeshType_3d_colon1
 from scaffoldmaker.meshtypes.meshtype_3d_colonsegment1 import MeshType_3d_colonsegment1
@@ -22,6 +23,9 @@ from scaffoldmaker.meshtypes.meshtype_3d_heartventricles2 import MeshType_3d_hea
 from scaffoldmaker.meshtypes.meshtype_3d_heartventriclesbase1 import MeshType_3d_heartventriclesbase1
 from scaffoldmaker.meshtypes.meshtype_3d_heartventriclesbase2 import MeshType_3d_heartventriclesbase2
 from scaffoldmaker.meshtypes.meshtype_3d_lens1 import MeshType_3d_lens1
+from scaffoldmaker.meshtypes.meshtype_3d_lungs1 import MeshType_3d_lungs1
+from scaffoldmaker.meshtypes.meshtype_3d_airwaybifurcation2 import MeshType_3d_airwaybifurcation2
+
 from scaffoldmaker.meshtypes.meshtype_3d_ostium1 import MeshType_3d_ostium1
 from scaffoldmaker.meshtypes.meshtype_3d_smallintestine1 import MeshType_3d_smallintestine1
 from scaffoldmaker.meshtypes.meshtype_3d_solidsphere1 import MeshType_3d_solidsphere1
@@ -42,6 +46,7 @@ class Scaffolds(object):
             MeshType_2d_platehole1,
             MeshType_2d_sphere1,
             MeshType_2d_tube1,
+            MeshType_3d_bladder1,
             MeshType_3d_box1,
             MeshType_3d_boxhole1,
             MeshType_3d_colon1,
@@ -56,6 +61,8 @@ class Scaffolds(object):
             MeshType_3d_heartventriclesbase1,
             MeshType_3d_heartventriclesbase2,
             MeshType_3d_lens1,
+            MeshType_3d_lungs1,
+            MeshType_3d_airwaybifurcation2,
             MeshType_3d_ostium1,
             MeshType_3d_smallintestine1,
             MeshType_3d_solidsphere1,

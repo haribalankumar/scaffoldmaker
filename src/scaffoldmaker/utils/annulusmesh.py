@@ -86,7 +86,19 @@ def createAnnulusMesh3d(nodes, mesh, nextNodeIdentifier, nextElementIdentifier,
         ((startDerivativesMap is None) or (len(startDerivativesMap) == nodesCountWall)) and \
         ((endDerivativesMap is None) or (len(endDerivativesMap) == nodesCountWall)), \
         'createAnnulusMesh3d:  Mismatch in number of layers through wall'
+
+    #print('len startPointsx[0]',len(startPointsx[0]))
+    #print('nodesCountWall',nodesCountWall)
+    #print('len(startPointsx[1])',len(startPointsx[1]))
     elementsCountAround = nodesCountAround = len(startPointsx[0])
+
+    #print('(len(endPointsd1[0]',len(endPointsd1[0]))
+    #print('len(endPointsd2[0]',len(endPointsd2[0]))
+    #print('len(startNodeId[0])',len(startNodeId[0]))
+
+    #print('(len(endPointsd1[1]',len(endPointsd1[1]))
+    #print('len(endPointsd2[1]',len(endPointsd2[1]))
+    #print('len(startNodeId[1]',len(startNodeId[1]))
     assert (nodesCountAround > 1), 'createAnnulusMesh3d:  Invalid number of points/nodes around annulus'
     for n3 in range(nodesCountWall):
         assert (len(startPointsx[n3]) == nodesCountAround) and (len(startPointsd1[n3]) == nodesCountAround) and (len(startPointsd2[n3]) == nodesCountAround) and \
