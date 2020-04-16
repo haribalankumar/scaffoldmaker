@@ -148,7 +148,6 @@ class MeshType_3d_lungs1(Scaffold_base):
 
         #-------------end of hardcoded values-----------------
 
-
         nodes = fm.findNodesetByFieldDomainType(Field.DOMAIN_TYPE_NODES)
         nodetemplateApex = nodes.createNodetemplate()
         nodetemplateApex.defineField(coordinates)
@@ -205,8 +204,9 @@ class MeshType_3d_lungs1(Scaffold_base):
             nx.append(x1)
             nd1.append(d1)
 
-        sPosteriorx, sPosteriorderiv2, _, _, _ = interp.sampleCubicHermiteCurves(nx, nd1,
-                                                                                 elementsCountOut=elementsCountUp)
+        sPosteriorx, sPosteriorderiv2, _, _, _ = \
+            interp.sampleCubicHermiteCurves(nx, nd1, elementsCountOut=elementsCountUp)
+
         nx = []
         nd1 = []
         for n2 in range(3):
@@ -450,8 +450,8 @@ class MeshType_3d_lungs1(Scaffold_base):
 
             nx = [x1, x2, x3]
             nd2 = [d21, d22, d23]
-            sLateralx, sLateralderiv2 = interp.sampleCubicHermiteCurves(nx, nd2, elementsCountOut=elementsCountlateral)[
-                                        0:2]
+            sLateralx, sLateralderiv2, _, _, _  = \
+                interp.sampleCubicHermiteCurves(nx, nd2, elementsCountOut=elementsCountlateral)
 
             # Apply tracheal rotation angle
             # ---------------------------------
