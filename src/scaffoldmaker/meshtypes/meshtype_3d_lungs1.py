@@ -419,8 +419,6 @@ class MeshType_3d_lungs1(Scaffold_base):
             nd2 = [d21, d22, d23]
             sMedialx, sMedialderiv2, _, _, _  = \
                 interp.sampleCubicHermiteCurves(nx, nd2, elementsCountOut=elementsCountlateral)
-#            sMedialx, sMedialderiv2 = interp.sampleCubicHermiteCurves(nx, nd2, elementsCountOut=elementsCountlateral)[
-#                                      0:2]
 
             x1 = sPosteriorOffsetx[n2]
             x3 = sAnteriorOffsetx[n2]
@@ -727,7 +725,6 @@ class MeshType_3d_lungs1(Scaffold_base):
             sinRadiansLateral = math.sin(radiansLateral)
             x2 = [x1[0] + 0.2 * lungdepth + 0.5 * lungdepth * medialsurfcoeff * (cosRadiansLateral - 1.0),
                   halflung,
-                  # x1[1] - halflung+0.5*lungwidth*medialsurfcoeff*sinRadiansLateral,
                   x1[2]]
 
             d22 = [0.5 * lungdepth * medialsurfcoeff * sinRadiansLateral,
@@ -742,9 +739,8 @@ class MeshType_3d_lungs1(Scaffold_base):
 
             nx = [x1, x2, x3]
             nd2 = [d21, d22, d23]
-            # sMedialx, sMedialderiv2, _, _, _  = interp.sampleCubicHermiteCurves(nx, nd2, elementsCountOut=elementsCountlateral)
-            sMedialx, sMedialderiv2 = interp.sampleCubicHermiteCurves(nx, nd2, elementsCountOut=elementsCountlateral)[
-                                      0:2]
+            sMedialx, sMedialderiv2, _, _, _  = \
+                interp.sampleCubicHermiteCurves(nx, nd2, elementsCountOut=elementsCountlateral)
 
             x1 = sPosteriorOffsetx[n2]
             x3 = sAnteriorOffsetx[n2]
@@ -762,7 +758,6 @@ class MeshType_3d_lungs1(Scaffold_base):
             sinRadiansLateral = math.sin(radiansLateral)
             x2 = [x1[0] + zratio * lungdepth + 0.5 * lungdepth * lateralsurfcoeff * (cosRadiansLateral - 1.0),
                   halflung,
-                  # x1[1] - halflung + 0.5 * lungwidth * lateralsurfcoeff * sinRadiansLateral,
                   x1[2]]
             d22 = [0.5 * lungdepth * lateralsurfcoeff * sinRadiansLateral,
                    -0.5 * lungwidth * lateralsurfcoeff * cosRadiansLateral,
@@ -771,17 +766,14 @@ class MeshType_3d_lungs1(Scaffold_base):
             radiansLateral = lRadiansLateral[2]
             cosRadiansLateral = math.cos(radiansLateral)
             sinRadiansLateral = math.sin(radiansLateral)
-            # x3 = [x1[0] - 0.5*lungdepth - 0.5 * lungdepth * lateralsurfcoeff * (cosRadiansLateral - 1.0),
-            #       x1[1] - 0.5*lungwidth + 0.5 * lungwidth * lateralsurfcoeff * sinRadiansLateral,
-            #       x1[2]]
             d23 = [0.5 * lungdepth * lateralsurfcoeff * sinRadiansLateral,
                    0.5 * lungwidth * lateralsurfcoeff * cosRadiansLateral,
                    0]
 
             nx = [x1, x2, x3]
             nd2 = [d21, d22, d23]
-            sLateralx, sLateralderiv2 = interp.sampleCubicHermiteCurves(nx, nd2, elementsCountOut=elementsCountlateral)[
-                                        0:2]
+            sLateralx, sLateralderiv2,  _, _, _  = \
+                interp.sampleCubicHermiteCurves(nx, nd2, elementsCountOut=elementsCountlateral)
             #
 
             # Apply tracheal rotation angle
