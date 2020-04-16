@@ -183,6 +183,8 @@ class MeshType_3d_lungs1(Scaffold_base):
         lRadiansLateral = []
         x = []
         nx = []
+        d1 = []
+        nd1 = []
         d2 = []
         nd2 = []
 
@@ -190,139 +192,73 @@ class MeshType_3d_lungs1(Scaffold_base):
             radiansUp = -thetaup + (n2) / (2.0) * (2 * thetaup)
             lRadiansUp.append(radiansUp)
 
-        for n2 in range(3):
             radiansLateral = -thetalateral + (n2) / (2.0) * (2 * thetalateral)
             lRadiansLateral.append(radiansLateral)
 
-        radiansUp = lRadiansUp[0]
-        cosRadiansUp = math.cos(radiansUp)
-        sinRadiansUp = math.sin(radiansUp)
-        x1 = [LMBcentre, ycentreleftlateral + posteriorcurveradius * (cosRadiansUp - 1.0),
-              zlateralcentre + posteriorcurveradius * sinRadiansUp]
-        d21 = [0, -posteriorcurveradius * sinRadiansUp, posteriorcurveradius * cosRadiansUp]
+        for n2 in range(3):
+            radiansUp = lRadiansUp[n2]
+            cosRadiansUp = math.cos(radiansUp)
+            sinRadiansUp = math.sin(radiansUp)
+            x1 = [LMBcentre, ycentreleftlateral + posteriorcurveradius * (cosRadiansUp - 1.0),
+                zlateralcentre + posteriorcurveradius * sinRadiansUp]
+            d1 = [0, -posteriorcurveradius * sinRadiansUp, posteriorcurveradius * cosRadiansUp]
+            nx.append(x1)
+            nd1.append(d1)
 
-        radiansUp = lRadiansUp[1]
-        cosRadiansUp = math.cos(radiansUp)
-        sinRadiansUp = math.sin(radiansUp)
-        x2 = [LMBcentre, ycentreleftlateral + posteriorcurveradius * (cosRadiansUp - 1.0),
-              zlateralcentre + posteriorcurveradius * sinRadiansUp]
-        d22 = [0, -posteriorcurveradius * sinRadiansUp, posteriorcurveradius * cosRadiansUp]
-
-        radiansUp = lRadiansUp[2]
-        cosRadiansUp = math.cos(radiansUp)
-        sinRadiansUp = math.sin(radiansUp)
-        x3 = [LMBcentre, ycentreleftlateral + posteriorcurveradius * (cosRadiansUp - 1.0),
-              zlateralcentre + posteriorcurveradius * sinRadiansUp]
-        d23 = [0, -posteriorcurveradius * sinRadiansUp, posteriorcurveradius * cosRadiansUp]
-
-        # radiansUp = lRadiansUp[3]
-        # cosRadiansUp = math.cos(radiansUp)
-        # sinRadiansUp = math.sin(radiansUp)
-        # x4=[LMBcentre,ycentreleftlateral + posteriorcurveradius*(cosRadiansUp-1.0),
-        #     zlateralcentre + posteriorcurveradius * sinRadiansUp]
-        # d24 = [0, -posteriorcurveradius*sinRadiansUp, posteriorcurveradius*cosRadiansUp]
-
-        nx = [x1, x2, x3]
-        nd2 = [d21, d22, d23]
-        sPosteriorx, sPosteriorderiv2, _, _, _ = interp.sampleCubicHermiteCurves(nx, nd2,
+        sPosteriorx, sPosteriorderiv2, _, _, _ = interp.sampleCubicHermiteCurves(nx, nd1,
                                                                                  elementsCountOut=elementsCountUp)
+        nx = []
+        nd1 = []
+        for n2 in range(3):
+            radiansUp = lRadiansUp[n2]
+            cosRadiansUp = math.cos(radiansUp)
+            sinRadiansUp = math.sin(radiansUp)
+            x1 = [LMBcentre - 2, ycentreleftlateral + posteriorcurveradius * (cosRadiansUp - 1.0),
+                zlateralcentre + posteriorcurveradius * sinRadiansUp]
+            d1 = [0, -posteriorcurveradius * sinRadiansUp, posteriorcurveradius * cosRadiansUp]
+            nx.append(x1)
+            nd1.append(d1)
 
-        radiansUp = lRadiansUp[0]
-        cosRadiansUp = math.cos(radiansUp)
-        sinRadiansUp = math.sin(radiansUp)
-        x1 = [LMBcentre - 2, ycentreleftlateral + posteriorcurveradius * (cosRadiansUp - 1.0),
-              zlateralcentre + posteriorcurveradius * sinRadiansUp]
-        d21 = [0, -posteriorcurveradius * sinRadiansUp, posteriorcurveradius * cosRadiansUp]
-
-        radiansUp = lRadiansUp[1]
-        cosRadiansUp = math.cos(radiansUp)
-        sinRadiansUp = math.sin(radiansUp)
-        x2 = [LMBcentre - 2, ycentreleftlateral + posteriorcurveradius * (cosRadiansUp - 1.0),
-              zlateralcentre + posteriorcurveradius * sinRadiansUp]
-        d22 = [0, -posteriorcurveradius * sinRadiansUp, posteriorcurveradius * cosRadiansUp]
-
-        radiansUp = lRadiansUp[2]
-        cosRadiansUp = math.cos(radiansUp)
-        sinRadiansUp = math.sin(radiansUp)
-        x3 = [LMBcentre - 2, ycentreleftlateral + posteriorcurveradius * (cosRadiansUp - 1.0),
-              zlateralcentre + posteriorcurveradius * sinRadiansUp]
-        d23 = [0, -posteriorcurveradius * sinRadiansUp, posteriorcurveradius * cosRadiansUp]
-
-        # radiansUp = lRadiansUp[3]
-        # cosRadiansUp = math.cos(radiansUp)
-        # sinRadiansUp = math.sin(radiansUp)
-        # x4=[LMBcentre,ycentreleftlateral + posteriorcurveradius*(cosRadiansUp-1.0),
-        #     zlateralcentre + posteriorcurveradius * sinRadiansUp]
-        # d24 = [0, -posteriorcurveradius*sinRadiansUp, posteriorcurveradius*cosRadiansUp]
-
-        nx = [x1, x2, x3]
-        nd2 = [d21, d22, d23]
         sPosteriorOffsetx, sPosteriorOffsetderiv2, _, _, _ = \
-            interp.sampleCubicHermiteCurves(nx, nd2, elementsCountOut=elementsCountUp)
+            interp.sampleCubicHermiteCurves(nx, nd1, elementsCountOut=elementsCountUp)
 
         zero = [0, 0, 0]
-
-        #
 
         # -----------------------------------------
         ## Anterior edge
         ## -------------------------------------
-        radiansUp = lRadiansUp[0]
-        cosRadiansUp = math.cos(radiansUp)
-        sinRadiansUp = math.sin(radiansUp)
-        x1 = [LMBcentre, -lungwidth + ycentreleftlateral - anteriorcurveradius * (cosRadiansUp - 1.0),
-              zlateralcentre + anteriorcurveradius * sinRadiansUp]
-        d21 = [0, anteriorcurveradius * sinRadiansUp, anteriorcurveradius * cosRadiansUp]
+        nx = []
+        nd1 = []
+        for n2 in range(3):
+            radiansUp = lRadiansUp[n2]
+            cosRadiansUp = math.cos(radiansUp)
+            sinRadiansUp = math.sin(radiansUp)
+            x1 = [LMBcentre, -lungwidth + ycentreleftlateral - anteriorcurveradius * (cosRadiansUp - 1.0),
+                zlateralcentre + anteriorcurveradius * sinRadiansUp]
+            d1 = [0, anteriorcurveradius * sinRadiansUp, anteriorcurveradius * cosRadiansUp]
+            nx.append(x1)
+            nd1.append(d1)
 
-        radiansUp = lRadiansUp[1]
-        cosRadiansUp = math.cos(radiansUp)
-        sinRadiansUp = math.sin(radiansUp)
-        x2 = [LMBcentre, -lungwidth + ycentreleftlateral - anteriorcurveradius * (cosRadiansUp - 1.0),
-              zlateralcentre + anteriorcurveradius * sinRadiansUp]
-        d22 = [0, anteriorcurveradius * sinRadiansUp, anteriorcurveradius * cosRadiansUp]
-
-        radiansUp = lRadiansUp[2]
-        cosRadiansUp = math.cos(radiansUp)
-        sinRadiansUp = math.sin(radiansUp)
-        x3 = [LMBcentre, -lungwidth + ycentreleftlateral - anteriorcurveradius * (cosRadiansUp - 1.0),
-              zlateralcentre + anteriorcurveradius * sinRadiansUp]
-        d23 = [0, anteriorcurveradius * sinRadiansUp, anteriorcurveradius * cosRadiansUp]
-
-
-        nx = [x1, x2, x3]
-        nd2 = [d21, d22, d23]
-        sAnteriorx, sAnteriorderiv2, _, _, _ = interp.sampleCubicHermiteCurves(nx, nd2,
-                                                                               elementsCountOut=elementsCountUp)
+        sAnteriorx, sAnteriorderiv2, _, _, _ = \
+            interp.sampleCubicHermiteCurves(nx, nd1, elementsCountOut=elementsCountUp)
 
         # -----------------------------------------
         ## Anterior edge offset
         ## ---------------------------------------
-        radiansUp = lRadiansUp[0]
-        cosRadiansUp = math.cos(radiansUp)
-        sinRadiansUp = math.sin(radiansUp)
-        x1 = [LMBcentre - 0.5, -lungwidth + ycentreleftlateral - anteriorcurveradius * (cosRadiansUp - 1.0),
-              zlateralcentre + anteriorcurveradius * sinRadiansUp]
-        d21 = [0, anteriorcurveradius * sinRadiansUp, anteriorcurveradius * cosRadiansUp]
+        nx = []
+        nd1 = []
+        for n2 in range(3):
+            radiansUp = lRadiansUp[n2]
+            cosRadiansUp = math.cos(radiansUp)
+            sinRadiansUp = math.sin(radiansUp)
+            x1 = [LMBcentre - 0.5, -lungwidth + ycentreleftlateral - anteriorcurveradius * (cosRadiansUp - 1.0),
+                zlateralcentre + anteriorcurveradius * sinRadiansUp]
+            d1 = [0, anteriorcurveradius * sinRadiansUp, anteriorcurveradius * cosRadiansUp]
+            nx.append(x1)
+            nd1.append(d1)
 
-        radiansUp = lRadiansUp[1]
-        cosRadiansUp = math.cos(radiansUp)
-        sinRadiansUp = math.sin(radiansUp)
-        x2 = [LMBcentre - 0.5, -lungwidth + ycentreleftlateral - anteriorcurveradius * (cosRadiansUp - 1.0),
-              zlateralcentre + anteriorcurveradius * sinRadiansUp]
-        d22 = [0, anteriorcurveradius * sinRadiansUp, anteriorcurveradius * cosRadiansUp]
-
-        radiansUp = lRadiansUp[2]
-        cosRadiansUp = math.cos(radiansUp)
-        sinRadiansUp = math.sin(radiansUp)
-        x3 = [LMBcentre - 0.5, -lungwidth + ycentreleftlateral - anteriorcurveradius * (cosRadiansUp - 1.0),
-              zlateralcentre + anteriorcurveradius * sinRadiansUp]
-        d23 = [0, anteriorcurveradius * sinRadiansUp, anteriorcurveradius * cosRadiansUp]
-
-
-        nx = [x1, x2, x3]
-        nd2 = [d21, d22, d23]
         sAnteriorOffsetx, sAnteriorderivOffset2, _, _, _ = \
-            interp.sampleCubicHermiteCurves(nx, nd2, elementsCountOut=elementsCountUp)
+            interp.sampleCubicHermiteCurves(nx, nd1, elementsCountOut=elementsCountUp)
 
         # Apply tracheal rotation angle
         # ---------------------------------
@@ -479,24 +415,12 @@ class MeshType_3d_lungs1(Scaffold_base):
             d23 = [0.5 * lungdepth * medialsurfcoeff * sinRadiansLateral,
                    0.5 * lungdepth * medialsurfcoeff * cosRadiansLateral, 0]
 
-            # radiansLateral = lRadiansLateral[2]
-            # cosRadiansLateral = math.cos(radiansLateral)
-            # sinRadiansLateral = math.sin(radiansLateral)
-            # x3 = [x1[0] - 0.5*lungdepth - 0.5*lungdepth*medialsurfcoeff * (cosRadiansLateral - 1.0),
-            #       x1[1] - 0.5*lungwidth + 0.5*lungwidth*medialsurfcoeff * sinRadiansLateral,
-            #       x1[2]]
-            # d23 = [0.5*lungdepth*medialsurfcoeff*sinRadiansLateral, 0.5*lungwidth*medialsurfcoeff*cosRadiansLateral, 0]
-
-            # radianLateral = lRadiansLateral[3]
-            # cosRadiansLateral = math.cos(radiansLateral)
-            # sinRadiansLateral = math.sin(radiansLateral)
-            # d24 = [0.5*lungdepth*medialsurfcoeff*sinRadiansLateral, 0.5*lungwidth*medialsurfcoeff*cosRadiansLateral, 0]
-
             nx = [x1, x2, x3]
             nd2 = [d21, d22, d23]
-            # sMedialx, sMedialderiv2, _, _, _  = interp.sampleCubicHermiteCurves(nx, nd2, elementsCountOut=elementsCountlateral)
-            sMedialx, sMedialderiv2 = interp.sampleCubicHermiteCurves(nx, nd2, elementsCountOut=elementsCountlateral)[
-                                      0:2]
+            sMedialx, sMedialderiv2, _, _, _  = \
+                interp.sampleCubicHermiteCurves(nx, nd2, elementsCountOut=elementsCountlateral)
+#            sMedialx, sMedialderiv2 = interp.sampleCubicHermiteCurves(nx, nd2, elementsCountOut=elementsCountlateral)[
+#                                      0:2]
 
             x1 = sPosteriorOffsetx[n2]
             x3 = sAnteriorOffsetx[n2]
@@ -592,131 +516,73 @@ class MeshType_3d_lungs1(Scaffold_base):
         # RIGHT LUNG
         lungwidth = lungwidth * 0.8
 
-        radiansUp = lRadiansUp[0]
-        cosRadiansUp = math.cos(radiansUp)
-        sinRadiansUp = math.sin(radiansUp)
-        x1 = [RMBcentre, ycentreleftlateral + posteriorcurveradius * (cosRadiansUp - 1.0),
-              zlateralcentre + posteriorcurveradius * sinRadiansUp]
-        d21 = [0, -posteriorcurveradius * sinRadiansUp, posteriorcurveradius * cosRadiansUp]
+        nx = []
+        nd1 = []
+        for n2 in range(3):
+            radiansUp = lRadiansUp[n2]
+            cosRadiansUp = math.cos(radiansUp)
+            sinRadiansUp = math.sin(radiansUp)
+            x1 = [RMBcentre, ycentreleftlateral + posteriorcurveradius * (cosRadiansUp - 1.0),
+                zlateralcentre + posteriorcurveradius * sinRadiansUp]
+            d1 = [0, -posteriorcurveradius * sinRadiansUp, posteriorcurveradius * cosRadiansUp]
+            nx.append(x1)
+            nd1.append(d1)
 
-        radiansUp = lRadiansUp[1]
-        cosRadiansUp = math.cos(radiansUp)
-        sinRadiansUp = math.sin(radiansUp)
-        x2 = [RMBcentre, ycentreleftlateral + posteriorcurveradius * (cosRadiansUp - 1.0),
-              zlateralcentre + posteriorcurveradius * sinRadiansUp]
-        d22 = [0, -posteriorcurveradius * sinRadiansUp, posteriorcurveradius * cosRadiansUp]
-
-        radiansUp = lRadiansUp[2]
-        cosRadiansUp = math.cos(radiansUp)
-        sinRadiansUp = math.sin(radiansUp)
-        x3 = [RMBcentre, ycentreleftlateral + posteriorcurveradius * (cosRadiansUp - 1.0),
-              zlateralcentre + posteriorcurveradius * sinRadiansUp]
-        d23 = [0, -posteriorcurveradius * sinRadiansUp, posteriorcurveradius * cosRadiansUp]
-
-        nx = [x1, x2, x3]
-        nd2 = [d21, d22, d23]
-        sPosteriorx, sPosteriorderiv2, _, _, _ = interp.sampleCubicHermiteCurves(nx, nd2,
+        sPosteriorx, sPosteriorderiv2, _, _, _ = interp.sampleCubicHermiteCurves(nx, nd1,
                                                                                  elementsCountOut=elementsCountUp)
 
-        radiansUp = lRadiansUp[0]
-        cosRadiansUp = math.cos(radiansUp)
-        sinRadiansUp = math.sin(radiansUp)
-        x1 = [RMBcentre + 2, ycentreleftlateral + posteriorcurveradius * (cosRadiansUp - 1.0),
-              zlateralcentre + posteriorcurveradius * sinRadiansUp]
-        d21 = [0, -posteriorcurveradius * sinRadiansUp, posteriorcurveradius * cosRadiansUp]
+        nx = []
+        nd1 = []
+        for n2 in range(3):
+            radiansUp = lRadiansUp[n2]
+            cosRadiansUp = math.cos(radiansUp)
+            sinRadiansUp = math.sin(radiansUp)
+            x1 = [RMBcentre + 2, ycentreleftlateral + posteriorcurveradius * (cosRadiansUp - 1.0),
+                zlateralcentre + posteriorcurveradius * sinRadiansUp]
+            d1 = [0, -posteriorcurveradius * sinRadiansUp, posteriorcurveradius * cosRadiansUp]
+            nx.append(x1)
+            nd1.append(d1)
 
-        radiansUp = lRadiansUp[1]
-        cosRadiansUp = math.cos(radiansUp)
-        sinRadiansUp = math.sin(radiansUp)
-        x2 = [RMBcentre + 2, ycentreleftlateral + posteriorcurveradius * (cosRadiansUp - 1.0),
-              zlateralcentre + posteriorcurveradius * sinRadiansUp]
-        d22 = [0, -posteriorcurveradius * sinRadiansUp, posteriorcurveradius * cosRadiansUp]
-
-        radiansUp = lRadiansUp[2]
-        cosRadiansUp = math.cos(radiansUp)
-        sinRadiansUp = math.sin(radiansUp)
-        x3 = [RMBcentre + 2, ycentreleftlateral + posteriorcurveradius * (cosRadiansUp - 1.0),
-              zlateralcentre + posteriorcurveradius * sinRadiansUp]
-        d23 = [0, -posteriorcurveradius * sinRadiansUp, posteriorcurveradius * cosRadiansUp]
-
-        nx = [x1, x2, x3]
-        nd2 = [d21, d22, d23]
         sPosteriorOffsetx, sPosteriorOffsetderiv2, _, _, _ = \
-            interp.sampleCubicHermiteCurves(nx, nd2, elementsCountOut=elementsCountUp)
+            interp.sampleCubicHermiteCurves(nx, nd1, elementsCountOut=elementsCountUp)
 
         zero = [0, 0, 0]
 
         # -----------------------------------------
         ## Anterior edge
         ## -------------------------------------
-        radiansUp = lRadiansUp[0]
-        cosRadiansUp = math.cos(radiansUp)
-        sinRadiansUp = math.sin(radiansUp)
-        x1 = [RMBcentre, -lungwidth + ycentreleftlateral - anteriorcurveradius * (cosRadiansUp - 1.0),
-              zlateralcentre + anteriorcurveradius * sinRadiansUp]
-        d21 = [0, anteriorcurveradius * sinRadiansUp, anteriorcurveradius * cosRadiansUp]
+        nx = []
+        nd1 = []
+        for n2 in range(3):
+            radiansUp = lRadiansUp[n2]
+            cosRadiansUp = math.cos(radiansUp)
+            sinRadiansUp = math.sin(radiansUp)
+            x1 = [RMBcentre, -lungwidth + ycentreleftlateral - anteriorcurveradius * (cosRadiansUp - 1.0),
+            zlateralcentre + anteriorcurveradius * sinRadiansUp]
+            d1 = [0, anteriorcurveradius * sinRadiansUp, anteriorcurveradius * cosRadiansUp]
+            nx.append(x1)
+            nd1.append(d1)
 
-        radiansUp = lRadiansUp[1]
-        cosRadiansUp = math.cos(radiansUp)
-        sinRadiansUp = math.sin(radiansUp)
-        x2 = [RMBcentre, -lungwidth + ycentreleftlateral - anteriorcurveradius * (cosRadiansUp - 1.0),
-              zlateralcentre + anteriorcurveradius * sinRadiansUp]
-        d22 = [0, anteriorcurveradius * sinRadiansUp, anteriorcurveradius * cosRadiansUp]
-
-        radiansUp = lRadiansUp[2]
-        cosRadiansUp = math.cos(radiansUp)
-        sinRadiansUp = math.sin(radiansUp)
-        x3 = [RMBcentre, -lungwidth + ycentreleftlateral - anteriorcurveradius * (cosRadiansUp - 1.0),
-              zlateralcentre + anteriorcurveradius * sinRadiansUp]
-        d23 = [0, anteriorcurveradius * sinRadiansUp, anteriorcurveradius * cosRadiansUp]
-
-        # radiansUp = lRadiansUp[3]
-        # cosRadiansUp = math.cos(radiansUp)
-        # sinRadiansUp = math.sin(radiansUp)
-        # x4 = [LMBcentre, -lungwidth+ycentreleftlateral - anteriorcurveradius*(cosRadiansUp - 1.0),
-        #       zlateralcentre + anteriorcurveradius * sinRadiansUp]
-        # d24 = [0, anteriorcurveradius*sinRadiansUp, anteriorcurveradius*cosRadiansUp]
-
-        nx = [x1, x2, x3]
-        nd2 = [d21, d22, d23]
-        sAnteriorx, sAnteriorderiv2, _, _, _ = interp.sampleCubicHermiteCurves(nx, nd2,
+        sAnteriorx, sAnteriorderiv2, _, _, _ = interp.sampleCubicHermiteCurves(nx, nd1,
                                                                                elementsCountOut=elementsCountUp)
 
         # -----------------------------------------
         ## Anterior edge offset
         ## ---------------------------------------
-        radiansUp = lRadiansUp[0]
-        cosRadiansUp = math.cos(radiansUp)
-        sinRadiansUp = math.sin(radiansUp)
-        x1 = [RMBcentre + 0.5, -lungwidth + ycentreleftlateral - anteriorcurveradius * (cosRadiansUp - 1.0),
-              zlateralcentre + anteriorcurveradius * sinRadiansUp]
-        d21 = [0, anteriorcurveradius * sinRadiansUp, anteriorcurveradius * cosRadiansUp]
+        nx = []
+        nd1 = []
+        for n2 in range(3):
+            radiansUp = lRadiansUp[n2]
+            cosRadiansUp = math.cos(radiansUp)
+            sinRadiansUp = math.sin(radiansUp)
+            x1 = [RMBcentre + 0.5, -lungwidth + ycentreleftlateral - anteriorcurveradius * (cosRadiansUp - 1.0),
+                zlateralcentre + anteriorcurveradius * sinRadiansUp]
+            d1 = [0, anteriorcurveradius * sinRadiansUp, anteriorcurveradius * cosRadiansUp]
+            nx.append(x1)
+            nd1.append(d1)
 
-        radiansUp = lRadiansUp[1]
-        cosRadiansUp = math.cos(radiansUp)
-        sinRadiansUp = math.sin(radiansUp)
-        x2 = [RMBcentre + 0.5, -lungwidth + ycentreleftlateral - anteriorcurveradius * (cosRadiansUp - 1.0),
-              zlateralcentre + anteriorcurveradius * sinRadiansUp]
-        d22 = [0, anteriorcurveradius * sinRadiansUp, anteriorcurveradius * cosRadiansUp]
-
-        radiansUp = lRadiansUp[2]
-        cosRadiansUp = math.cos(radiansUp)
-        sinRadiansUp = math.sin(radiansUp)
-        x3 = [RMBcentre + 0.5, -lungwidth + ycentreleftlateral - anteriorcurveradius * (cosRadiansUp - 1.0),
-              zlateralcentre + anteriorcurveradius * sinRadiansUp]
-        d23 = [0, anteriorcurveradius * sinRadiansUp, anteriorcurveradius * cosRadiansUp]
-
-        # radiansUp = lRadiansUp[3]
-        # cosRadiansUp = math.cos(radiansUp)
-        # sinRadiansUp = math.sin(radiansUp)
-        # x4 = [LMBcentre, -lungwidth+ycentreleftlateral - anteriorcurveradius*(cosRadiansUp - 1.0),
-        #       zlateralcentre + anteriorcurveradius * sinRadiansUp]
-        # d24 = [0, anteriorcurveradius*sinRadiansUp, anteriorcurveradius*cosRadiansUp]
-
-        nx = [x1, x2, x3]
-        nd2 = [d21, d22, d23]
         sAnteriorOffsetx, sAnteriorderivOffset2, _, _, _ = \
-            interp.sampleCubicHermiteCurves(nx, nd2, elementsCountOut=elementsCountUp)
+            interp.sampleCubicHermiteCurves(nx, nd1, elementsCountOut=elementsCountUp)
 
         # Apply tracheal rotation angle
         # ---------------------------------
