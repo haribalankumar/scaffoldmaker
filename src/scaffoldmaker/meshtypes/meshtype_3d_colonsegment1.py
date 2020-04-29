@@ -742,6 +742,7 @@ def getColonSegmentInnerPoints(region, elementsCountAroundTC,
     return xFinal, d1Final, d2Final, transitElementList, xiList, relaxedLengthList, contractedWallThicknessList, \
            segmentAxis, annotationGroups, annotationArray, faceMidPointsZ
 
+
 def createHalfSetInterHaustralSegment(elementsCountAroundTC, elementsCountAroundHaustrum,
     tcCount, tcWidth, radius, cornerInnerRadiusFactor, sampleElementOut):
     """
