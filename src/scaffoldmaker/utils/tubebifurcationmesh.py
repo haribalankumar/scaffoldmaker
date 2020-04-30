@@ -17,6 +17,67 @@ from scaffoldmaker.utils import interpolation as interp
 from scaffoldmaker.utils import matrix
 from scaffoldmaker.utils import vector
 
+def createjunctionAirwaySegmentPoints(
+        xParentWarpedList, xDaugh1WarpedList, xDaugh2WarpedList,
+        d1ParentWarpedList, d1Daugh1WarpedList, d1Daugh2WarpedList,
+        d2ParentWarpedList, d2Daugh1WarpedList, d2Daugh2WarpedList,
+        segmentAxisParent, segmentAxisDaughter1, segmentAxisDaughter2,
+        parentsegmentLength, daughter1segmentLength, daughter2segmentLength,
+        sxparent, sxDaugh1, sxDaugh2,
+        sd1parent, sd1Daugh1, sd1Daugh2,
+        sd2parent, sd2Daugh1, sd2Daugh2,
+        elementsCountAround, elementsCountAlongSegment, nSegment):
+
+    """
+    Warps points in Airway segment to account for bending and twisting
+    along central path defined by nodes sx and derivatives sd1 and sd2.
+    :param x1List: coordinates of segment points.
+    :param d1List: derivatives around axis of segment.
+    :param d2List: derivatives along axis of segment.
+    :param segmentAxis: axis perpendicular to segment plane.
+    :param sx: coordinates of points on central path.
+    :param sd1: derivatives of points along central path.
+    :param sd2: derivatives representing cross axes.
+    groups along the segment.
+    :return coordinates and derivatives of warped points.
+    """
+    xjunctionList = []
+    d2junctionList = []
+    d1junctionList = []
+
+    xParentAlongSegment = xParentWarpedList[9]
+    xDaugh1AlongSegment = xDaugh1WarpedList[2]
+    xjunction1 = [(xParentAlongSegment[j]+xDaugh1AlongSegment[j])/2.0 for j in range(3)]
+    xjunctionList.append(xjunction1)
+
+    xParentAlongSegment = xParentWarpedList[11]
+    xDaugh2AlongSegment = xDaugh2WarpedList[2]
+    xjunction1 = [(xParentAlongSegment[j]+xDaugh2AlongSegment[j])/2.0 for j in range(3)]
+    xjunctionList.append(xjunction1)
+
+    xDaugh1AlongSegment = xDaugh1WarpedList[0]
+    xDaugh2AlongSegment = xDaugh2WarpedList[0]
+    xjunction1 = [(xDaugh1AlongSegment[j]+xDaugh2AlongSegment[j])/2.0 for j in range(3)]
+    xjunctionList.append(xjunction1)
+
+    xParentAlongSegment = xParentWarpedList[8]
+    xDaugh1AlongSegment = xDaugh1WarpedList[1]
+    xDaugh2AlongSegment = xDaugh2WarpedList[1]
+
+    xjunction1 = [(xParentAlongSegment[j]+xDaugh1AlongSegment[j]+xDaugh2AlongSegment[j])/3.0 for j in range(3)]
+    xjunctionList.append(xjunction1)
+
+    xParentAlongSegment = xParentWarpedList[10]
+    xDaugh1AlongSegment = xDaugh1WarpedList[3]
+    xDaugh2AlongSegment = xDaugh2WarpedList[3]
+    xjunction2 = [(xParentAlongSegment[j]+xDaugh1AlongSegment[j]+xDaugh2AlongSegment[j])/3.0 for j in range(3)]
+    xjunctionList.append(xjunction2)
+
+
+    return xjunctionList, d1junctionList, d2junctionList
+
+
+
 def warpAirwaySegmentPoints(x1ListParent, x1ListDaugh1, x1ListDaugh2,
                             d1ListParent, d1ListDaugh1, d1ListDaugh2,
                             d2ListParent, d2ListDaugh1, d2ListDaugh2,
@@ -447,6 +508,195 @@ def getAirwaySegmentCoordinatesFromInner(xInner, d1Inner, d2Inner, d3Inner,
     return xList, d1List, d2List, d3List, curvatureList
 
 
+def createAirwaySegmentSurfaceNodesAndElements(region,
+                                  xParent, d1Parent, d2Parent,
+                                  xDaugh1, d1Daugh1, d2Daugh1,
+                                  xDaugh2, d1Daugh2, d2Daugh2,
+                                  xjunction, d1junction, d2junction,
+                                  elementsCountAround, elementsCountAlong,
+                                  firstNodeIdentifier, firstElementIdentifier,
+                                  useCrossDerivatives):
+    #    annotationGroups, annotationArray,
+    """
+    :param xList: coordinates of centerline points.
+    :param d1List: derivatives along axis of segment.
+    :param radius1List: derivatives along axis of segment.
+    :param elementsCountAround: Number of elements around segment.
+    :param elementsCountAlongSegment: Number of elements along segment.
+    :param nSegment: Segment index along central path.
+    :return coordinates and derivatives of warped points.
+    """
+
+    nodeIdentifier = firstNodeIdentifier
+    elementIdentifier = firstElementIdentifier
+    zero = [0.0, 0.0, 0.0]
+
+    fm = region.getFieldmodule()
+    fm.beginChange()
+
+    coordinates = findOrCreateFieldCoordinates(fm)
+
+    nodes = fm.findNodesetByFieldDomainType(Field.DOMAIN_TYPE_NODES)
+    nodetemplate = nodes.createNodetemplate()
+    nodetemplate.defineField(coordinates)
+    nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_VALUE, 1)
+    nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_D_DS1, 1)
+    nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_D_DS2, 1)
+    if useCrossDerivatives:
+        nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_D2_DS1DS2, 1)
+
+    #    mesh = fm.findMeshByDimension(3)
+    #    eftfactory = eftfactory_bicubichermite(mesh, useCrossDerivatives)
+    #    eft = eftfactory.createEftBasic()
+
+    mesh = fm.findMeshByDimension(2)
+    bicubicHermiteBasis = fm.createElementbasis(2, Elementbasis.FUNCTION_TYPE_CUBIC_HERMITE)
+    eft = mesh.createElementfieldtemplate(bicubicHermiteBasis)
+    if not useCrossDerivatives:
+        for n in range(4):
+            eft.setFunctionNumberOfTerms(n * 4 + 4, 0)
+
+    elementtemplate = mesh.createElementtemplate()
+    elementtemplate.setElementShapeType(Element.SHAPE_TYPE_SQUARE)
+    result = elementtemplate.defineField(coordinates, -1, eft)
+
+    cache = fm.createFieldcache()
+    print('coming to write nodes in create surface node')
+
+    # Create nodes - PARENT
+    # Coordinates field
+    for n in range(len(xParent)):
+        node = nodes.createNode(nodeIdentifier, nodetemplate)
+        cache.setNode(node)
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, xParent[n])
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS1, 1, d1Parent[n])
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS2, 1, d2Parent[n])
+        if useCrossDerivatives:
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS2, 1, zero)
+        nodeIdentifier = nodeIdentifier + 1
+
+    # Create nodes - DauGH1
+    # Coordinates field
+    for n in range(len(xDaugh1)):
+        node = nodes.createNode(nodeIdentifier, nodetemplate)
+        cache.setNode(node)
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, xDaugh1[n])
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS1, 1, d1Daugh1[n])
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS2, 1, d2Daugh1[n])
+        if useCrossDerivatives:
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS2, 1, zero)
+        nodeIdentifier = nodeIdentifier + 1
+
+    # Create nodes - DAUGH2
+    # Coordinates field
+    for n in range(len(xDaugh2)):
+        node = nodes.createNode(nodeIdentifier, nodetemplate)
+        cache.setNode(node)
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, xDaugh2[n])
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS1, 1, d1Daugh2[n])
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS2, 1, d2Daugh2[n])
+        if useCrossDerivatives:
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS2, 1, zero)
+        nodeIdentifier = nodeIdentifier + 1
+
+
+    # Create nodes - JUNCTION
+    # Coordinates field
+    for n in range(5):
+        node = nodes.createNode(nodeIdentifier, nodetemplate)
+        cache.setNode(node)
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, xjunction[n])
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS1, 1, zero)
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS2, 1, zero)
+        if useCrossDerivatives:
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS2, 1, zero)
+        nodeIdentifier = nodeIdentifier + 1
+
+
+    # # create elements - Parent
+    # ##################
+    for e2 in range(elementsCountAlong):
+        for e1 in range(elementsCountAround):
+            element = mesh.createElement(elementIdentifier, elementtemplate)
+            bni1 = e2 * elementsCountAround + e1 + 1
+            bni2 = e2 * elementsCountAround + (e1 + 1) % elementsCountAround + 1
+            nodeIdentifiers = [bni1, bni2, bni1 + elementsCountAround, bni2 + elementsCountAround]
+            result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+            elementIdentifier = elementIdentifier + 1
+
+    # # create elements - Daughter1
+    # ##############################
+    node0 = (elementsCountAround) * (elementsCountAlong + 1) + 1
+    for e2 in range(elementsCountAlong):
+        for e1 in range(elementsCountAround):
+            element = mesh.createElement(elementIdentifier, elementtemplate)
+            bni1 = e2 * elementsCountAround + e1 + node0
+            bni2 = e2 * elementsCountAround + (e1 + 1) % elementsCountAround + node0
+            nodeIdentifiers = [bni1, bni2, bni1 + elementsCountAround, bni2 + elementsCountAround]
+            result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+            elementIdentifier = elementIdentifier + 1
+
+    # # create elements - Daughter2
+    # ##########################3##
+    node0 = 2 * (elementsCountAround) * (elementsCountAlong + 1) + 1
+    for e2 in range(elementsCountAlong):
+        for e1 in range(elementsCountAround):
+            element = mesh.createElement(elementIdentifier, elementtemplate)
+            bni1 = e2 * elementsCountAround + e1 + node0
+            bni2 = e2 * elementsCountAround + (e1 + 1) % elementsCountAround + node0
+            nodeIdentifiers = [bni1, bni2, bni1 + elementsCountAround, bni2 + elementsCountAround]
+            result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+            elementIdentifier = elementIdentifier + 1
+
+
+    # # create elements - junction 1
+    # ##########################3##
+    element = mesh.createElement(elementIdentifier, elementtemplate)
+    nodeIdentifiers = [9, 10, 40, 37]
+    result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+    elementIdentifier = elementIdentifier + 1
+
+    element = mesh.createElement(elementIdentifier, elementtemplate)
+    nodeIdentifiers = [39,  40, 13, 14]
+    result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+    elementIdentifier = elementIdentifier + 1
+
+    element = mesh.createElement(elementIdentifier, elementtemplate)
+    nodeIdentifiers = [12, 9, 38, 40]
+    result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+    elementIdentifier = elementIdentifier + 1
+
+    element = mesh.createElement(elementIdentifier, elementtemplate)
+    nodeIdentifiers = [40, 38, 26, 27]
+    result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+    elementIdentifier = elementIdentifier + 1
+
+    element = mesh.createElement(elementIdentifier, elementtemplate)
+    nodeIdentifiers = [39, 40, 25, 26]
+    result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+    elementIdentifier = elementIdentifier + 1
+
+    element = mesh.createElement(elementIdentifier, elementtemplate)
+    nodeIdentifiers = [40, 37, 14, 15]
+    result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+    elementIdentifier = elementIdentifier + 1
+
+    # node0 = 3 * (elementsCountAround) * (elementsCountAlong + 1) + 1
+    # for e2 in range(elementsCountAlong):
+    #     for e1 in range(elementsCountAround):
+    #         element = mesh.createElement(elementIdentifier, elementtemplate)
+    #         bni1 = e2 * elementsCountAround + e1 + node0
+    #         bni2 = e2 * elementsCountAround + (e1 + 1) % elementsCountAround + node0
+    #         nodeIdentifiers = [bni1, bni2, bni1 + elementsCountAround, bni2 + elementsCountAround]
+    #         result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+    #         elementIdentifier = elementIdentifier + 1
+
+    fm.endChange()
+
+    return nodeIdentifier, elementIdentifier
+
+
+
 
 def createSurfaceNodesAndElements(region,
                                   xParent, d1Parent, d2Parent,
@@ -597,16 +847,42 @@ def createSurfaceNodesAndElements(region,
         nodeIdentifier = nodeIdentifier + 1
 
 
-    # # create elements
+    # # create elements - Parent
     # ##################
-    # for e2 in range(elementsCountAlong):
-    #     for e1 in range(elementsCountAround):
-    #         element = mesh.createElement(elementIdentifier, elementtemplate)
-    #         bni1 = e2*elementsCountAround + e1 + 1
-    #         bni2 = e2*elementsCountAround + (e1 + 1)%elementsCountAround + 1
-    #         nodeIdentifiers = [ bni1, bni2, bni1 + elementsCountAround, bni2 + elementsCountAround ]
-    #         result = element.setNodesByIdentifier(eft, nodeIdentifiers)
-    #         elementIdentifier = elementIdentifier + 1
+    for e2 in range(elementsCountAlong):
+        for e1 in range(elementsCountAround):
+            element = mesh.createElement(elementIdentifier, elementtemplate)
+            bni1 = e2*elementsCountAround + e1 + 1
+            bni2 = e2*elementsCountAround + (e1 + 1)%elementsCountAround + 1
+            nodeIdentifiers = [ bni1, bni2, bni1 + elementsCountAround, bni2 + elementsCountAround ]
+            result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+            elementIdentifier = elementIdentifier + 1
+
+
+    # # create elements - Daughter1
+    # ##############################
+    node0 = (elementsCountAround)*(elementsCountAlong+1) + 1
+    for e2 in range(elementsCountAlong):
+        for e1 in range(elementsCountAround):
+            element = mesh.createElement(elementIdentifier, elementtemplate)
+            bni1 = e2*elementsCountAround + e1 + node0
+            bni2 = e2*elementsCountAround + (e1 + 1)%elementsCountAround + node0
+            nodeIdentifiers = [ bni1, bni2, bni1 + elementsCountAround, bni2 + elementsCountAround ]
+            result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+            elementIdentifier = elementIdentifier + 1
+
+    # # create elements - Daughter2
+    # ##########################3##
+    node0 = 2*(elementsCountAround)*(elementsCountAlong+1) + 1
+    for e2 in range(elementsCountAlong):
+        for e1 in range(elementsCountAround):
+            element = mesh.createElement(elementIdentifier, elementtemplate)
+            bni1 = e2*elementsCountAround + e1 + node0
+            bni2 = e2*elementsCountAround + (e1 + 1)%elementsCountAround + node0
+            nodeIdentifiers = [ bni1, bni2, bni1 + elementsCountAround, bni2 + elementsCountAround ]
+            result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+            elementIdentifier = elementIdentifier + 1
+
 
     fm.endChange()
 

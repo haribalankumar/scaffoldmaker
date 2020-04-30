@@ -283,15 +283,40 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
             elementsCountAround, elementsCountAlongSegment, nSegment,
             ParentfaceMidPointsZ, Daughter1faceMidPointsZ, Daughter2faceMidPointsZ)
 
+        # Form junction  points
+        ###############################
+        xjunction, d1junction, d2junction \
+            = tubebifurcationmesh.createjunctionAirwaySegmentPoints(
+            xParentWarpedList, xDaugh1WarpedList, xDaugh2WarpedList,
+            d1ParentWarpedList, d1Daugh1WarpedList, d1Daugh2WarpedList,
+            d2ParentWarpedList, d2Daugh1WarpedList, d2Daugh2WarpedList,
+            segmentAxisParent, segmentAxisDaughter1, segmentAxisDaughter2,
+            parentsegmentLength, daughter1segmentLength, daughter2segmentLength,
+            sxparent, sxDaugh1, sxDaugh2,
+            sd1parent, sd1Daugh1, sd1Daugh2,
+            sd2parent, sd2Daugh1, sd2Daugh2,
+            elementsCountAround, elementsCountAlongSegment, nSegment)
+
         ##Create nodes and elements
+        # nextNodeIdentifier, nextElementIdentifier = \
+        #     tubebifurcationmesh.createSurfaceNodesAndElements\
+        #         (region,
+        #          xParentWarpedList, d1ParentWarpedList, d2ParentWarpedList,
+        #          xDaugh1WarpedList, d1Daugh1WarpedList, d2Daugh1WarpedList,
+        #          xDaugh2WarpedList, d1Daugh2WarpedList, d2Daugh2WarpedList,
+        #          elementsCountAround, elementsCountAlongSegment,
+        #         nodeIdentifier, elementIdentifier, useCrossDerivatives)
+
         nextNodeIdentifier, nextElementIdentifier = \
-            tubebifurcationmesh.createSurfaceNodesAndElements\
+            tubebifurcationmesh.createAirwaySegmentSurfaceNodesAndElements\
                 (region,
                  xParentWarpedList, d1ParentWarpedList, d2ParentWarpedList,
                  xDaugh1WarpedList, d1Daugh1WarpedList, d2Daugh1WarpedList,
                  xDaugh2WarpedList, d1Daugh2WarpedList, d2Daugh2WarpedList,
+                 xjunction,d1junction,d2junction,
                  elementsCountAround, elementsCountAlongSegment,
                 nodeIdentifier, elementIdentifier, useCrossDerivatives)
+
 
         # print('calling create surf node = ', nodeIdentifier)
         # print('NodeIdentifier = ', nodeIdentifier)
