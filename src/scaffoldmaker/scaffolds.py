@@ -60,8 +60,6 @@ class Scaffolds(object):
             MeshType_3d_heartventriclesbase1,
             MeshType_3d_heartventriclesbase2,
             MeshType_3d_lens1,
-            MeshType_3d_lungs1,
-            MeshType_3d_airwaybifurcation2,
             MeshType_3d_ostium1,
             MeshType_3d_smallintestine1,
             MeshType_3d_solidsphere1,
