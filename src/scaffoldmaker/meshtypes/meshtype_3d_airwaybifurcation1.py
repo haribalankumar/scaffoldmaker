@@ -11,11 +11,8 @@ from opencmiss.zinc.field import Field
 from opencmiss.zinc.node import Node
 
 from scaffoldmaker.annotation.annotationgroup import AnnotationGroup
-#from scaffoldmaker.meshtypes.meshtype_3d_ostium1 import MeshType_3d_ostium1
-
 from scaffoldmaker.meshtypes.scaffold_base import Scaffold_base
 from scaffoldmaker.scaffoldpackage import ScaffoldPackage
-##from scaffoldmaker.utils.annulusmesh import createAnnulusMesh3d
 ##from scaffoldmaker.utils.eftfactory_bicubichermitelinear import eftfactory_bicubichermitelinear
 
 from scaffoldmaker.utils import tubebifurcationmesh
@@ -23,9 +20,7 @@ from scaffoldmaker.utils.geometry import createCirclePoints
 from scaffoldmaker.utils import interpolation as interp
 from scaffoldmaker.utils.interpolation import getCubicHermiteBasis, smoothCubicHermiteDerivativesLine
 from scaffoldmaker.utils import vector
-
 from scaffoldmaker.utils.meshrefinement import MeshRefinement
-#from scaffoldmaker.utils.tracksurface import TrackSurface, TrackSurfacePosition, calculate_surface_axes
 
 
 class MeshType_3d_airwaybifurcation1(Scaffold_base):
@@ -38,7 +33,7 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
         return '3D Bifurcation template 1'
 
     @staticmethod
-    def getDefaultOptions(cls, parameterSetName='Default'):
+    def getDefaultOptions(parameterSetName='Default'):
         options = {
             'Number of elements along': 2,
             'Number of elements around': 4,  # should be even
@@ -55,31 +50,28 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
         ]
 
     @staticmethod
-    def checkOptions(cls, options):
-        if (options['Number of elements along'] < 4):
-            options['Number of elements along'] = 4
-        if (options['Number of elements around'] > 8):
-            options['Number of elements around'] = 8
+    def checkOptions(options):
+        if (options['Number of elements along'] < 2):
+            options['Number of elements along'] = 2
+        if (options['Number of elements around'] > 4):
+            options['Number of elements around'] = 4
             if (options['Number of elements around'] < 4):
                 options['Number of elements around'] = 4
         elif (options['Number of elements around'] % 2) == 1:
             options['Number of elements around'] += 1
 
     @staticmethod
-    def generateMesh(region, options):
+    def generateBaseMesh(region, options):
         '''
         Generate the base bicubic Hermite mesh. See also generateMesh().
         :param region: Zinc region to define model in. Must be empty.
         :param options: Dict containing options. See getDefaultOptions().
         :return: list of AnnotationGroup
         '''
+
         elementsCountAlong = options['Number of elements along']
         elementsCountAround = options['Number of elements around']
-
         useCrossDerivatives = options['Use cross derivatives']
-
-#        ostiumOptions = options['Ureter']
-#        ostiumDefaultOptions = ostiumOptions.getScaffoldSettings()
 
         fm = region.getFieldmodule()
         fm.beginChange()
@@ -119,13 +111,6 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
 
         cache = fm.createFieldcache()
 
-#        neckGroup = AnnotationGroup(region, 'neck of bladder', FMANumber='unknown', lyphID='unknown')
-#        bodyGroup = AnnotationGroup(region, 'body of bladder', FMANumber='unknown', lyphID='unknown')
-#        annotationGroups = [neckGroup, bodyGroup]
-
-#        neckMeshGroup = neckGroup.getMeshGroup(mesh)
-#        bodyMeshGroup = bodyGroup.getMeshGroup(mesh)
-
         # create nodes
         nodeIdentifier = 1
         elementIdentifier = 1
@@ -139,26 +124,24 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
         ########################################################################
         #### centerline details
         ## typically comes from a centerline definition. currently hardcoding it
-        parentsegmentLength = 1.1 ##When using centerline this is trach length + height
-        daughter1segmentLength = 0.8 ##When using centerline this is trach length + height
-        daughter2segmentLength = 0.8 ##When using centerline this is trach length + height
+        parentsegmentLength = 1.1 ##When using centerline this is trach length - junctionheight
+        daughter1segmentLength = 0.8 ##When using centerline this is trach length - junctionheight
+        daughter2segmentLength = 0.8 ##When using centerline this is trach length - junctionheight
 
         parentsegmentLength = parentsegmentLength * 0.85
         daughter1segmentLength = daughter1segmentLength * 0.85
         daughter2segmentLength = daughter2segmentLength * 0.85
 
         elementsCountAlongSegment = 2
+
+        wallThickness = 0.1
+        startPhase = 360.0
         ########################################################################
 
         x0 = [0,0,0]
         x1 = [0,0,parentsegmentLength]
         x2 = [-0.5,0,trachealLength-0.2]
         x3 = [0.5,0.2,trachealLength-0.2]
-
-        x1List.append(x0)
-        x1List.append(x1)
-        x1List.append(x2)
-        x1List.append(x3)
 
         d10 = [0,0,-1]
         d11 = [0,0,-1]
@@ -181,35 +164,49 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
         segmentCount = 0  # Hardcoded for starters
 
         # Central path
-        cx = [ [ 0.0, 0.0, 0.0 ], [ parentsegmentLength, 0.0, 0.0 ] ]
-        cd1 = [ [ parentsegmentLength, 0.0, 0.0 ], [ parentsegmentLength, 0.0, 0.0 ] ]
+        cx = [ [ 0.0, 0.0, 0.0 ], [ 0.0, 0.0, parentsegmentLength ] ]
+        cd1 = [ [ 0.0, 0.0, parentsegmentLength ], [ 0.0, 0.0, parentsegmentLength ] ]
         cd2 = [ [ 0.0, 1.0, 0.0 ], [ 0.0, 1.0, 0.0 ] ]
         cd12 = [ [0.0, 0.0, 0.0 ], [ 0.0, 0.0, 0.0 ] ]
 
+        print('calling parent central path sampling')
         # Sample central path - PARENT
         sxparent, sd1parent, separent, sxiparent, ssfparent = \
             interp.sampleCubicHermiteCurves(cx, cd1, elementsCountAlongSegment*segmentCount)
         sd2parent = interp.interpolateSampleCubicHermite(cd2, cd12, separent, sxiparent, ssfparent)[0]
+        print('called parent central path sampling', sxparent[0], sxparent[1])
 
         # Sample central path - DAUGHTER1
-        cx = [ [ 0.0, 0.0, 0.0 ], [ parentsegmentLength, 0.0, 0.0 ] ]
-        cd1 = [ [ parentsegmentLength, 0.0, 0.0 ], [ parentsegmentLength, 0.0, 0.0 ] ]
+        cx = [ [ 0.0, 0.0, 0.0 ], [ daughter1segmentLength, 0.0, 0.0 ] ]
+        cd1 = [ [ daughter1segmentLength, 0.0, 0.0 ], [ daughter1segmentLength, 0.0, 0.0 ] ]
         cd2 = [ [ 0.0, 1.0, 0.0 ], [ 0.0, 1.0, 0.0 ] ]
         cd12 = [ [0.0, 0.0, 0.0 ], [ 0.0, 0.0, 0.0 ] ]
-        sxDaugh1, sd1Daugh1, seDaugh1, sxipDaugh1, ssfDaugh1 = \
+        sxDaugh1, sd1Daugh1, seDaugh1, sxiDaugh1, ssfDaugh1 = \
             interp.sampleCubicHermiteCurves(cx, cd1, elementsCountAlongSegment*segmentCount)
-        sd2Daugh1 = interp.interpolateSampleCubicHermite(cd2, cd12, separent, sxiparent, ssfparent)[0]
+        sd2Daugh1 = interp.interpolateSampleCubicHermite(cd2, cd12, seDaugh1, sxiDaugh1, ssfDaugh1)[0]
+
+        # Sample central path - DAUGHTER2
+        cx = [ [ 0.0, 0.0, 0.0 ], [ -daughter2segmentLength, 0.0, 0.0 ] ]
+        cd1 = [ [ -daughter2segmentLength, 0.0, 0.0 ], [ -daughter2segmentLength, 0.0, 0.0 ] ]
+        cd2 = [ [ 0.0, 1.0, 0.0 ], [ 0.0, 1.0, 0.0 ] ]
+        cd12 = [ [0.0, 0.0, 0.0 ], [ 0.0, 0.0, 0.0 ] ]
+        sxDaugh2, sd1Daugh2, seDaugh2, sxiDaugh2, ssfDaugh2 = \
+            interp.sampleCubicHermiteCurves(cx, cd1, elementsCountAlongSegment*segmentCount)
+        sd2Daugh2 = interp.interpolateSampleCubicHermite(cd2, cd12, seDaugh2, sxiDaugh2, ssfDaugh2)[0]
 
         # Find parameter variation along elementsCountAlongSegment
         radiusparentAlongSegment = []
         dRadiusparentAlongSegment = []
+
         radiusDaugh1AlongSegment = []
         dRadiusDaugh1AlongSegment = []
+
         radiusDaugh2AlongSegment = []
         dRadiusDaugh2AlongSegment = []
 
         for n2 in range(elementsCountAlongSegment + 1):
             xi = 1/elementsCountAlongSegment * n2
+            print('n2 for xi value = ', n2, xi)
             radius = interp.interpolateCubicHermite([startRadiusparent], [startRadiusparentDerivative],
                                                     [endRadiusparent], [endRadiusparentDerivative], xi)[0]
             radiusparentAlongSegment.append(radius)
@@ -227,13 +224,15 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
             radius = interp.interpolateCubicHermite([startRadiusDaugh2], [startRadiusDaugh2Derivative],
                                                     [endRadiusDaugh2], [endRadiusDaugh2Derivative], xi)[0]
             radiusDaugh2AlongSegment.append(radius)
+
             dRadius = interp.interpolateCubicHermiteDerivative([startRadiusparent], [startRadiusparentDerivative],
                                                                [endRadiusparent], [endRadiusparentDerivative], xi)[0]
             dRadiusDaugh2AlongSegment.append(dRadius)
 
-        AirwaySegmentTubeMeshInnerPoints = AirwaySegmentTubeMeshInnerPoints(
+        airwaysegmentTubeMeshInnerPoints = AirwaySegmentTubeMeshInnerPoints(
             region, elementsCountAround, elementsCountAlongSegment,
-            segmentLength, wallThickness, radiusParentAlongSegment, radiusDaugh1AlongSegment,
+            parentsegmentLength, daughter1segmentLength, daughter2segmentLength,
+            wallThickness, radiusparentAlongSegment, radiusDaugh1AlongSegment,
             radiusDaugh2AlongSegment, dRadiusDaugh2AlongSegment,
             dRadiusDaugh1AlongSegment, dRadiusDaugh2AlongSegment, startPhase)
 
@@ -243,32 +242,56 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
         xParentInner, xDaugh1Inner, xDaugh2Inner, \
         d1ParentInner, d1Daugh1Inner, d1Daugh2Inner, \
         d2ParentInner, d2Daugh1Inner, d2Daugh2Inner, \
-        transitElementList, segmentAxis, annotationGroups, annotationArray, faceMidPointsZ = \
-            AirwaySegmentTubeMeshInnerPoints.getAirwaySegmentTubeMeshInnerPoints(nSegment)
+        transitElementList, segmentAxisParent, segmentAxisDaughter1, segmentAxisDaughter2,\
+        ParentfaceMidPointsZ, Daughter1faceMidPointsZ, Daughter2faceMidPointsZ = \
+            airwaysegmentTubeMeshInnerPoints.getAirwaySegmentTubeMeshInnerPoints(nSegment)
 
+        contractedWallThicknessList = airwaysegmentTubeMeshInnerPoints.getContractedWallThicknessList()
 
         # Warp segment points
         #####################
-        xParentWarpedList, xDaugh1WarpedList, xDaugh2WarpedList, \
-        d1ParentWarpedList, d1Daugh1WarpedList, d1Daugh2WarpedList,\
-        d2ParentWarpedList, d2Daugh1WarpedList, d2Daugh2WarpedList,\
-        d3ParentWarpedUnitList, d3Daugh1WarpedList, d3Daugh2WarpetList \
-            = tubebifurcationmesh.warpAirwaySegmentPoints(
-            xParentInner, xDaugh1Inner, xDaugh2Inner,
-            d1ParentInner, d1Daugh1Inner, d1Daugh2Inner,
-            d2ParentInner, d2Daugh1Inner, d2Daugh2Inner,
-            segmentAxis, segmentLength,
-            sxparent, sxDaugh1, sxDaugh2,
-            sd1parent, sd1Daugh1, sd1Daugh2,
-            sd2parent, sd2Daugh1, sd2Daugh2,
-            elementsCountAround, elementsCountAlongSegment, nSegment, faceMidPointsZ)
+        # xParentWarpedList, xDaugh1WarpedList, xDaugh2WarpedList, \
+        # d1ParentWarpedList, d1Daugh1WarpedList, d1Daugh2WarpedList,\
+        # d2ParentWarpedList, d2Daugh1WarpedList, d2Daugh2WarpedList,\
+        # d3ParentWarpedUnitList, d3Daugh1WarpedList, d3Daugh2WarpedList \
+        #     = tubebifurcationmesh.warpAirwaySegmentPoints(
+        #     xParentInner, xDaugh1Inner, xDaugh2Inner,
+        #     d1ParentInner, d1Daugh1Inner, d1Daugh2Inner,
+        #     d2ParentInner, d2Daugh1Inner, d2Daugh2Inner,
+        #     segmentAxisParent, segmentAxisDaughter1, segmentAxisDaughter2,
+        #     parentsegmentLength, daughter1segmentLength, daughter2segmentLength,
+        #     sxparent, sxDaugh1, sxDaugh2,
+        #     sd1parent, sd1Daugh1, sd1Daugh2,
+        #     sd2parent, sd2Daugh1, sd2Daugh2,
+        #     elementsCountAround, elementsCountAlongSegment, nSegment,
+        #     ParentfaceMidPointsZ, Daughter1faceMidPointsZ, Daughter2faceMidPointsZ)
 
-        contractedWallThicknessList = colonSegmentTubeMeshInnerPoints.getContractedWallThicknessList()
 
-        # Create coordinates and derivatives
-        xList, d1List, d2List, d3List, curvatureList = tubemesh.getCoordinatesFromInner(xWarpedList, d1WarpedList,
-            d2WarpedList, d3WarpedUnitList, contractedWallThicknessList,
-            elementsCountAround, elementsCountAlongSegment, elementsCountThroughWall, transitElementList)
+#        # Create coordinates and derivatives
+#        xList, d1List, d2List, d3List, curvatureList = tubemesh.getCoordinatesFromInner(xWarpedList, d1WarpedList,
+#            d2WarpedList, d3WarpedUnitList, contractedWallThicknessList,
+#            elementsCountAround, elementsCountAlongSegment, elementsCountThroughWall, transitElementList)
+
+        # Create nodes and elements
+        # nextNodeIdentifier, nextElementIdentifier = \
+        #     tubebifurcationmesh.createSurfaceNodesAndElements\
+        #         (region,
+        #          xParentWarpedList, d1ParentWarpedList, d2ParentWarpedList,
+        #          xDaugh1WarpedList, d1Daugh1WarpedList, d2Daugh1WarpedList,
+        #          xDaugh2WarpedList, d1Daugh2WarpedList, d2Daugh2WarpedList,
+        #          elementsCountAround, elementsCountAlongSegment,
+        #         nodeIdentifier, elementIdentifier, useCrossDerivatives)
+
+        print('calling create surf node = ', nodeIdentifier)
+        print('NodeIdentifier = ', nodeIdentifier)
+        nextNodeIdentifier, nextElementIdentifier = \
+            tubebifurcationmesh.createSurfaceNodesAndElements\
+                (region,
+                 xParentInner, d1ParentInner, d2ParentInner,
+                 xDaugh1Inner, d1Daugh1Inner, d2Daugh1Inner,
+                 xDaugh2Inner, d1Daugh2Inner, d2Daugh2Inner,
+                 elementsCountAround, elementsCountAlongSegment,
+                nodeIdentifier, elementIdentifier, useCrossDerivatives)
 
         fm.endChange()
 #        return annotationGroups
@@ -278,7 +301,8 @@ class AirwaySegmentTubeMeshInnerPoints:
     Generates inner profile of a cylindrical segment for use by tubemesh.
     """
     def __init__(self, region, elementsCountAround, elementsCountAlongSegment,
-                 segmentLength, wallThickness,
+                 parentsegmentLength, daugh1segmentLength, daugh2segmentLength,
+                 wallThickness,
                  innerRadiusParentSegmentList, innerRadiusDaugh1SegmentList,
                  innerRadiusDaugh2SegmentList, dInnerRadiusParentSegmentList,
                  dInnerRadiusDaugh1SegmentList, dInnerRadiusDaugh2SegmentList, startPhase):
@@ -286,7 +310,9 @@ class AirwaySegmentTubeMeshInnerPoints:
         self._region = region
         self._elementsCountAround = elementsCountAround
         self._elementsCountAlongSegment = elementsCountAlongSegment
-        self._segmentLength = segmentLength
+        self._parentsegmentLength = parentsegmentLength
+        self._daugh1segmentLength = daugh1segmentLength
+        self._daugh2segmentLength = daugh2segmentLength
         self._wallThickness = wallThickness
         self._innerRadiusParentSegmentList = innerRadiusParentSegmentList
         self._innerRadiusDaugh1SegmentList = innerRadiusDaugh1SegmentList
@@ -295,8 +321,7 @@ class AirwaySegmentTubeMeshInnerPoints:
         self._dInnerRadiusDaugh1SegmentList = dInnerRadiusDaugh1SegmentList
         self._dInnerRadiusDaugh2SegmentList = dInnerRadiusDaugh2SegmentList
 
-        self._tubeTCWidthList = []
-
+        self._contractedWallThicknessList = []
         self._startPhase = startPhase
 
 
@@ -321,10 +346,13 @@ class AirwaySegmentTubeMeshInnerPoints:
         xParentInner, xDaugh1Inner, xDaugh2Inner, \
         d1ParentInner, d1Daugh1Inner, d1Daugh2Inner, \
         d2ParentInner, d2Daugh1Inner, d2Daugh2Inner, \
-        transitElementList, contractedWallThickness, \
-        segmentAxis, faceMidPointsZ = getAirwaySegmentInnerPoints(self._region,
+        transitElementList, contractedWallThicknessSegment, \
+        segmentAxisParent, segmentAxisDaughter1, segmentAxisDaughter2, \
+        ParentfaceMidPointsZ, Daughter1faceMidPointsZ, Daughter2faceMidPointsZ\
+            = getAirwaySegmentInnerPoints(self._region,
                                           self._elementsCountAround, self._elementsCountAlongSegment,
-                                          self._segmentLength, self._wallThickness,
+                                          self._parentsegmentLength, self._daugh1segmentLength,
+                                          self._daugh2segmentLength, self._wallThickness,
                                           startRadiusParent, startRadiusDaugh1, startRadiusDaugh2,
                                           startRadiusParentDerivative, startRadiusDaugh1Derivative,
                                           startRadiusDaugh2Derivative,
@@ -332,20 +360,27 @@ class AirwaySegmentTubeMeshInnerPoints:
                                           endRadiusParentDerivative,endRadiusDaugh1Derivative,
                                           endRadiusDaugh2Derivative,
                                           self._startPhase)
+
         startIdx = 0 if nSegment == 0 else 1
-        xi = xiSegment[startIdx:self._elementsCountAlongSegment + 1]
-        self._xiList += xi
+
+        # xi = xiSegment[startIdx:self._elementsCountAlongSegment + 1]
+        # self._xiList += xi
 
         contractedWallThickness = contractedWallThicknessSegment[startIdx:self._elementsCountAlongSegment + 1]
         self._contractedWallThicknessList += contractedWallThickness
 
         return xParentInner, xDaugh1Inner, xDaugh2Inner, \
         d1ParentInner, d1Daugh1Inner, d1Daugh2Inner, \
-        d2ParentInner, d2Daugh1Inner, d2Daugh2Inner, \
-        transitElementList, segmentAxis, faceMidPointsZ
+        d2ParentInner, d2Daugh1Inner, d2Daugh2Inner, transitElementList, \
+               segmentAxisParent, segmentAxisDaughter1, segmentAxisDaughter2, \
+               ParentfaceMidPointsZ, Daughter1faceMidPointsZ, Daughter2faceMidPointsZ
+
+    def getContractedWallThicknessList(self):
+        return self._contractedWallThicknessList
 
 
-def getAirwaySegmentInnerPoints(region, elementsCountAround, elementsCountAlongSegment, segmentLength,
+def getAirwaySegmentInnerPoints(region, elementsCountAround, elementsCountAlongSegment,
+                                parentsegmentLength, daugh1segmentLength, daugh2segmentLength,
                                 wallThickness, startRadiusParent, startRadiusDaugh1, startRadiusDaugh2,
                                 startRadiusParentDerivative, startRadiusDaugh1Derivative, startRadiusDaugh2Derivative,
                                 endRadiusParent, endRadiusDaugh1, endRadiusDaugh2,
@@ -372,14 +407,17 @@ def getAirwaySegmentInnerPoints(region, elementsCountAround, elementsCountAlongS
 
     transitElementList = [0] * elementsCountAround
 
+    contractedWallThicknessList = []
+
     # create nodes - PARENT
     #######################
-    segmentAxis = [0.0, 0.0, 1.0]
+    segmentAxisParent = [0.0, 0.0, 1.0]
 
     xParentFinal = []
     d1ParentFinal = []
     d2ParentFinal = []
     sRadiusParentAlongSegment = []
+
 
     for n2 in range(elementsCountAlongSegment + 1):
         phase = startPhase + n2 * 360.0 / elementsCountAlongSegment
@@ -387,7 +425,7 @@ def getAirwaySegmentInnerPoints(region, elementsCountAround, elementsCountAlongS
         radius = interp.interpolateCubicHermite([startRadiusParent], [startRadiusParentDerivative],
                                                 [endRadiusParent], [endRadiusParentDerivative], xi)[0]
         sRadiusParentAlongSegment.append(radius)
-        z = segmentLength / elementsCountAlongSegment * n2 + startPhase / 360.0 * segmentLength
+        z = parentsegmentLength / elementsCountAlongSegment * n2 + startPhase / 360.0 * parentsegmentLength
 
         xLoop, d1Loop = createCirclePoints([0.0, 0.0, z], [radius, 0.0, 0.0], [0.0, radius, 0.0],
                                            elementsCountAround, startRadians=0.0)
@@ -402,7 +440,7 @@ def getAirwaySegmentInnerPoints(region, elementsCountAround, elementsCountAlongS
         for n2 in range(elementsCountAlongSegment + 1):
             n = n2 * elementsCountAround + n1
             nx.append(xParentFinal[n])
-            nd2.append(segmentAxis)
+            nd2.append(segmentAxisParent)
         smoothd2 = interp.smoothCubicHermiteDerivativesLine(nx, nd2)
         smoothd2Raw.append(smoothd2)
 
@@ -412,9 +450,16 @@ def getAirwaySegmentInnerPoints(region, elementsCountAround, elementsCountAlongS
         for n1 in range(elementsCountAround):
             d2ParentFinal.append(smoothd2Raw[n1][n2])
 
+    # Calculate z mid-point for each element set along the segment
+    faceParentMidPointsZ = []
+    lengthToFirstPhase = startPhase / 360.0 * parentsegmentLength
+    for n2 in range(elementsCountAlongSegment + 1):
+        faceParentMidPointsZ += [lengthToFirstPhase +
+                                 n2 * parentsegmentLength / elementsCountAlongSegment]
+
     # create nodes - DAUGHTER1
     ############################
-    segmentAxis = [1.0, 0.0, 0.0]
+    segmentAxisDaugh1 = [1.0, 0.0, 0.0]
 
     xDaugh1Final = []
     d1Daugh1Final = []
@@ -427,7 +472,7 @@ def getAirwaySegmentInnerPoints(region, elementsCountAround, elementsCountAlongS
         radius = interp.interpolateCubicHermite([startRadiusDaugh1], [startRadiusDaugh1Derivative],
                                                 [endRadiusDaugh1], [endRadiusDaugh1Derivative], xi)[0]
         sRadiusDaugh1AlongSegment.append(radius)
-        z = segmentLength / elementsCountAlongSegment * n2 + startPhase / 360.0 * segmentLength
+        z = daugh1segmentLength / elementsCountAlongSegment * n2 + startPhase / 360.0 * daugh1segmentLength
 
         xLoop, d1Loop = createCirclePoints([0.0, 0.0, z], [radius, 0.0, 0.0], [0.0, radius, 0.0],
                                            elementsCountAround, startRadians=0.0)
@@ -442,7 +487,7 @@ def getAirwaySegmentInnerPoints(region, elementsCountAround, elementsCountAlongS
         for n2 in range(elementsCountAlongSegment + 1):
             n = n2 * elementsCountAround + n1
             nx.append(xDaugh1Final[n])
-            nd2.append(segmentAxis)
+            nd2.append(segmentAxisDaugh1)
         smoothd2 = interp.smoothCubicHermiteDerivativesLine(nx, nd2)
         smoothd2Raw.append(smoothd2)
 
@@ -452,10 +497,16 @@ def getAirwaySegmentInnerPoints(region, elementsCountAround, elementsCountAlongS
         for n1 in range(elementsCountAround):
             d2Daugh1Final.append(smoothd2Raw[n1][n2])
 
+    # Calculate z mid-point for each element set along the segment
+    faceDaughter1MidPointsZ = []
+    lengthToFirstPhase = startPhase / 360.0 * daugh1segmentLength
+    for n2 in range(elementsCountAlongSegment + 1):
+        faceDaughter1MidPointsZ += [lengthToFirstPhase +
+                                 n2 * daugh1segmentLength / elementsCountAlongSegment]
 
     # create nodes - DAUGHTER2
     ############################
-    segmentAxis = [1.0, 0.0, 0.0]
+    segmentAxisDaugh2 = [-1.0, 0.0, 0.0]
 
     xDaugh2Final = []
     d1Daugh2Final = []
@@ -468,7 +519,7 @@ def getAirwaySegmentInnerPoints(region, elementsCountAround, elementsCountAlongS
         radius = interp.interpolateCubicHermite([startRadiusDaugh2], [startRadiusDaugh2Derivative],
                                                 [endRadiusDaugh2], [endRadiusDaugh2Derivative], xi)[0]
         sRadiusDaugh2AlongSegment.append(radius)
-        z = segmentLength / elementsCountAlongSegment * n2 + startPhase / 360.0 * segmentLength
+        z = daugh2segmentLength / elementsCountAlongSegment * n2 + startPhase / 360.0 * daugh2segmentLength
 
         xLoop, d1Loop = createCirclePoints([0.0, 0.0, z], [radius, 0.0, 0.0], [0.0, radius, 0.0],
                                            elementsCountAround, startRadians=0.0)
@@ -483,7 +534,7 @@ def getAirwaySegmentInnerPoints(region, elementsCountAround, elementsCountAlongS
         for n2 in range(elementsCountAlongSegment + 1):
             n = n2 * elementsCountAround + n1
             nx.append(xDaugh2Final[n])
-            nd2.append(segmentAxis)
+            nd2.append(segmentAxisDaugh2)
         smoothd2 = interp.smoothCubicHermiteDerivativesLine(nx, nd2)
         smoothd2Raw.append(smoothd2)
 
@@ -493,5 +544,20 @@ def getAirwaySegmentInnerPoints(region, elementsCountAround, elementsCountAlongS
         for n1 in range(elementsCountAround):
             d2Daugh2Final.append(smoothd2Raw[n1][n2])
 
-    return xParentFinal, xDaugh1Final, xDaugh2Final, d1ParentFinal, d1Daugh1Final, d1Daugh2Final, \
-           d2ParentFinal, d2Daugh1Final, d2Daugh2Final, transitElementList, segmentAxis
+    # Calculate z mid-point for each element set along the segment
+    faceDaughter2MidPointsZ = []
+    lengthToFirstPhase = startPhase / 360.0 * daugh1segmentLength
+    for n2 in range(elementsCountAlongSegment + 1):
+        faceDaughter2MidPointsZ += [lengthToFirstPhase +
+                                 n2 * daugh2segmentLength / elementsCountAlongSegment]
+
+    # WALL THICKNESS
+    contractedWallThickness = wallThickness
+    contractedWallThicknessList.append(contractedWallThickness)
+
+    return xParentFinal, xDaugh1Final, xDaugh2Final, \
+           d1ParentFinal, d1Daugh1Final, d1Daugh2Final, \
+           d2ParentFinal, d2Daugh1Final, d2Daugh2Final, \
+           transitElementList, contractedWallThicknessList,\
+           segmentAxisParent, segmentAxisDaugh1, segmentAxisDaugh2, \
+           faceParentMidPointsZ, faceDaughter1MidPointsZ, faceDaughter2MidPointsZ

@@ -9,10 +9,9 @@ from opencmiss.utils.zinc.field import findOrCreateFieldCoordinates
 from opencmiss.zinc.element import Element, Elementbasis, Elementfieldtemplate
 from opencmiss.zinc.field import Field
 from opencmiss.zinc.node import Node
-
 from scaffoldmaker.meshtypes.scaffold_base import Scaffold_base
 
-#from scaffoldmaker.utils.eftfactory_bicubichermitelinear import eftfactory_bicubichermitelinear
+##from scaffoldmaker.utils.eftfactory_bicubichermitelinear import eftfactory_bicubichermitelinear
 from scaffoldmaker.utils.geometry import createCirclePoints
 from scaffoldmaker.utils import interpolation as interp
 from scaffoldmaker.utils import matrix
@@ -21,12 +20,14 @@ from scaffoldmaker.utils import vector
 def warpAirwaySegmentPoints(x1ListParent, x1ListDaugh1, x1ListDaugh2,
                             d1ListParent, d1ListDaugh1, d1ListDaugh2,
                             d2ListParent, d2ListDaugh1, d2ListDaugh2,
-                            segmentAxis, segmentLength,
+                            segmentAxisParent, segmentAxisDaughter1, segmentAxisDaughter2,
+                            parentsegmentLength, daughter1segmentLength, daughter2segmentLength,
                             sxParent, sxDaugh1, sxDaugh2,
                             sd1Parent, sd1Daugh1, sd1Daugh2,
                             sd2Parent, sd2Daugh1, sd2Daugh2,
                             elementsCountAround, elementsCountAlongSegment,
-                            nSegment, faceMidPointZ):
+                            nSegment,
+                            ParentfaceMidPointZ, Daughter1faceMidPointZ, Daughter2faceMidPointZ):
     """
     Warps points in Airway segment to account for bending and twisting
     along central path defined by nodes sx and derivatives sd1 and sd2.
@@ -68,15 +69,15 @@ def warpAirwaySegmentPoints(x1ListParent, x1ListDaugh1, x1ListDaugh2,
         xElementAlongSegment = x1ListParent[elementsCountAround*nAlongSegment: elementsCountAround*(nAlongSegment+1)]
         d1ElementAlongSegment = d1ListParent[elementsCountAround*nAlongSegment: elementsCountAround*(nAlongSegment+1)]
         d2ElementAlongSegment = d2ListParent[elementsCountAround*nAlongSegment: elementsCountAround*(nAlongSegment+1)]
-        xMid = [0.0, 0.0, faceMidPointZ[nAlongSegment]]
+        xMid = [0.0, 0.0, ParentfaceMidPointZ[nAlongSegment]]
 
         # Rotate to align segment axis with tangent of central line
         unitTangent = vector.normalise(sd1Parent[n2])
-        cp = vector.crossproduct3(segmentAxis, unitTangent)
-        dp = vector.dotproduct(segmentAxis, unitTangent)
+        cp = vector.crossproduct3(segmentAxisParent, unitTangent)
+        dp = vector.dotproduct(segmentAxisParent, unitTangent)
         if vector.magnitude(cp)> 0.0: # path tangent not parallel to segment axis
             axisRot = vector.normalise(cp)
-            thetaRot = math.acos(vector.dotproduct(segmentAxis, unitTangent))
+            thetaRot = math.acos(vector.dotproduct(segmentAxisParent, unitTangent))
             rotFrame = matrix.getRotationMatrixFromAxisAngle(axisRot, thetaRot)
             midRot = [rotFrame[j][0]*xMid[0] + rotFrame[j][1]*xMid[1] + rotFrame[j][2]*xMid[2] for j in range(3)]
         else: # path tangent parallel to segment axis (z-axis)
@@ -148,15 +149,15 @@ def warpAirwaySegmentPoints(x1ListParent, x1ListDaugh1, x1ListDaugh2,
         xElementAlongSegment = x1ListDaugh1[elementsCountAround*nAlongSegment: elementsCountAround*(nAlongSegment+1)]
         d1ElementAlongSegment = d1ListDaugh1[elementsCountAround*nAlongSegment: elementsCountAround*(nAlongSegment+1)]
         d2ElementAlongSegment = d2ListDaugh1[elementsCountAround*nAlongSegment: elementsCountAround*(nAlongSegment+1)]
-        xMid = [0.0, 0.0, faceMidPointZ[nAlongSegment]]
+        xMid = [0.0, 0.0, Daughter1faceMidPointZ[nAlongSegment]]
 
         # Rotate to align segment axis with tangent of central line
         unitTangent = vector.normalise(sd1Daugh1[n2])
-        cp = vector.crossproduct3(segmentAxis, unitTangent)
-        dp = vector.dotproduct(segmentAxis, unitTangent)
+        cp = vector.crossproduct3(segmentAxisDaughter1, unitTangent)
+        dp = vector.dotproduct(segmentAxisDaughter1, unitTangent)
         if vector.magnitude(cp)> 0.0: # path tangent not parallel to segment axis
             axisRot = vector.normalise(cp)
-            thetaRot = math.acos(vector.dotproduct(segmentAxis, unitTangent))
+            thetaRot = math.acos(vector.dotproduct(segmentAxisDaughter1, unitTangent))
             rotFrame = matrix.getRotationMatrixFromAxisAngle(axisRot, thetaRot)
             midRot = [rotFrame[j][0]*xMid[0] + rotFrame[j][1]*xMid[1] + rotFrame[j][2]*xMid[2] for j in range(3)]
         else: # path tangent parallel to segment axis (z-axis)
@@ -205,7 +206,7 @@ def warpAirwaySegmentPoints(x1ListParent, x1ListDaugh1, x1ListDaugh2,
 
                 # Rotate to align start of elementsAround with sd2
                 if n1 == 0:
-                    v = vector.normalise(sd2Parent[n2])
+                    v = vector.normalise(sd2Daugh1[n2])
                     startVector = vector.normalise([xRot1[j] - midRot[j] for j in range(3)])
                     axisRot2 = unitTangent
                     thetaRot2 = dp*-math.acos(vector.dotproduct(v, startVector))
@@ -228,15 +229,15 @@ def warpAirwaySegmentPoints(x1ListParent, x1ListDaugh1, x1ListDaugh2,
         xElementAlongSegment = x1ListDaugh2[elementsCountAround*nAlongSegment: elementsCountAround*(nAlongSegment+1)]
         d1ElementAlongSegment = d1ListDaugh2[elementsCountAround*nAlongSegment: elementsCountAround*(nAlongSegment+1)]
         d2ElementAlongSegment = d2ListDaugh2[elementsCountAround*nAlongSegment: elementsCountAround*(nAlongSegment+1)]
-        xMid = [0.0, 0.0, faceMidPointZ[nAlongSegment]]
+        xMid = [0.0, 0.0, Daughter2faceMidPointZ[nAlongSegment]]
 
         # Rotate to align segment axis with tangent of central line
-        unitTangent = vector.normalise(sd1Daugh1[n2])
-        cp = vector.crossproduct3(segmentAxis, unitTangent)
-        dp = vector.dotproduct(segmentAxis, unitTangent)
+        unitTangent = vector.normalise(sd1Daugh2[n2])
+        cp = vector.crossproduct3(segmentAxisDaughter2, unitTangent)
+        dp = vector.dotproduct(segmentAxisDaughter2, unitTangent)
         if vector.magnitude(cp)> 0.0: # path tangent not parallel to segment axis
             axisRot = vector.normalise(cp)
-            thetaRot = math.acos(vector.dotproduct(segmentAxis, unitTangent))
+            thetaRot = math.acos(vector.dotproduct(segmentAxisDaughter2, unitTangent))
             rotFrame = matrix.getRotationMatrixFromAxisAngle(axisRot, thetaRot)
             midRot = [rotFrame[j][0]*xMid[0] + rotFrame[j][1]*xMid[1] + rotFrame[j][2]*xMid[2] for j in range(3)]
         else: # path tangent parallel to segment axis (z-axis)
@@ -285,7 +286,7 @@ def warpAirwaySegmentPoints(x1ListParent, x1ListDaugh1, x1ListDaugh2,
 
                 # Rotate to align start of elementsAround with sd2
                 if n1 == 0:
-                    v = vector.normalise(sd2Parent[n2])
+                    v = vector.normalise(sd2Daugh2[n2])
                     startVector = vector.normalise([xRot1[j] - midRot[j] for j in range(3)])
                     axisRot2 = unitTangent
                     thetaRot2 = dp*-math.acos(vector.dotproduct(v, startVector))
@@ -339,10 +340,10 @@ def warpAirwaySegmentPoints(x1ListParent, x1ListDaugh1, x1ListDaugh2,
                                                        vector.normalise(d2Daugh2WarpedList[n])))
         d3Daugh2WarpedUnitList.append(d3Unit)
 
-    return x1ParentWarpedList, x1Daugh1WarpedList, x1Daugh2WarpedList, d1ParentWarpedList, \
-           d1Daugh1WarpedList, d1Daugh2WarpedList, d3ParentWarpedUnitList, \
-           d2Daugh1WarpedList, d2Daugh2WarpedList, d3ParentWarpedUnitList, \
-           d3Daugh1WarpedUnitList, d3Daugh2WarpedUnitList
+    return x1ParentWarpedList, x1Daugh1WarpedList, x1Daugh2WarpedList, \
+           d1ParentWarpedList, d1Daugh1WarpedList, d1Daugh2WarpedList, \
+           d2ParentWarpedList, d2Daugh1WarpedList, d2Daugh2WarpedList, \
+           d3ParentWarpedUnitList, d3Daugh1WarpedUnitList, d3Daugh2WarpedUnitList
 
 
 def getAirwaySegmentCoordinatesFromInner(xInner, d1Inner, d2Inner, d3Inner,
@@ -438,12 +439,13 @@ def getAirwaySegmentCoordinatesFromInner(xInner, d1Inner, d2Inner, d3Inner,
 
 
 
-
-def CreateTubeBifurcationMesh(region,
-    x1List, d1List, radius1list,
-    elementsCountAround, elementsCountAlong,
-    firstNodeIdentifier, firstElementIdentifier,
-    useCrossDerivatives):
+def createSurfaceNodesAndElements(region,
+                                  xParent, d1Parent, d2Parent,
+                                  xDaugh1, d1Daugh1, d2Daugh1,
+                                  xDaugh2, d1Daugh2, d2Daugh2,
+                                  elementsCountAround, elementsCountAlong,
+                                  firstNodeIdentifier, firstElementIdentifier,
+                                  useCrossDerivatives):
     #    annotationGroups, annotationArray,
     """
     :param xList: coordinates of centerline points.
@@ -489,73 +491,111 @@ def CreateTubeBifurcationMesh(region,
 
     cache = fm.createFieldcache()
 
-    radiansPerElementAround = 2.0 * math.pi / elementsCountAround
-    x = [0.0, 0.0, 0.0]
-    dx_ds1 = [0.0, 0.0, 0.0]
-    dx_ds2 = [0.0, 0.0, 1.0 / elementsCountAlong]
-    zero = [0.0, 0.0, 0.0]
+    # radiansPerElementAround = 2.0 * math.pi / elementsCountAround
+    # x = [0.0, 0.0, 0.0]
+    # dx_ds1 = [0.0, 0.0, 0.0]
+    # dx_ds2 = [0.0, 0.0, 1.0 / elementsCountAlong]
+    # zero = [0.0, 0.0, 0.0]
 
-    #parent
-    radius = radius1list[0]
-    for n2 in range(elementsCountAlong + 1):
-        x[2] = n2 / elementsCountAlong
-        for n1 in range(elementsCountAround):
-            radiansAround = n1 * radiansPerElementAround
-            cosRadiansAround = math.cos(radiansAround)
-            sinRadiansAround = math.sin(radiansAround)
-            x[0] = radius * cosRadiansAround
-            x[1] = radius * sinRadiansAround
-            dx_ds1[0] = radiansPerElementAround * radius * -sinRadiansAround
-            dx_ds1[1] = radiansPerElementAround * radius * cosRadiansAround
-            node = nodes.createNode(nodeIdentifier, nodetemplate)
-            cache.setNode(node)
-            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, x)
-            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS1, 1, dx_ds1)
-            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS2, 1, dx_ds2)
-            if useCrossDerivatives:
+    # #parent
+    # radius = radius1list[0]
+    # for n2 in range(elementsCountAlong + 1):
+    #     x[2] = n2 / elementsCountAlong
+    #     for n1 in range(elementsCountAround):
+    #         radiansAround = n1 * radiansPerElementAround
+    #         cosRadiansAround = math.cos(radiansAround)
+    #         sinRadiansAround = math.sin(radiansAround)
+    #         x[0] = radius * cosRadiansAround
+    #         x[1] = radius * sinRadiansAround
+    #         dx_ds1[0] = radiansPerElementAround * radius * -sinRadiansAround
+    #         dx_ds1[1] = radiansPerElementAround * radius * cosRadiansAround
+    #         node = nodes.createNode(nodeIdentifier, nodetemplate)
+    #         cache.setNode(node)
+    #         coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, x)
+    #         coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS1, 1, dx_ds1)
+    #         coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS2, 1, dx_ds2)
+    #         if useCrossDerivatives:
+    #             coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS2, 1, zero)
+    #         nodeIdentifier = nodeIdentifier + 1
+
+    # # Central path
+    # cx = [ [ 0.0, 0.0, 0.0 ], [ segmentLength, 0.0, 0.0 ] ]
+    # cd1 = [ [ segmentLength, 0.0, 0.0 ], [ segmentLength, 0.0, 0.0 ] ]
+    # cd2 = [ [ 0.0, 1.0, 0.0 ], [ 0.0, 1.0, 0.0 ] ]
+    # cd12 = [ [0.0, 0.0, 0.0 ], [ 0.0, 0.0, 0.0 ] ]
+    #
+    # # Sample central path
+    # sx, sd1, se, sxi, ssf = interp.sampleCubicHermiteCurves(cx, cd1, elementsCountAlong)
+    # sd2 = interp.interpolateSampleCubicHermite(cd2, cd12, se, sxi, ssf)[0]
+
+    # ###daughter 1
+    # radius = radius1list[1]
+    # for n2 in range(elementsCountAlong + 1):
+    #     x[2] = n2 / elementsCountAlong
+    #     for n1 in range(elementsCountAround):
+    #         radiansAround = n1 * radiansPerElementAround
+    #         cosRadiansAround = math.cos(radiansAround)
+    #         sinRadiansAround = math.sin(radiansAround)
+    #         x[0] = radius * cosRadiansAround
+    #         x[1] = radius * sinRadiansAround
+    #         node = nodes.createNode(nodeIdentifier, nodetemplate)
+    #         cache.setNode(node)
+    #         coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, x)
+    #         coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS1, 1, zero)
+    #         coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS2, 1, zero)
+    #         if useCrossDerivatives:
+    #             coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS2, 1, zero)
+    #         nodeIdentifier = nodeIdentifier + 1
+
+    print('coming to write nodes in create surface node')
+
+    # Create nodes - PARENT
+    # Coordinates field
+    for n in range(len(xParent)):
+        node = nodes.createNode(nodeIdentifier, nodetemplate)
+        cache.setNode(node)
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, xParent[n])
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS1, 1, d1Parent[n])
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS2, 1, d2Parent[n])
+        if useCrossDerivatives:
                 coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS2, 1, zero)
-            nodeIdentifier = nodeIdentifier + 1
+        nodeIdentifier = nodeIdentifier + 1
 
-    # Central path
-    cx = [ [ 0.0, 0.0, 0.0 ], [ segmentLength, 0.0, 0.0 ] ]
-    cd1 = [ [ segmentLength, 0.0, 0.0 ], [ segmentLength, 0.0, 0.0 ] ]
-    cd2 = [ [ 0.0, 1.0, 0.0 ], [ 0.0, 1.0, 0.0 ] ]
-    cd12 = [ [0.0, 0.0, 0.0 ], [ 0.0, 0.0, 0.0 ] ]
-
-    # Sample central path
-    sx, sd1, se, sxi, ssf = interp.sampleCubicHermiteCurves(cx, cd1, elementsCountAlong)
-    sd2 = interp.interpolateSampleCubicHermite(cd2, cd12, se, sxi, ssf)[0]
-
-    ###daughter 1
-    radius = radius1list[1]
-    for n2 in range(elementsCountAlong + 1):
-        x[2] = n2 / elementsCountAlong
-        for n1 in range(elementsCountAround):
-            radiansAround = n1 * radiansPerElementAround
-            cosRadiansAround = math.cos(radiansAround)
-            sinRadiansAround = math.sin(radiansAround)
-            x[0] = radius * cosRadiansAround
-            x[1] = radius * sinRadiansAround
-            node = nodes.createNode(nodeIdentifier, nodetemplate)
-            cache.setNode(node)
-            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, x)
-            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS1, 1, zero)
-            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS2, 1, zero)
-            if useCrossDerivatives:
+    # Create nodes - DauGH1
+    # Coordinates field
+    for n in range(len(xDaugh1)):
+        node = nodes.createNode(nodeIdentifier, nodetemplate)
+        cache.setNode(node)
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, xDaugh1[n])
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS1, 1, d1Daugh1[n])
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS2, 1, d2Daugh1[n])
+        if useCrossDerivatives:
                 coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS2, 1, zero)
-            nodeIdentifier = nodeIdentifier + 1
+        nodeIdentifier = nodeIdentifier + 1
+
+    # Create nodes - DAUGH2
+    # Coordinates field
+    for n in range(len(xDaugh2)):
+        node = nodes.createNode(nodeIdentifier, nodetemplate)
+        cache.setNode(node)
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, xDaugh2[n])
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS1, 1, d1Daugh2[n])
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS2, 1, d2Daugh2[n])
+        if useCrossDerivatives:
+                coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS2, 1, zero)
+        nodeIdentifier = nodeIdentifier + 1
 
 
-    # create elements
-    ##################
-    for e2 in range(elementsCountAlong):
-        for e1 in range(elementsCountAround):
-            element = mesh.createElement(elementIdentifier, elementtemplate)
-            bni1 = e2*elementsCountAround + e1 + 1
-            bni2 = e2*elementsCountAround + (e1 + 1)%elementsCountAround + 1
-            nodeIdentifiers = [ bni1, bni2, bni1 + elementsCountAround, bni2 + elementsCountAround ]
-            result = element.setNodesByIdentifier(eft, nodeIdentifiers)
-            elementIdentifier = elementIdentifier + 1
+    # # create elements
+    # ##################
+    # for e2 in range(elementsCountAlong):
+    #     for e1 in range(elementsCountAround):
+    #         element = mesh.createElement(elementIdentifier, elementtemplate)
+    #         bni1 = e2*elementsCountAround + e1 + 1
+    #         bni2 = e2*elementsCountAround + (e1 + 1)%elementsCountAround + 1
+    #         nodeIdentifiers = [ bni1, bni2, bni1 + elementsCountAround, bni2 + elementsCountAround ]
+    #         result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+    #         elementIdentifier = elementIdentifier + 1
 
     fm.endChange()
 
