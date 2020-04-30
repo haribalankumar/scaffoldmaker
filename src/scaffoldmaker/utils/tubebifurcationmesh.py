@@ -463,18 +463,20 @@ def createSurfaceNodesAndElements(region,
 
     fm = region.getFieldmodule()
     fm.beginChange()
-    cache = fm.createFieldcache()
 
-    # Coordinates field
     coordinates = findOrCreateFieldCoordinates(fm)
+
     nodes = fm.findNodesetByFieldDomainType(Field.DOMAIN_TYPE_NODES)
     nodetemplate = nodes.createNodetemplate()
     nodetemplate.defineField(coordinates)
     nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_VALUE, 1)
     nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_D_DS1, 1)
     nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_D_DS2, 1)
+    if useCrossDerivatives:
+        nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_D2_DS1DS2, 1)
 
-#    mesh = fm.findMeshByDimension(3)
+
+    #    mesh = fm.findMeshByDimension(3)
 #    eftfactory = eftfactory_bicubichermite(mesh, useCrossDerivatives)
 #    eft = eftfactory.createEftBasic()
 

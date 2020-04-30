@@ -18,7 +18,8 @@ from scaffoldmaker.scaffoldpackage import ScaffoldPackage
 from scaffoldmaker.utils import tubebifurcationmesh
 from scaffoldmaker.utils.geometry import createCirclePoints
 from scaffoldmaker.utils import interpolation as interp
-from scaffoldmaker.utils.interpolation import getCubicHermiteBasis, smoothCubicHermiteDerivativesLine
+
+##from scaffoldmaker.utils.interpolation import getCubicHermiteBasis, smoothCubicHermiteDerivativesLine
 from scaffoldmaker.utils import vector
 from scaffoldmaker.utils.meshrefinement import MeshRefinement
 
@@ -72,23 +73,19 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
         elementsCountAround = options['Number of elements around']
         useCrossDerivatives = options['Use cross derivatives']
 
-        fm = region.getFieldmodule()
-        fm.beginChange()
-        coordinates = findOrCreateFieldCoordinates(fm)
-
-        nodes = fm.findNodesetByFieldDomainType(Field.DOMAIN_TYPE_NODES)
-        nodetemplate = nodes.createNodetemplate()
-        nodetemplate.defineField(coordinates)
-        nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_VALUE, 1)
-        nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_D_DS1, 1)
-        nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_D_DS2, 1)
-        if useCrossDerivatives:
-            nodetemplate = nodes.createNodetemplate()
-            nodetemplate.defineField(coordinates)
-            nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_VALUE, 1)
-            nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_D_DS1, 1)
-            nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_D_DS2, 1)
-            nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_D2_DS1DS2, 1)
+        # fm = region.getFieldmodule()
+        # fm.beginChange()
+        # coordinates = findOrCreateFieldCoordinates(fm)
+        #
+        # nodes = fm.findNodesetByFieldDomainType(Field.DOMAIN_TYPE_NODES)
+        # nodetemplate = nodes.createNodetemplate()
+        # nodetemplate.defineField(coordinates)
+        #
+        # nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_VALUE, 1)
+        # nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_D_DS1, 1)
+        # nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_D_DS2, 1)
+        # if useCrossDerivatives:
+        #     nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_D2_DS1DS2, 1)
 
 #        mesh = fm.findMeshByDimension(3)
 #        eftfactory = eftfactory_bicubichermitelinear(mesh, useCrossDerivatives)
@@ -98,17 +95,17 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
 #        elementtemplate.setElementShapeType(Element.SHAPE_TYPE_CUBE)
 #        elementtemplate.defineField(coordinates, -1, eft)
 
-        mesh = fm.findMeshByDimension(2)
-        bicubicHermiteBasis = fm.createElementbasis(2, Elementbasis.FUNCTION_TYPE_CUBIC_HERMITE)
-        eft = mesh.createElementfieldtemplate(bicubicHermiteBasis)
-        if not useCrossDerivatives:
-            for n in range(4):
-                eft.setFunctionNumberOfTerms(n*4 + 4, 0)
-        elementtemplate = mesh.createElementtemplate()
-        elementtemplate.setElementShapeType(Element.SHAPE_TYPE_SQUARE)
-        result = elementtemplate.defineField(coordinates, -1, eft)
-
-        cache = fm.createFieldcache()
+        # mesh = fm.findMeshByDimension(2)
+        # bicubicHermiteBasis = fm.createElementbasis(2, Elementbasis.FUNCTION_TYPE_CUBIC_HERMITE)
+        # eft = mesh.createElementfieldtemplate(bicubicHermiteBasis)
+        # if not useCrossDerivatives:
+        #     for n in range(4):
+        #         eft.setFunctionNumberOfTerms(n*4 + 4, 0)
+        # elementtemplate = mesh.createElementtemplate()
+        # elementtemplate.setElementShapeType(Element.SHAPE_TYPE_SQUARE)
+        # result = elementtemplate.defineField(coordinates, -1, eft)
+        #
+        # cache = fm.createFieldcache()
 
         # create nodes
         nodeIdentifier = 1
@@ -289,8 +286,8 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
                  elementsCountAround, elementsCountAlongSegment,
                 nodeIdentifier, elementIdentifier, useCrossDerivatives)
 
-        fm.endChange()
-#        return annotationGroups
+        # fm.endChange()
+       # return annotationGroups
 
 class AirwaySegmentTubeMeshInnerPoints:
     """
