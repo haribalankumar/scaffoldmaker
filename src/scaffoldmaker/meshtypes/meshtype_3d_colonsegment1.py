@@ -222,6 +222,7 @@ class MeshType_3d_colonsegment1(Scaffold_base):
         useCrossDerivatives = options['Use cross derivatives']
         useCubicHermiteThroughWall = not(options['Use linear through wall'])
         elementsCountAround = (elementsCountAroundTC + elementsCountAroundHaustrum)*tcCount
+
         segmentCount = 1
         firstNodeIdentifier = 1
         firstElementIdentifier = 1

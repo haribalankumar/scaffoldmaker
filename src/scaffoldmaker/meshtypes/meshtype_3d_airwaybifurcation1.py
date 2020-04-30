@@ -2,7 +2,7 @@
 Generates a 3-D bifurcation mesh with variable numbers of elements around and up.
 """
 
-from __future__ import division
+#######from __future__ import division
 import math
 import copy
 from opencmiss.utils.zinc.field import findOrCreateFieldCoordinates
@@ -25,21 +25,20 @@ from scaffoldmaker.utils.meshrefinement import MeshRefinement
 
 class MeshType_3d_airwaybifurcation1(Scaffold_base):
     '''
-    3-D Airway Bifurcation scaffold.
+    2-D Airway Bifurcation scaffold.
     '''
 
     @staticmethod
     def getName():
-        return '3D Bifurcation template 1'
+        return '2D Bifurcation template 1'
 
     @staticmethod
     def getDefaultOptions(parameterSetName='Default'):
-        options = {
-            'Number of elements along': 2,
-            'Number of elements around': 4,  # should be even
-            'Use cross derivatives': False
+        return {
+            'Number of elements along' : 2,
+            'Number of elements around' : 4,
+            'Use cross derivatives' : False
         }
-        return options
 
     @staticmethod
     def getOrderedOptionNames():
@@ -117,9 +116,6 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
         radiansPerElementAround = 2.0*math.pi/elementsCountAround
         radiansPerElementAlong = (math.pi/4)/elementsCountAlong
 
-        x1List = []
-        d1List = []
-        radius1list = []
 
         ########################################################################
         #### centerline details
@@ -137,14 +133,14 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
         wallThickness = 0.1
         startPhase = 360.0
         ########################################################################
-
-        x0 = [0,0,0]
-        x1 = [0,0,parentsegmentLength]
-        x2 = [-0.5,0,trachealLength-0.2]
-        x3 = [0.5,0.2,trachealLength-0.2]
-
-        d10 = [0,0,-1]
-        d11 = [0,0,-1]
+        #
+        # x0 = [0,0,0]
+        # x1 = [0,0,parentsegmentLength]
+        # x2 = [-0.5,0,trachealLength-0.2]
+        # x3 = [0.5,0.2,trachealLength-0.2]
+        #
+        # d10 = [0,0,-1]
+        # d11 = [0,0,-1]
 
         startRadiusparent = 0.4
         endRadiusparent = 0.4
@@ -161,7 +157,7 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
         endRadiusDaugh2Derivative = 0.1
 
         #######################################################################
-        segmentCount = 0  # Hardcoded for starters
+        segmentCount = 1  # Hardcoded for starters
 
         # Central path
         cx = [ [ 0.0, 0.0, 0.0 ], [ 0.0, 0.0, parentsegmentLength ] ]
