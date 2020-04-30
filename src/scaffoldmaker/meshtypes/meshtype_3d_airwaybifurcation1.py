@@ -38,7 +38,11 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
         return {
             'Number of elements along' : 2,
             'Number of elements around' : 4,
-            'Use cross derivatives' : False
+            'Use cross derivatives' : False,
+            'Refine': False,
+            'Refine number of elements around': 1,
+            'Refine number of elements along segment': 1,
+            'Refine number of elements through wall': 1
         }
 
     @staticmethod
@@ -46,7 +50,11 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
         return [
             'Number of elements along',
             'Number of elements around',
-            'Use cross derivatives'
+            'Use cross derivatives',
+            'Refine',
+            'Refine number of elements around',
+            'Refine number of elements along segment',
+            'Refine number of elements through wall'
         ]
 
     @staticmethod
@@ -288,6 +296,28 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
 
         # fm.endChange()
        # return annotationGroups
+
+    @classmethod
+    def generateMesh(cls, region, options):
+        """
+        Generate base or refined mesh.
+        :param region: Zinc region to create mesh in. Must be empty.
+        :param options: Dict containing options. See getDefaultOptions().
+        """
+        if not options['Refine']:
+            return cls.generateBaseMesh(region, options)
+
+        refineElementsCountAround = options['Refine number of elements around']
+        refineElementsCountAlong = options['Refine number of elements along segment']
+
+        baseRegion = region.createRegion()
+        baseAnnotationGroups = cls.generateBaseMesh(baseRegion, options)
+
+        meshrefinement = MeshRefinement(baseRegion, region, baseAnnotationGroups)
+        meshrefinement.refineAllElementsCubeStandard3d(refineElementsCountAround, refineElementsCountAlong)
+
+        return meshrefinement.getAnnotationGroups()
+
 
 class AirwaySegmentTubeMeshInnerPoints:
     """
