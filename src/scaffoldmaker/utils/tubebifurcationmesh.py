@@ -149,7 +149,9 @@ def warpAirwaySegmentPoints(x1ListParent, x1ListDaugh1, x1ListDaugh2,
         xElementAlongSegment = x1ListDaugh1[elementsCountAround*nAlongSegment: elementsCountAround*(nAlongSegment+1)]
         d1ElementAlongSegment = d1ListDaugh1[elementsCountAround*nAlongSegment: elementsCountAround*(nAlongSegment+1)]
         d2ElementAlongSegment = d2ListDaugh1[elementsCountAround*nAlongSegment: elementsCountAround*(nAlongSegment+1)]
-        xMid = [0.0, 0.0, Daughter1faceMidPointZ[nAlongSegment]]
+
+        #xMid = [0.0, 0.0, Daughter1faceMidPointZ[nAlongSegment]]
+        xMid = [Daughter1faceMidPointZ[nAlongSegment], 0.0, 2*ParentfaceMidPointZ[nAlongSegment]]
 
         # Rotate to align segment axis with tangent of central line
         unitTangent = vector.normalise(sd1Daugh1[n2])
@@ -229,7 +231,9 @@ def warpAirwaySegmentPoints(x1ListParent, x1ListDaugh1, x1ListDaugh2,
         xElementAlongSegment = x1ListDaugh2[elementsCountAround*nAlongSegment: elementsCountAround*(nAlongSegment+1)]
         d1ElementAlongSegment = d1ListDaugh2[elementsCountAround*nAlongSegment: elementsCountAround*(nAlongSegment+1)]
         d2ElementAlongSegment = d2ListDaugh2[elementsCountAround*nAlongSegment: elementsCountAround*(nAlongSegment+1)]
-        xMid = [0.0, 0.0, Daughter2faceMidPointZ[nAlongSegment]]
+
+        #xMid = [0.0, 0.0, Daughter2faceMidPointZ[nAlongSegment]]
+        xMid = [-Daughter1faceMidPointZ[nAlongSegment], 0.0, 2*ParentfaceMidPointZ[nAlongSegment]]
 
         # Rotate to align segment axis with tangent of central line
         unitTangent = vector.normalise(sd1Daugh2[n2])

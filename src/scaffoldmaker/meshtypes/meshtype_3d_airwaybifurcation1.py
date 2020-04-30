@@ -156,10 +156,10 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
 
         startRadiusparentDerivative = 0
         endRadiusparentDerivative = 0
-        startRadiusDaugh1Derivative = 0.1
-        endRadiusDaugh1Derivative = 0.1
-        startRadiusDaugh2Derivative = 0.1
-        endRadiusDaugh2Derivative = 0.1
+        startRadiusDaugh1Derivative = 0.3
+        endRadiusDaugh1Derivative = 0.3
+        startRadiusDaugh2Derivative = 0.21
+        endRadiusDaugh2Derivative = 0.21
 
         #######################################################################
         segmentCount = 1  # Hardcoded for starters
@@ -170,15 +170,13 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
         cd2 = [ [ 0.0, 1.0, 0.0 ], [ 0.0, 1.0, 0.0 ] ]
         cd12 = [ [0.0, 0.0, 0.0 ], [ 0.0, 0.0, 0.0 ] ]
 
-        print('calling parent central path sampling')
         # Sample central path - PARENT
         sxparent, sd1parent, separent, sxiparent, ssfparent = \
             interp.sampleCubicHermiteCurves(cx, cd1, elementsCountAlongSegment*segmentCount)
         sd2parent = interp.interpolateSampleCubicHermite(cd2, cd12, separent, sxiparent, ssfparent)[0]
-        print('called parent central path sampling', sxparent[0], sxparent[1])
 
         # Sample central path - DAUGHTER1
-        cx = [ [ 0.0, 0.0, 0.0 ], [ daughter1segmentLength, 0.0, 0.0 ] ]
+        cx = [ [ 0.0, 0.0, parentsegmentLength ], [ daughter1segmentLength, 0.0, parentsegmentLength ] ]
         cd1 = [ [ daughter1segmentLength, 0.0, 0.0 ], [ daughter1segmentLength, 0.0, 0.0 ] ]
         cd2 = [ [ 0.0, 1.0, 0.0 ], [ 0.0, 1.0, 0.0 ] ]
         cd12 = [ [0.0, 0.0, 0.0 ], [ 0.0, 0.0, 0.0 ] ]
@@ -187,7 +185,7 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
         sd2Daugh1 = interp.interpolateSampleCubicHermite(cd2, cd12, seDaugh1, sxiDaugh1, ssfDaugh1)[0]
 
         # Sample central path - DAUGHTER2
-        cx = [ [ 0.0, 0.0, 0.0 ], [ -daughter2segmentLength, 0.0, 0.0 ] ]
+        cx = [ [ 0.0, 0.0, parentsegmentLength], [ -daughter2segmentLength, 0.0, parentsegmentLength ] ]
         cd1 = [ [ -daughter2segmentLength, 0.0, 0.0 ], [ -daughter2segmentLength, 0.0, 0.0 ] ]
         cd2 = [ [ 0.0, 1.0, 0.0 ], [ 0.0, 1.0, 0.0 ] ]
         cd12 = [ [0.0, 0.0, 0.0 ], [ 0.0, 0.0, 0.0 ] ]
@@ -207,10 +205,10 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
 
         for n2 in range(elementsCountAlongSegment + 1):
             xi = 1/elementsCountAlongSegment * n2
-            print('n2 for xi value = ', n2, xi)
             radius = interp.interpolateCubicHermite([startRadiusparent], [startRadiusparentDerivative],
                                                     [endRadiusparent], [endRadiusparentDerivative], xi)[0]
             radiusparentAlongSegment.append(radius)
+
             dRadius = interp.interpolateCubicHermiteDerivative([startRadiusparent], [startRadiusparentDerivative],
                                                                [endRadiusparent], [endRadiusparentDerivative], xi)[0]
             dRadiusparentAlongSegment.append(dRadius)
@@ -218,6 +216,7 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
             radius = interp.interpolateCubicHermite([startRadiusDaugh1], [startRadiusDaugh1Derivative],
                                                     [endRadiusDaugh1], [endRadiusDaugh1Derivative], xi)[0]
             radiusDaugh1AlongSegment.append(radius)
+
             dRadius = interp.interpolateCubicHermiteDerivative([startRadiusparent], [startRadiusparentDerivative],
                                                                [endRadiusparent], [endRadiusparentDerivative], xi)[0]
             dRadiusDaugh1AlongSegment.append(dRadius)
@@ -251,48 +250,42 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
 
         # Warp segment points
         #####################
-        # xParentWarpedList, xDaugh1WarpedList, xDaugh2WarpedList, \
-        # d1ParentWarpedList, d1Daugh1WarpedList, d1Daugh2WarpedList,\
-        # d2ParentWarpedList, d2Daugh1WarpedList, d2Daugh2WarpedList,\
-        # d3ParentWarpedUnitList, d3Daugh1WarpedList, d3Daugh2WarpedList \
-        #     = tubebifurcationmesh.warpAirwaySegmentPoints(
-        #     xParentInner, xDaugh1Inner, xDaugh2Inner,
-        #     d1ParentInner, d1Daugh1Inner, d1Daugh2Inner,
-        #     d2ParentInner, d2Daugh1Inner, d2Daugh2Inner,
-        #     segmentAxisParent, segmentAxisDaughter1, segmentAxisDaughter2,
-        #     parentsegmentLength, daughter1segmentLength, daughter2segmentLength,
-        #     sxparent, sxDaugh1, sxDaugh2,
-        #     sd1parent, sd1Daugh1, sd1Daugh2,
-        #     sd2parent, sd2Daugh1, sd2Daugh2,
-        #     elementsCountAround, elementsCountAlongSegment, nSegment,
-        #     ParentfaceMidPointsZ, Daughter1faceMidPointsZ, Daughter2faceMidPointsZ)
+        xParentWarpedList, xDaugh1WarpedList, xDaugh2WarpedList, \
+        d1ParentWarpedList, d1Daugh1WarpedList, d1Daugh2WarpedList,\
+        d2ParentWarpedList, d2Daugh1WarpedList, d2Daugh2WarpedList,\
+        d3ParentWarpedUnitList, d3Daugh1WarpedList, d3Daugh2WarpedList \
+            = tubebifurcationmesh.warpAirwaySegmentPoints(
+            xParentInner, xDaugh1Inner, xDaugh2Inner,
+            d1ParentInner, d1Daugh1Inner, d1Daugh2Inner,
+            d2ParentInner, d2Daugh1Inner, d2Daugh2Inner,
+            segmentAxisParent, segmentAxisDaughter1, segmentAxisDaughter2,
+            parentsegmentLength, daughter1segmentLength, daughter2segmentLength,
+            sxparent, sxDaugh1, sxDaugh2,
+            sd1parent, sd1Daugh1, sd1Daugh2,
+            sd2parent, sd2Daugh1, sd2Daugh2,
+            elementsCountAround, elementsCountAlongSegment, nSegment,
+            ParentfaceMidPointsZ, Daughter1faceMidPointsZ, Daughter2faceMidPointsZ)
 
-
-#        # Create coordinates and derivatives
-#        xList, d1List, d2List, d3List, curvatureList = tubemesh.getCoordinatesFromInner(xWarpedList, d1WarpedList,
-#            d2WarpedList, d3WarpedUnitList, contractedWallThicknessList,
-#            elementsCountAround, elementsCountAlongSegment, elementsCountThroughWall, transitElementList)
-
-        # Create nodes and elements
-        # nextNodeIdentifier, nextElementIdentifier = \
-        #     tubebifurcationmesh.createSurfaceNodesAndElements\
-        #         (region,
-        #          xParentWarpedList, d1ParentWarpedList, d2ParentWarpedList,
-        #          xDaugh1WarpedList, d1Daugh1WarpedList, d2Daugh1WarpedList,
-        #          xDaugh2WarpedList, d1Daugh2WarpedList, d2Daugh2WarpedList,
-        #          elementsCountAround, elementsCountAlongSegment,
-        #         nodeIdentifier, elementIdentifier, useCrossDerivatives)
-
-        print('calling create surf node = ', nodeIdentifier)
-        print('NodeIdentifier = ', nodeIdentifier)
+        #Create nodes and elements
         nextNodeIdentifier, nextElementIdentifier = \
             tubebifurcationmesh.createSurfaceNodesAndElements\
                 (region,
-                 xParentInner, d1ParentInner, d2ParentInner,
-                 xDaugh1Inner, d1Daugh1Inner, d2Daugh1Inner,
-                 xDaugh2Inner, d1Daugh2Inner, d2Daugh2Inner,
+                 xParentWarpedList, d1ParentWarpedList, d2ParentWarpedList,
+                 xDaugh1WarpedList, d1Daugh1WarpedList, d2Daugh1WarpedList,
+                 xDaugh2WarpedList, d1Daugh2WarpedList, d2Daugh2WarpedList,
                  elementsCountAround, elementsCountAlongSegment,
                 nodeIdentifier, elementIdentifier, useCrossDerivatives)
+
+        # print('calling create surf node = ', nodeIdentifier)
+        # print('NodeIdentifier = ', nodeIdentifier)
+        # nextNodeIdentifier, nextElementIdentifier = \
+        #     tubebifurcationmesh.createSurfaceNodesAndElements\
+        #         (region,
+        #          xParentInner, d1ParentInner, d2ParentInner,
+        #          xDaugh1Inner, d1Daugh1Inner, d2Daugh1Inner,
+        #          xDaugh2Inner, d1Daugh2Inner, d2Daugh2Inner,
+        #          elementsCountAround, elementsCountAlongSegment,
+        #         nodeIdentifier, elementIdentifier, useCrossDerivatives)
 
         # fm.endChange()
        # return annotationGroups
