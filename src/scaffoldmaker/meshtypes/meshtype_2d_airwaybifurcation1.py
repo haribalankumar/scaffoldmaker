@@ -23,22 +23,20 @@ from scaffoldmaker.utils import interpolation as interp
 from scaffoldmaker.utils import vector
 from scaffoldmaker.utils.meshrefinement import MeshRefinement
 
-
-class MeshType_3d_airwaybifurcation1(Scaffold_base):
+class MeshType_2d_airwaybifurcation1(Scaffold_base):
     '''
-    3-D Airway Bifurcation scaffold.
+    2-D Airway Bifurcation scaffold.
     '''
 
     @staticmethod
     def getName():
-        return '3D Bifurcation template 1'
+        return '2D Bifurcation template 1'
 
     @staticmethod
     def getDefaultOptions(parameterSetName='Default'):
         return {
             'Number of elements along' : 2,
             'Number of elements around' : 4,
-            'Number of elements through wall': 1,
             'Bifurcation angle': 45,
             'Use cross derivatives' : False,
             'Refine': False,
@@ -52,7 +50,6 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
         return [
             'Number of elements along',
             'Number of elements around',
-            'Number of elements through wall',
             'Use cross derivatives',
             'Bifurcation angle',
             'Refine',
@@ -87,7 +84,6 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
 
         elementsCountAlong = options['Number of elements along']
         elementsCountAround = options['Number of elements around']
-        elementsCountThroughWall = options['Number of elements through wall']
         useCrossDerivatives = options['Use cross derivatives']
         bifurcationangle = options['Bifurcation angle']
 
@@ -131,6 +127,7 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
         radiansPerElementAround = 2.0*math.pi/elementsCountAround
         radiansPerElementAlong = (math.pi/4)/elementsCountAlong
 
+
         ########################################################################
         #### centerline details
         ## typically comes from a centerline definition. currently hardcoding it
@@ -159,9 +156,9 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
         startRadiusparent = 0.4
         endRadiusparent = 0.4
         startRadiusDaugh1 = 0.35
-        endRadiusDaugh1 = 0.35
+        endRadiusDaugh1 = 0.25
         startRadiusDaugh2 = 0.35
-        endRadiusDaugh2 = 0.35
+        endRadiusDaugh2 = 0.25
 
         tracheaoriginx = 0
         tracheaoriginy = 0
@@ -192,7 +189,7 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
         sd2parent = interp.interpolateSampleCubicHermite(cd2, cd12, separent, sxiparent, ssfparent)[0]
 
         # Sample central path - DAUGHTER1
-        daughter1angle = bifurcationangle
+        daughter1angle = 0.5*math.pi - bifurcationangle*0.5
         cosangle = math.cos(daughter1angle)
         sinangle = math.sin(daughter1angle)
         cx = [ [ tracheaoriginx+endRadiusparent, tracheaoriginy, endRadiusparent+tracheaoriginz+parentsegmentLength ],
@@ -206,9 +203,9 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
         sd2Daugh1 = interp.interpolateSampleCubicHermite(cd2, cd12, seDaugh1, sxiDaugh1, ssfDaugh1)[0]
 
         # Sample central path - DAUGHTER2
-        daughter1angle = bifurcationangle
-        cosangle = math.cos(daughter1angle)
-        sinangle = math.sin(daughter1angle)
+        daughter2angle = 0.5*math.pi - bifurcationangle*0.5
+        cosangle = math.cos(daughter2angle)
+        sinangle = math.sin(daughter2angle)
         cx = [ [ tracheaoriginx-endRadiusparent, tracheaoriginy, tracheaoriginz+endRadiusparent+parentsegmentLength],
                [ tracheaoriginx-endRadiusparent-cosangle*daughter2segmentLength, tracheaoriginy,
                  tracheaoriginz+sinangle*daughter2segmentLength+endRadiusparent+parentsegmentLength ] ]
@@ -306,38 +303,35 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
             sd2parent, sd2Daugh1, sd2Daugh2,
             elementsCountAround, elementsCountAlongSegment, nSegment)
 
-        # Create coordinates and derivatives
-        xParentList, d1ParentList, d2ParentList, d3ParentList, \
-        xDaughter1List, d1Daughter1List, d2Daughter1List, d3Daughter1List, \
-        xDaughter2List, d1Daughter2List, d2Daughter2List, d3Daughter2List, \
-        curvatureList = \
-            tubebifurcationmesh.getAirwaySegmentCoordinatesFromInner(
-                xParentWarpedList, xDaugh1WarpedList, xDaugh2WarpedList,
-                d1ParentWarpedList, d1Daugh1WarpedList, d1Daugh2WarpedList,
-                d2ParentWarpedList, d2Daugh1WarpedList, d2Daugh2WarpedList,
-                d3ParentWarpedUnitList, d3Daugh1WarpedList, d3Daugh2WarpedList,
-                contractedWallThicknessList,
-                elementsCountAround, elementsCountAlongSegment,
-                elementsCountThroughWall, transitElementList)
-
-
         ##Create nodes and elements
-        nextNodeIdentifier, nextElementIdentifier = \
-            tubebifurcationmesh.createAirwaySegmentNodesAndElements\
-                (region,
-                 xParentList, d1ParentList, d2ParentList, d3ParentList,
-                 xDaughter1List, d1Daughter1List, d2Daughter1List, d3Daughter1List,
-                 xDaughter2List, d1Daughter2List, d2Daughter2List, d3Daughter2List,
-                 elementsCountAround, elementsCountAlongSegment,
-                 nodeIdentifier, elementIdentifier, useCrossDerivatives)
-
         # nextNodeIdentifier, nextElementIdentifier = \
-        #     tubebifurcationmesh.createAirwaySegmentSurfaceNodesAndElements\
+        #     tubebifurcationmesh.createSurfaceNodesAndElements\
         #         (region,
         #          xParentWarpedList, d1ParentWarpedList, d2ParentWarpedList,
         #          xDaugh1WarpedList, d1Daugh1WarpedList, d2Daugh1WarpedList,
         #          xDaugh2WarpedList, d1Daugh2WarpedList, d2Daugh2WarpedList,
-        #          xjunctionOuter, xjunctionInner, d1junction,d2junction,
+        #          elementsCountAround, elementsCountAlongSegment,
+        #         nodeIdentifier, elementIdentifier, useCrossDerivatives)
+
+        nextNodeIdentifier, nextElementIdentifier = \
+            tubebifurcationmesh.createAirwaySegmentSurfaceNodesAndElements\
+                (region,
+                 xParentWarpedList, d1ParentWarpedList, d2ParentWarpedList,
+                 xDaugh1WarpedList, d1Daugh1WarpedList, d2Daugh1WarpedList,
+                 xDaugh2WarpedList, d1Daugh2WarpedList, d2Daugh2WarpedList,
+                 xjunctionOuter, xjunctionInner, d1junction,d2junction,
+                 elementsCountAround, elementsCountAlongSegment,
+                nodeIdentifier, elementIdentifier, useCrossDerivatives)
+
+
+        # print('calling create surf node = ', nodeIdentifier)
+        # print('NodeIdentifier = ', nodeIdentifier)
+        # nextNodeIdentifier, nextElementIdentifier = \
+        #     tubebifurcationmesh.createSurfaceNodesAndElements\
+        #         (region,
+        #          xParentInner, d1ParentInner, d2ParentInner,
+        #          xDaugh1Inner, d1Daugh1Inner, d2Daugh1Inner,
+        #          xDaugh2Inner, d1Daugh2Inner, d2Daugh2Inner,
         #          elementsCountAround, elementsCountAlongSegment,
         #         nodeIdentifier, elementIdentifier, useCrossDerivatives)
 

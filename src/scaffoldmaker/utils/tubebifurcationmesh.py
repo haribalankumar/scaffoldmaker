@@ -11,7 +11,9 @@ from opencmiss.zinc.field import Field
 from opencmiss.zinc.node import Node
 from scaffoldmaker.meshtypes.scaffold_base import Scaffold_base
 
-##from scaffoldmaker.utils.eftfactory_bicubichermitelinear import eftfactory_bicubichermitelinear
+from scaffoldmaker.utils.eftfactory_bicubichermitelinear import eftfactory_bicubichermitelinear
+from scaffoldmaker.utils.eftfactory_tricubichermite import eftfactory_tricubichermite
+
 from scaffoldmaker.utils.geometry import createCirclePoints
 from scaffoldmaker.utils import interpolation as interp
 from scaffoldmaker.utils import matrix
@@ -41,40 +43,49 @@ def createjunctionAirwaySegmentPoints(
     groups along the segment.
     :return coordinates and derivatives of warped points.
     """
-    xjunctionList = []
+    xjunctionOuterList = []
+    xjunctionInnerList = []
     d2junctionList = []
     d1junctionList = []
 
+    n2 = elementsCountAlongSegment * nSegment + elementsCountAlongSegment
+
+    #JUNCTION OUTER
+    ##################
     xParentAlongSegment = xParentWarpedList[9]
     xDaugh1AlongSegment = xDaugh1WarpedList[2]
+
     xjunction1 = [(xParentAlongSegment[j]+xDaugh1AlongSegment[j])/2.0 for j in range(3)]
-    xjunctionList.append(xjunction1)
+    xjunctionOuterList.append(xjunction1)
 
     xParentAlongSegment = xParentWarpedList[11]
     xDaugh2AlongSegment = xDaugh2WarpedList[2]
     xjunction1 = [(xParentAlongSegment[j]+xDaugh2AlongSegment[j])/2.0 for j in range(3)]
-    xjunctionList.append(xjunction1)
+    xjunctionOuterList.append(xjunction1)
 
     xDaugh1AlongSegment = xDaugh1WarpedList[0]
     xDaugh2AlongSegment = xDaugh2WarpedList[0]
-    xjunction1 = [(xDaugh1AlongSegment[j]+xDaugh2AlongSegment[j])/2.0 for j in range(3)]
-    xjunctionList.append(xjunction1)
+    xjunction1 = [(xDaugh1AlongSegment[j]+xDaugh2AlongSegment[j]+sxparent[n2][j])/3.0 for j in range(3)]
+    xjunctionOuterList.append(xjunction1)
+
+    #JUNCTION INNER
+    ##################
 
     xParentAlongSegment = xParentWarpedList[8]
     xDaugh1AlongSegment = xDaugh1WarpedList[1]
     xDaugh2AlongSegment = xDaugh2WarpedList[1]
 
     xjunction1 = [(xParentAlongSegment[j]+xDaugh1AlongSegment[j]+xDaugh2AlongSegment[j])/3.0 for j in range(3)]
-    xjunctionList.append(xjunction1)
+    xjunctionInnerList.append(xjunction1)
 
     xParentAlongSegment = xParentWarpedList[10]
     xDaugh1AlongSegment = xDaugh1WarpedList[3]
     xDaugh2AlongSegment = xDaugh2WarpedList[3]
-    xjunction2 = [(xParentAlongSegment[j]+xDaugh1AlongSegment[j]+xDaugh2AlongSegment[j])/3.0 for j in range(3)]
-    xjunctionList.append(xjunction2)
+    xjunction1 = [(xParentAlongSegment[j]+xDaugh1AlongSegment[j]+xDaugh2AlongSegment[j])/3.0 for j in range(3)]
+    xjunctionInnerList.append(xjunction1)
 
 
-    return xjunctionList, d1junctionList, d2junctionList
+    return xjunctionOuterList, xjunctionInnerList, d1junctionList, d2junctionList
 
 
 
@@ -201,7 +212,6 @@ def warpAirwaySegmentPoints(x1ListParent, x1ListDaugh1, x1ListDaugh2,
             x1ParentWarpedList.append(xTranslate)
             d1ParentWarpedList.append(d1Rot2)
             d2ParentWarpedList.append(d2Rot2)
-
 
     #Daughter1
     ##########
@@ -416,9 +426,13 @@ def warpAirwaySegmentPoints(x1ListParent, x1ListDaugh1, x1ListDaugh2,
            d3ParentWarpedUnitList, d3Daugh1WarpedUnitList, d3Daugh2WarpedUnitList
 
 
-def getAirwaySegmentCoordinatesFromInner(xInner, d1Inner, d2Inner, d3Inner,
-    wallThicknessList, elementsCountAround,
-    elementsCountAlong, elementsCountThroughWall, transitElementList):
+def getAirwaySegmentCoordinatesFromInner(
+        xParentInner, xDaugh1Inner, xDaugh2Inner,
+        d1ParentInner, d1Daugh1Inner, d1Daugh2Inner,
+        d2ParentInner, d2Daugh1Inner, d2Daugh2Inner,
+        d3ParentInner, d3Daugh1Inner, d3Daugh2Inner,
+        wallThicknessList, elementsCountAround,
+        elementsCountAlong, elementsCountThroughWall, transitElementList):
     """
     Generates coordinates from inner to outer surface using coordinates
     and derivatives of inner surface.
@@ -439,24 +453,36 @@ def getAirwaySegmentCoordinatesFromInner(xInner, d1Inner, d2Inner, d3Inner,
     curvatureAroundInner = []
     curvatureAlong = []
     curvatureList = []
-    xList = []
-    d1List = []
-    d2List = []
-    d3List = []
 
+    xParentList = []
+    d1ParentList = []
+    d2ParentList = []
+    d3ParentList = []
+
+    xDaughter1List = []
+    d1Daughter1List = []
+    d2Daughter1List = []
+    d3Daughter1List = []
+
+    xDaughter2List = []
+    d1Daughter2List = []
+    d2Daughter2List = []
+    d3Daughter2List = []
+
+    #PARENT
     for n2 in range(elementsCountAlong + 1):
         wallThickness = wallThicknessList[n2]
         for n1 in range(elementsCountAround):
             n = n2*elementsCountAround + n1
-            norm = d3Inner[n]
+            norm = d3ParentInner[n]
             # Calculate outer coordinates
-            x = [xInner[n][i] + norm[i]*wallThickness for i in range(3)]
+            x = [xParentInner[n][i] + norm[i]*wallThickness for i in range(3)]
             xOuter.append(x)
             # Calculate curvature along elements around
             prevIdx = n - 1 if (n1 != 0) else (n2 + 1)*elementsCountAround - 1
             nextIdx = n + 1 if (n1 < elementsCountAround - 1) else n2*elementsCountAround
-            kappam = interp.getCubicHermiteCurvatureSimple(xInner[prevIdx], d1Inner[prevIdx], xInner[n], d1Inner[n], 1.0)
-            kappap = interp.getCubicHermiteCurvatureSimple(xInner[n], d1Inner[n], xInner[nextIdx], d1Inner[nextIdx], 0.0)
+            kappam = interp.getCubicHermiteCurvatureSimple(xParentInner[prevIdx], d1ParentInner[prevIdx], xParentInner[n], d1ParentInner[n], 1.0)
+            kappap = interp.getCubicHermiteCurvatureSimple(xParentInner[n], d1ParentInner[n], xParentInner[nextIdx], d1ParentInner[nextIdx], 0.0)
             if not transitElementList[n1] and not transitElementList[(n1-1)%elementsCountAround]:
                 curvatureAround = 0.5*(kappam + kappap)
             elif transitElementList[n1]:
@@ -467,52 +493,302 @@ def getAirwaySegmentCoordinatesFromInner(xInner, d1Inner, d2Inner, d3Inner,
 
             # Calculate curvature along
             if n2 == 0:
-                curvature = abs(interp.getCubicHermiteCurvature(xInner[n], d2Inner[n], xInner[n + elementsCountAround], d2Inner[n + elementsCountAround], vector.normalise(d3Inner[n]), 0.0))
+                curvature = abs(interp.getCubicHermiteCurvature(xParentInner[n], d2ParentInner[n], xParentInner[n + elementsCountAround], d2ParentInner[n + elementsCountAround], vector.normalise(d3ParentInner[n]), 0.0))
             elif n2 == elementsCountAlong:
-                curvature = abs(interp.getCubicHermiteCurvature(xInner[n - elementsCountAround], d2Inner[n - elementsCountAround], xInner[n], d2Inner[n], vector.normalise(d3Inner[n]), 1.0))
+                curvature = abs(interp.getCubicHermiteCurvature(xParentInner[n - elementsCountAround], d2ParentInner[n - elementsCountAround], xParentInner[n], d2ParentInner[n], vector.normalise(d3ParentInner[n]), 1.0))
             else:
                 curvature = 0.5*(
-                    abs(interp.getCubicHermiteCurvature(xInner[n - elementsCountAround], d2Inner[n - elementsCountAround], xInner[n], d2Inner[n], vector.normalise(d3Inner[n]), 1.0)) +
-                    abs(interp.getCubicHermiteCurvature(xInner[n], d2Inner[n], xInner[n + elementsCountAround], d2Inner[n + elementsCountAround], vector.normalise(d3Inner[n]), 0.0)))
+                    abs(interp.getCubicHermiteCurvature(xParentInner[n - elementsCountAround], d2ParentInner[n - elementsCountAround], xParentInner[n], d2ParentInner[n], vector.normalise(d3ParentInner[n]), 1.0)) +
+                    abs(interp.getCubicHermiteCurvature(xParentInner[n], d2ParentInner[n], xParentInner[n + elementsCountAround], d2ParentInner[n + elementsCountAround], vector.normalise(d3ParentInner[n]), 0.0)))
             curvatureAlong.append(curvature)
 
         for n3 in range(elementsCountThroughWall + 1):
             xi3 = 1/elementsCountThroughWall * n3
             for n1 in range(elementsCountAround):
                 n = n2*elementsCountAround + n1
-                norm = d3Inner[n]
-                innerx = xInner[n]
+                norm = d3ParentInner[n]
+                innerx = xParentInner[n]
                 outerx = xOuter[n]
                 dWall = [wallThickness*c for c in norm]
                 # x
                 x = interp.interpolateCubicHermite(innerx, dWall, outerx, dWall, xi3)
-                xList.append(x)
+                xParentList.append(x)
 
                 # dx_ds1
                 factor = 1.0 + wallThickness*xi3 * curvatureAroundInner[n]
-                d1 = [ factor*c for c in d1Inner[n]]
-                d1List.append(d1)
+                d1 = [ factor*c for c in d1ParentInner[n]]
+                d1ParentList.append(d1)
 
                 # dx_ds2
                 curvature = curvatureAlong[n]
-                distance = vector.magnitude([x[i] - xInner[n][i] for i in range(3)])
+                distance = vector.magnitude([x[i] - xParentInner[n][i] for i in range(3)])
                 factor = 1.0 - curvature*distance
-                d2 = [ factor*c for c in d2Inner[n]]
-                d2List.append(d2)
+                d2 = [ factor*c for c in d2ParentInner[n]]
+                d2ParentList.append(d2)
                 curvatureList.append(curvature)
 
                 #dx_ds3
                 d3 = [c * wallThickness/elementsCountThroughWall for c in norm]
-                d3List.append(d3)
+                d3ParentList.append(d3)
 
-    return xList, d1List, d2List, d3List, curvatureList
+    #DAUGHTER1
+    for n2 in range(elementsCountAlong + 1):
+        wallThickness = wallThicknessList[n2]
+        for n1 in range(elementsCountAround):
+            n = n2*elementsCountAround + n1
+            norm = d3Daugh1Inner[n]
+            # Calculate outer coordinates
+            x = [xDaugh1Inner[n][i] + norm[i]*wallThickness for i in range(3)]
+            xOuter.append(x)
+            # Calculate curvature along elements around
+            prevIdx = n - 1 if (n1 != 0) else (n2 + 1)*elementsCountAround - 1
+            nextIdx = n + 1 if (n1 < elementsCountAround - 1) else n2*elementsCountAround
+            kappam = interp.getCubicHermiteCurvatureSimple(xDaugh1Inner[prevIdx], d1Daugh1Inner[prevIdx], xDaugh1Inner[n], d1Daugh1Inner[n], 1.0)
+            kappap = interp.getCubicHermiteCurvatureSimple(xDaugh1Inner[n], d1Daugh1Inner[n], xDaugh1Inner[nextIdx], d1Daugh1Inner[nextIdx], 0.0)
+            if not transitElementList[n1] and not transitElementList[(n1-1)%elementsCountAround]:
+                curvatureAround = 0.5*(kappam + kappap)
+            elif transitElementList[n1]:
+                curvatureAround = kappam
+            elif transitElementList[(n1-1)%elementsCountAround]:
+                curvatureAround = kappap
+            curvatureAroundInner.append(curvatureAround)
+
+            # Calculate curvature along
+            if n2 == 0:
+                curvature = abs(interp.getCubicHermiteCurvature(xDaugh1Inner[n], d2Daugh1Inner[n], xDaugh1Inner[n + elementsCountAround], d2Daugh1Inner[n + elementsCountAround], vector.normalise(d3Daugh1Inner[n]), 0.0))
+            elif n2 == elementsCountAlong:
+                curvature = abs(interp.getCubicHermiteCurvature(xDaugh1Inner[n - elementsCountAround], d2Daugh1Inner[n - elementsCountAround], xDaugh1Inner[n], d2Daugh1Inner[n], vector.normalise(d3Daugh1Inner[n]), 1.0))
+            else:
+                curvature = 0.5*(
+                    abs(interp.getCubicHermiteCurvature(xDaugh1Inner[n - elementsCountAround], d2Daugh1Inner[n - elementsCountAround], xDaugh1Inner[n], d2Daugh1Inner[n], vector.normalise(d3Daugh1Inner[n]), 1.0)) +
+                    abs(interp.getCubicHermiteCurvature(xDaugh1Inner[n], d2Daugh1Inner[n], xDaugh1Inner[n + elementsCountAround], d2Daugh1Inner[n + elementsCountAround], vector.normalise(d3Daugh1Inner[n]), 0.0)))
+            curvatureAlong.append(curvature)
+
+        for n3 in range(elementsCountThroughWall + 1):
+            xi3 = 1/elementsCountThroughWall * n3
+            for n1 in range(elementsCountAround):
+                n = n2*elementsCountAround + n1
+                norm = d3Daugh1Inner[n]
+                innerx = xDaugh1Inner[n]
+                outerx = xOuter[n]
+                dWall = [wallThickness*c for c in norm]
+                # x
+                x = interp.interpolateCubicHermite(innerx, dWall, outerx, dWall, xi3)
+                xDaughter1List.append(x)
+
+                # dx_ds1
+                factor = 1.0 + wallThickness*xi3 * curvatureAroundInner[n]
+                d1 = [ factor*c for c in d1Daugh1Inner[n]]
+                d1Daughter1List.append(d1)
+
+                # dx_ds2
+                curvature = curvatureAlong[n]
+                distance = vector.magnitude([x[i] - xDaugh1Inner[n][i] for i in range(3)])
+                factor = 1.0 - curvature*distance
+                d2 = [ factor*c for c in d2Daugh1Inner[n]]
+                d2Daughter1List.append(d2)
+                curvatureList.append(curvature)
+
+                #dx_ds3
+                d3 = [c * wallThickness/elementsCountThroughWall for c in norm]
+                d3Daughter1List.append(d3)
+
+
+    #DAUGHTER2
+    ###########
+    for n2 in range(elementsCountAlong + 1):
+        wallThickness = wallThicknessList[n2]
+        for n1 in range(elementsCountAround):
+            n = n2*elementsCountAround + n1
+            norm = d3Daugh2Inner[n]
+            # Calculate outer coordinates
+            x = [xDaugh2Inner[n][i] + norm[i]*wallThickness for i in range(3)]
+            xOuter.append(x)
+            # Calculate curvature along elements around
+            prevIdx = n - 1 if (n1 != 0) else (n2 + 1)*elementsCountAround - 1
+            nextIdx = n + 1 if (n1 < elementsCountAround - 1) else n2*elementsCountAround
+            kappam = interp.getCubicHermiteCurvatureSimple(xDaugh1Inner[prevIdx], d1Daugh1Inner[prevIdx], xDaugh1Inner[n], d1Daugh1Inner[n], 1.0)
+            kappap = interp.getCubicHermiteCurvatureSimple(xDaugh1Inner[n], d1Daugh1Inner[n], xDaugh1Inner[nextIdx], d1Daugh1Inner[nextIdx], 0.0)
+            if not transitElementList[n1] and not transitElementList[(n1-1)%elementsCountAround]:
+                curvatureAround = 0.5*(kappam + kappap)
+            elif transitElementList[n1]:
+                curvatureAround = kappam
+            elif transitElementList[(n1-1)%elementsCountAround]:
+                curvatureAround = kappap
+            curvatureAroundInner.append(curvatureAround)
+
+            # Calculate curvature along
+            if n2 == 0:
+                curvature = abs(interp.getCubicHermiteCurvature(xDaugh2Inner[n], d2Daugh2Inner[n], xDaugh2Inner[n + elementsCountAround], d2Daugh2Inner[n + elementsCountAround], vector.normalise(d3Daugh2Inner[n]), 0.0))
+            elif n2 == elementsCountAlong:
+                curvature = abs(interp.getCubicHermiteCurvature(xDaugh2Inner[n - elementsCountAround], d2Daugh2Inner[n - elementsCountAround], xDaugh2Inner[n], d2Daugh2Inner[n], vector.normalise(d3Daugh2Inner[n]), 1.0))
+            else:
+                curvature = 0.5*(
+                    abs(interp.getCubicHermiteCurvature(xDaugh2Inner[n - elementsCountAround], d2Daugh2Inner[n - elementsCountAround], xDaugh2Inner[n], d2Daugh2Inner[n], vector.normalise(d3Daugh2Inner[n]), 1.0)) +
+                    abs(interp.getCubicHermiteCurvature(xDaugh2Inner[n], d2Daugh1Inner[n], xDaugh2Inner[n + elementsCountAround], d2Daugh2Inner[n + elementsCountAround], vector.normalise(d3Daugh2Inner[n]), 0.0)))
+            curvatureAlong.append(curvature)
+
+        for n3 in range(elementsCountThroughWall + 1):
+            xi3 = 1/elementsCountThroughWall * n3
+            for n1 in range(elementsCountAround):
+                n = n2*elementsCountAround + n1
+                norm = d3Daugh2Inner[n]
+                innerx = xDaugh2Inner[n]
+                outerx = xOuter[n]
+                dWall = [wallThickness*c for c in norm]
+                # x
+                x = interp.interpolateCubicHermite(innerx, dWall, outerx, dWall, xi3)
+                xDaughter1List.append(x)
+
+                # dx_ds1
+                factor = 1.0 + wallThickness*xi3 * curvatureAroundInner[n]
+                d1 = [ factor*c for c in d1Daugh1Inner[n]]
+                d1Daughter2List.append(d1)
+
+                # dx_ds2
+                curvature = curvatureAlong[n]
+                distance = vector.magnitude([x[i] - xDaugh1Inner[n][i] for i in range(3)])
+                factor = 1.0 - curvature*distance
+                d2 = [ factor*c for c in d2Daugh1Inner[n]]
+                d2Daughter2List.append(d2)
+                curvatureList.append(curvature)
+
+                #dx_ds3
+                d3 = [c * wallThickness/elementsCountThroughWall for c in norm]
+                d3Daughter2List.append(d3)
+
+    return xParentList, d1ParentList, d2ParentList, d3ParentList, \
+           xDaughter1List, d1Daughter1List, d2Daughter1List, d3Daughter1List,\
+           xDaughter2List, d1Daughter2List, d2Daughter2List, d3Daughter2List,\
+           curvatureList
+
+
+def createAirwaySegmentNodesAndElements\
+                (region,
+                 xParent, d1Parent, d2Parent, d3Parent,
+                 xDaughter1, d1Daughter1, d2Daughter1, d3Daughter1,
+                 xDaughter2, d1Daughter2, d2Daughter2, d3Daughter2,
+                 xjunctionOuter, xjunctionInner, d1junction, d2junction,
+                 elementsCountAround, elementsCountAlong,
+                 firstNodeIdentifier, firstElementIdentifier,
+                 useCrossDerivatives):
+    #    annotationGroups, annotationArray,
+    """
+    :param xList: coordinates of centerline points.
+    :param d1List: derivatives along axis of segment.
+    :param radius1List: derivatives along axis of segment.
+    :param elementsCountAround: Number of elements around segment.
+    :param elementsCountAlongSegment: Number of elements along segment.
+    :param nSegment: Segment index along central path.
+    :return coordinates and derivatives of warped points.
+    """
+
+    nodeIdentifier = firstNodeIdentifier
+    elementIdentifier = firstElementIdentifier
+    zero = [0.0, 0.0, 0.0]
+
+
+    fm = region.getFieldmodule()
+    fm.beginChange()
+    cache = fm.createFieldcache()
+
+    # Coordinates field
+    coordinates = findOrCreateFieldCoordinates(fm)
+    nodes = fm.findNodesetByFieldDomainType(Field.DOMAIN_TYPE_NODES)
+    nodetemplate = nodes.createNodetemplate()
+    nodetemplate.defineField(coordinates)
+    nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_VALUE, 1)
+    nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_D_DS1, 1)
+    nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_D_DS2, 1)
+    if useCrossDerivatives:
+        nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_D2_DS1DS2, 1)
+    # if useCubicHermiteThroughWall:
+    #     nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_D_DS3, 1)
+        if useCrossDerivatives:
+            nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_D2_DS1DS3, 1)
+            nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_D2_DS2DS3, 1)
+            nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_D3_DS1DS2DS3, 1)
+
+    mesh = fm.findMeshByDimension(3)
+
+    eftfactory = eftfactory_tricubichermite(mesh, useCrossDerivatives)
+
+
+    # if useCubicHermiteThroughWall:
+    #     eftfactory = eftfactory_tricubichermite(mesh, useCrossDerivatives)
+    # else:
+    #     eftfactory = eftfactory_bicubichermitelinear(mesh, useCrossDerivatives)
+
+    eft = eftfactory.createEftBasic()
+
+    elementtemplate = mesh.createElementtemplate()
+    elementtemplate.setElementShapeType(Element.SHAPE_TYPE_CUBE)
+    result = elementtemplate.defineField(coordinates, -1, eft)
+
+    ###################
+    # Create nodes
+    ##################
+
+    # Create nodes for Parent
+    # Coordinates field
+    for n in range(len(x)):
+        node = nodes.createNode(nodeIdentifier, nodetemplate)
+        cache.setNode(node)
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, xParent[n])
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS1, 1, d1Parent[n])
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS2, 1, d2Parent[n])
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS3, 1, d3Parent[n])
+        if useCrossDerivatives:
+                coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS2, 1, zero)
+                coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS3, 1, zero)
+                coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS2DS3, 1, zero)
+                coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D3_DS1DS2DS3, 1, zero)
+        nodeIdentifier = nodeIdentifier + 1
+
+
+    # Create nodes for Daughter1
+    # Coordinates field
+    for n in range(len(x)):
+        node = nodes.createNode(nodeIdentifier, nodetemplate)
+        cache.setNode(node)
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, xDaughter1[n])
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS1, 1, d1Daughter1[n])
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS2, 1, d2Daughter1[n])
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS3, 1, d3Daughter1[n])
+        if useCrossDerivatives:
+                coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS2, 1, zero)
+                coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS3, 1, zero)
+                coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS2DS3, 1, zero)
+                coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D3_DS1DS2DS3, 1, zero)
+        nodeIdentifier = nodeIdentifier + 1
+
+    # Create nodes for Daughter2
+    # Coordinates field
+    for n in range(len(x)):
+        node = nodes.createNode(nodeIdentifier, nodetemplate)
+        cache.setNode(node)
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, xDaughter2[n])
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS1, 1, d1Daughter2[n])
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS2, 1, d2Daughter2[n])
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS3, 1, d3Daughter2[n])
+        if useCrossDerivatives:
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS2, 1, zero)
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS3, 1, zero)
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS2DS3, 1, zero)
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D3_DS1DS2DS3, 1, zero)
+        nodeIdentifier = nodeIdentifier + 1
+
+    fm.endChange()
+
+    return nodeIdentifier, elementIdentifier
+
 
 
 def createAirwaySegmentSurfaceNodesAndElements(region,
                                   xParent, d1Parent, d2Parent,
                                   xDaugh1, d1Daugh1, d2Daugh1,
                                   xDaugh2, d1Daugh2, d2Daugh2,
-                                  xjunction, d1junction, d2junction,
+                                  xjunctionOuter, xjunctionInner, d1junction, d2junction,
                                   elementsCountAround, elementsCountAlong,
                                   firstNodeIdentifier, firstElementIdentifier,
                                   useCrossDerivatives):
@@ -563,6 +839,9 @@ def createAirwaySegmentSurfaceNodesAndElements(region,
     cache = fm.createFieldcache()
     print('coming to write nodes in create surface node')
 
+    #####################
+    # CREATE NODES
+    #####################
     # Create nodes - PARENT
     # Coordinates field
     for n in range(len(xParent)):
@@ -574,6 +853,7 @@ def createAirwaySegmentSurfaceNodesAndElements(region,
         if useCrossDerivatives:
             coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS2, 1, zero)
         nodeIdentifier = nodeIdentifier + 1
+
 
     # Create nodes - DauGH1
     # Coordinates field
@@ -587,6 +867,7 @@ def createAirwaySegmentSurfaceNodesAndElements(region,
             coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS2, 1, zero)
         nodeIdentifier = nodeIdentifier + 1
 
+
     # Create nodes - DAUGH2
     # Coordinates field
     for n in range(len(xDaugh2)):
@@ -598,21 +879,40 @@ def createAirwaySegmentSurfaceNodesAndElements(region,
         if useCrossDerivatives:
             coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS2, 1, zero)
         nodeIdentifier = nodeIdentifier + 1
-
+        print('daughter2 nodes list', nodeIdentifier)
 
     # Create nodes - JUNCTION
-    # Coordinates field
-    for n in range(5):
+    nodeIdentifierOuter = []
+    nodeIdentifierInner = []
+
+    for n in range(len(xjunctionOuter)):
+        nodeIdentifierOuter.append(nodeIdentifier)
+
         node = nodes.createNode(nodeIdentifier, nodetemplate)
         cache.setNode(node)
-        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, xjunction[n])
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, xjunctionOuter[n])
         coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS1, 1, zero)
         coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS2, 1, zero)
         if useCrossDerivatives:
             coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS2, 1, zero)
         nodeIdentifier = nodeIdentifier + 1
 
+    for n in range(len(xjunctionInner)):
+        nodeIdentifierInner.append(nodeIdentifier)
 
+        node = nodes.createNode(nodeIdentifier, nodetemplate)
+        cache.setNode(node)
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, xjunctionInner[n])
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS1, 1, zero)
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS2, 1, zero)
+        if useCrossDerivatives:
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS2, 1, zero)
+        nodeIdentifier = nodeIdentifier + 1
+        print('adding junction inner to a list', nodeIdentifier)
+
+    #####################
+    # CREATE ELEMENTS
+    #####################
     # # create elements - Parent
     # ##################
     for e2 in range(elementsCountAlong):
@@ -649,37 +949,110 @@ def createAirwaySegmentSurfaceNodesAndElements(region,
             elementIdentifier = elementIdentifier + 1
 
 
-    # # create elements - junction 1
+    # # create elements - junction
     # ##########################3##
-    element = mesh.createElement(elementIdentifier, elementtemplate)
-    nodeIdentifiers = [9, 10, 40, 37]
-    result = element.setNodesByIdentifier(eft, nodeIdentifiers)
-    elementIdentifier = elementIdentifier + 1
+    # for e2 in range(len(xjunctionInner)):
+    #     nodeinner = nodeIdentifierInner[e2]
+    #     bnp1 = (elementsCountAround)*(elementsCountAlong)+1
+    #     bnd1 = (elementsCountAround)*(elementsCountAlong+1)+1
+    #     bnd2 = 2*(elementsCountAround)*(elementsCountAlong+1)+1
+    #
+    #     bndparentouter = bnp1 if e2==0 else bnp1+2
+    #     bnddaugh1outer = bnd1+1 if e2==0 else bnd1+3
+    #     bnddaugh2outer = bnd2+1 if e2==0 else bnd2+3
+    #
+    #     element = mesh.createElement(elementIdentifier, elementtemplate)
+    #     nodeIdentifiers = [bndparentouter, 10, nodeinner, 37]
+    #     result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+    #     elementIdentifier = elementIdentifier + 1
+    #
+    #     element = mesh.createElement(elementIdentifier, elementtemplate)
+    #     nodeIdentifiers = [39, nodeinner, 13, bnddaugh1outer]
+    #     result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+    #     elementIdentifier = elementIdentifier + 1
+    #
+    #     element = mesh.createElement(elementIdentifier, elementtemplate)
+    #     nodeIdentifiers = [12, bndparentouter, 38, nodeinner]
+    #     result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+    #     elementIdentifier = elementIdentifier + 1
+    #
+    #     element = mesh.createElement(elementIdentifier, elementtemplate)
+    #     nodeIdentifiers = [nodeinner, 38, bnddaugh2outer, 27]
+    #     result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+    #     elementIdentifier = elementIdentifier + 1
+    #
+    #     element = mesh.createElement(elementIdentifier, elementtemplate)
+    #     nodeIdentifiers = [39, nodeinner, 25, bnddaugh2outer]
+    #     result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+    #     elementIdentifier = elementIdentifier + 1
+    #
+    #     element = mesh.createElement(elementIdentifier, elementtemplate)
+    #     nodeIdentifiers = [nodeinner, 37, bnddaugh1outer, 15]
+    #     result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+    #     elementIdentifier = elementIdentifier + 1
+    #
 
-    element = mesh.createElement(elementIdentifier, elementtemplate)
-    nodeIdentifiers = [39,  40, 13, 14]
-    result = element.setNodesByIdentifier(eft, nodeIdentifiers)
-    elementIdentifier = elementIdentifier + 1
+        element = mesh.createElement(elementIdentifier, elementtemplate)
+        nodeIdentifiers = [9, 10, 40, 37]
+        result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+        elementIdentifier = elementIdentifier + 1
 
-    element = mesh.createElement(elementIdentifier, elementtemplate)
-    nodeIdentifiers = [12, 9, 38, 40]
-    result = element.setNodesByIdentifier(eft, nodeIdentifiers)
-    elementIdentifier = elementIdentifier + 1
+        element = mesh.createElement(elementIdentifier, elementtemplate)
+        nodeIdentifiers = [12, 9, 38, 40]
+        result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+        elementIdentifier = elementIdentifier + 1
 
-    element = mesh.createElement(elementIdentifier, elementtemplate)
-    nodeIdentifiers = [40, 38, 26, 27]
-    result = element.setNodesByIdentifier(eft, nodeIdentifiers)
-    elementIdentifier = elementIdentifier + 1
+        element = mesh.createElement(elementIdentifier, elementtemplate)
+        nodeIdentifiers = [39, 40, 13, 14]
+        result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+        elementIdentifier = elementIdentifier + 1
 
-    element = mesh.createElement(elementIdentifier, elementtemplate)
-    nodeIdentifiers = [39, 40, 25, 26]
-    result = element.setNodesByIdentifier(eft, nodeIdentifiers)
-    elementIdentifier = elementIdentifier + 1
+        element = mesh.createElement(elementIdentifier, elementtemplate)
+        nodeIdentifiers = [40, 37, 14, 15]
+        result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+        elementIdentifier = elementIdentifier + 1
 
-    element = mesh.createElement(elementIdentifier, elementtemplate)
-    nodeIdentifiers = [40, 37, 14, 15]
-    result = element.setNodesByIdentifier(eft, nodeIdentifiers)
-    elementIdentifier = elementIdentifier + 1
+        element = mesh.createElement(elementIdentifier, elementtemplate)
+        nodeIdentifiers = [40, 38, 26, 27]
+        result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+        elementIdentifier = elementIdentifier + 1
+
+        element = mesh.createElement(elementIdentifier, elementtemplate)
+        nodeIdentifiers = [39, 40, 25, 26]
+        result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+        elementIdentifier = elementIdentifier + 1
+
+        #JUNCTION BACK
+        element = mesh.createElement(elementIdentifier, elementtemplate)
+        nodeIdentifiers = [11, 12, 41, 38]
+        result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+        elementIdentifier = elementIdentifier + 1
+
+        element = mesh.createElement(elementIdentifier, elementtemplate)
+        nodeIdentifiers = [10, 11, 37, 41]
+        result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+        elementIdentifier = elementIdentifier + 1
+
+        element = mesh.createElement(elementIdentifier, elementtemplate)
+        nodeIdentifiers = [41, 39, 28, 25]
+        result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+        elementIdentifier = elementIdentifier + 1
+
+        element = mesh.createElement(elementIdentifier, elementtemplate)
+        nodeIdentifiers = [38, 41, 27, 28]
+        result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+        elementIdentifier = elementIdentifier + 1
+
+        element = mesh.createElement(elementIdentifier, elementtemplate)
+        nodeIdentifiers = [41, 39, 16, 13]
+        result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+        elementIdentifier = elementIdentifier + 1
+
+        element = mesh.createElement(elementIdentifier, elementtemplate)
+        nodeIdentifiers = [37, 41, 15, 16]
+        result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+        elementIdentifier = elementIdentifier + 1
+
 
     # node0 = 3 * (elementsCountAround) * (elementsCountAlong + 1) + 1
     # for e2 in range(elementsCountAlong):
