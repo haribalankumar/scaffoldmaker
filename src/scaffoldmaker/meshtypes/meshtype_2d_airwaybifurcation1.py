@@ -135,10 +135,6 @@ class MeshType_2d_airwaybifurcation1(Scaffold_base):
         daughter1segmentLength = 0.8 ##When using centerline this is trach length - junctionheight
         daughter2segmentLength = 0.8 ##When using centerline this is trach length - junctionheight
 
-        parentsegmentLength = parentsegmentLength * 0.85
-        daughter1segmentLength = daughter1segmentLength * 0.85
-        daughter2segmentLength = daughter2segmentLength * 0.85
-
         elementsCountAlongSegment = 2
 
         wallThickness = 0.1
@@ -178,7 +174,7 @@ class MeshType_2d_airwaybifurcation1(Scaffold_base):
 
         # Central path
         cx = [ [ tracheaoriginx, tracheaoriginy, tracheaoriginz ],
-               [ tracheaoriginx, tracheaoriginy, tracheaoriginz + parentsegmentLength ] ]
+               [ tracheaoriginx, tracheaoriginy, tracheaoriginz + 0.85*parentsegmentLength ] ]
         cd1 = [ [ 0.0, 0.0, parentsegmentLength ], [ 0.0, 0.0, parentsegmentLength ] ]
         cd2 = [ [ 0.0, 1.0, 0.0 ], [ 0.0, 1.0, 0.0 ] ]
         cd12 = [ [0.0, 0.0, 0.0 ], [ 0.0, 0.0, 0.0 ] ]
@@ -189,28 +185,29 @@ class MeshType_2d_airwaybifurcation1(Scaffold_base):
         sd2parent = interp.interpolateSampleCubicHermite(cd2, cd12, separent, sxiparent, ssfparent)[0]
 
         # Sample central path - DAUGHTER1
-        daughter1angle = 0.5*math.pi - bifurcationangle*0.5
+        daughter1angle = bifurcationangle*0.5
+        print('bif angle test =', bifurcationangle)
         cosangle = math.cos(daughter1angle)
         sinangle = math.sin(daughter1angle)
-        cx = [ [ tracheaoriginx+endRadiusparent, tracheaoriginy, endRadiusparent+tracheaoriginz+parentsegmentLength ],
-               [ tracheaoriginx+endRadiusparent+cosangle*daughter1segmentLength, tracheaoriginy,
-                 tracheaoriginz+sinangle*daughter1segmentLength+endRadiusparent+parentsegmentLength ] ]
-        cd1 = [ [ cosangle, 0.0, sinangle ], [ cosangle, 0.0, sinangle ] ]
-        cd2 = [ [ -sinangle, 0.0, cosangle ], [ -sinangle, 0.0, cosangle ] ]
+        cx = [ [ tracheaoriginx+0.15*daughter1segmentLength*sinangle, tracheaoriginy, tracheaoriginz+parentsegmentLength+0.15*daughter1segmentLength*cosangle ],
+               [ tracheaoriginx+sinangle*daughter1segmentLength, tracheaoriginy,
+                 tracheaoriginz+parentsegmentLength+cosangle*daughter1segmentLength] ]
+        cd1 = [ [ sinangle, 0.0, cosangle ], [ sinangle, 0.0, cosangle ] ]
+        cd2 = [ [ -cosangle, 0.0, sinangle ], [ -cosangle, 0.0, sinangle ] ]
         cd12 = [ [0.0, 0.0, 0.0 ], [ 0.0, 0.0, 0.0 ] ]
         sxDaugh1, sd1Daugh1, seDaugh1, sxiDaugh1, ssfDaugh1 = \
             interp.sampleCubicHermiteCurves(cx, cd1, elementsCountAlongSegment*segmentCount)
         sd2Daugh1 = interp.interpolateSampleCubicHermite(cd2, cd12, seDaugh1, sxiDaugh1, ssfDaugh1)[0]
 
         # Sample central path - DAUGHTER2
-        daughter2angle = 0.5*math.pi - bifurcationangle*0.5
+        daughter2angle = bifurcationangle*0.5
         cosangle = math.cos(daughter2angle)
         sinangle = math.sin(daughter2angle)
-        cx = [ [ tracheaoriginx-endRadiusparent, tracheaoriginy, tracheaoriginz+endRadiusparent+parentsegmentLength],
-               [ tracheaoriginx-endRadiusparent-cosangle*daughter2segmentLength, tracheaoriginy,
-                 tracheaoriginz+sinangle*daughter2segmentLength+endRadiusparent+parentsegmentLength ] ]
-        cd1 = [ [ -cosangle, 0.0, sinangle ], [ -cosangle, 0.0, sinangle ] ]
-        cd2 = [ [ sinangle, 0.0, cosangle ], [ sinangle, 0.0, cosangle ] ]
+        cx = [ [ tracheaoriginx-0.15*daughter2segmentLength*sinangle, tracheaoriginy, tracheaoriginz+parentsegmentLength+0.15*daughter2segmentLength*cosangle ],
+               [ tracheaoriginx-sinangle*daughter2segmentLength, tracheaoriginy,
+                 tracheaoriginz+parentsegmentLength+cosangle*daughter2segmentLength] ]
+        cd1 = [ [ -sinangle, 0.0, cosangle ], [ -sinangle, 0.0, cosangle ] ]
+        cd2 = [ [ cosangle, 0.0, sinangle ], [ sinangle, 0.0, sinangle ] ]
         cd12 = [ [0.0, 0.0, 0.0 ], [ 0.0, 0.0, 0.0 ] ]
         sxDaugh2, sd1Daugh2, seDaugh2, sxiDaugh2, ssfDaugh2 = \
             interp.sampleCubicHermiteCurves(cx, cd1, elementsCountAlongSegment*segmentCount)
