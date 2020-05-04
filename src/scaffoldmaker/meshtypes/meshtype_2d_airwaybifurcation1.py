@@ -72,6 +72,7 @@ class MeshType_2d_airwaybifurcation1(Scaffold_base):
                 options['Number of elements around'] = 4
         elif (options['Number of elements around'] % 2) == 1:
             options['Number of elements around'] += 1
+
         if (options['Daughter1 angle'] < 20):
             options['Daughter1 angle'] = 20
         if (options['Daughter1 angle'] > 60):

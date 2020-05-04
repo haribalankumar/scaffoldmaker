@@ -475,9 +475,11 @@ def getAirwaySegmentCoordinatesFromInner(
         for n1 in range(elementsCountAround):
             n = n2*elementsCountAround + n1
             norm = d3ParentInner[n]
+
             # Calculate outer coordinates
             x = [xParentInner[n][i] + norm[i]*wallThickness for i in range(3)]
             xOuter.append(x)
+
             # Calculate curvature along elements around
             prevIdx = n - 1 if (n1 != 0) else (n2 + 1)*elementsCountAround - 1
             nextIdx = n + 1 if (n1 < elementsCountAround - 1) else n2*elementsCountAround
@@ -531,15 +533,20 @@ def getAirwaySegmentCoordinatesFromInner(
                 d3 = [c * wallThickness/elementsCountThroughWall for c in norm]
                 d3ParentList.append(d3)
 
+    xOuter = []
     #DAUGHTER1
     for n2 in range(elementsCountAlong + 1):
+        print('coord inner for daughter=',n2)
         wallThickness = wallThicknessList[n2]
+        print('wall thickness for daughter1 = ', wallThickness)
         for n1 in range(elementsCountAround):
             n = n2*elementsCountAround + n1
             norm = d3Daugh1Inner[n]
             # Calculate outer coordinates
+            print('print normals for d1=',norm[0],norm[1],norm[2])
             x = [xDaugh1Inner[n][i] + norm[i]*wallThickness for i in range(3)]
             xOuter.append(x)
+
             # Calculate curvature along elements around
             prevIdx = n - 1 if (n1 != 0) else (n2 + 1)*elementsCountAround - 1
             nextIdx = n + 1 if (n1 < elementsCountAround - 1) else n2*elementsCountAround
@@ -567,6 +574,7 @@ def getAirwaySegmentCoordinatesFromInner(
         for n3 in range(elementsCountThroughWall + 1):
             xi3 = 1/elementsCountThroughWall * n3
             for n1 in range(elementsCountAround):
+                print('coord inner for daughter=', n3, n1)
                 n = n2*elementsCountAround + n1
                 norm = d3Daugh1Inner[n]
                 innerx = xDaugh1Inner[n]
@@ -593,7 +601,7 @@ def getAirwaySegmentCoordinatesFromInner(
                 d3 = [c * wallThickness/elementsCountThroughWall for c in norm]
                 d3Daughter1List.append(d3)
 
-
+    xOuter = []
     #DAUGHTER2
     ###########
     for n2 in range(elementsCountAlong + 1):
@@ -638,7 +646,7 @@ def getAirwaySegmentCoordinatesFromInner(
                 dWall = [wallThickness*c for c in norm]
                 # x
                 x = interp.interpolateCubicHermite(innerx, dWall, outerx, dWall, xi3)
-                xDaughter1List.append(x)
+                xDaughter2List.append(x)
 
                 # dx_ds1
                 factor = 1.0 + wallThickness*xi3 * curvatureAroundInner[n]
@@ -671,7 +679,9 @@ def createAirwaySegmentNodesAndElements\
                  xjunctionOuter, xjunctionInner, d1junction, d2junction,
                  elementsCountAround, elementsCountAlong,
                  firstNodeIdentifier, firstElementIdentifier,
+                 useCubicHermiteThroughWall,
                  useCrossDerivatives):
+
     #    annotationGroups, annotationArray,
     """
     :param xList: coordinates of centerline points.
@@ -687,7 +697,6 @@ def createAirwaySegmentNodesAndElements\
     elementIdentifier = firstElementIdentifier
     zero = [0.0, 0.0, 0.0]
 
-
     fm = region.getFieldmodule()
     fm.beginChange()
     cache = fm.createFieldcache()
@@ -702,8 +711,8 @@ def createAirwaySegmentNodesAndElements\
     nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_D_DS2, 1)
     if useCrossDerivatives:
         nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_D2_DS1DS2, 1)
-    # if useCubicHermiteThroughWall:
-    #     nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_D_DS3, 1)
+    if useCubicHermiteThroughWall:
+        nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_D_DS3, 1)
         if useCrossDerivatives:
             nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_D2_DS1DS3, 1)
             nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_D2_DS2DS3, 1)
@@ -714,10 +723,10 @@ def createAirwaySegmentNodesAndElements\
     eftfactory = eftfactory_tricubichermite(mesh, useCrossDerivatives)
 
 
-    # if useCubicHermiteThroughWall:
-    #     eftfactory = eftfactory_tricubichermite(mesh, useCrossDerivatives)
-    # else:
-    #     eftfactory = eftfactory_bicubichermitelinear(mesh, useCrossDerivatives)
+    if useCubicHermiteThroughWall:
+        eftfactory = eftfactory_tricubichermite(mesh, useCrossDerivatives)
+    else:
+        eftfactory = eftfactory_bicubichermitelinear(mesh, useCrossDerivatives)
 
     eft = eftfactory.createEftBasic()
 
@@ -731,7 +740,8 @@ def createAirwaySegmentNodesAndElements\
 
     # Create nodes for Parent
     # Coordinates field
-    for n in range(len(x)):
+    print('length of parent with thickness = ',len(xParent))
+    for n in range(len(xParent)):
         node = nodes.createNode(nodeIdentifier, nodetemplate)
         cache.setNode(node)
         coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, xParent[n])
@@ -745,10 +755,11 @@ def createAirwaySegmentNodesAndElements\
                 coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D3_DS1DS2DS3, 1, zero)
         nodeIdentifier = nodeIdentifier + 1
 
-
     # Create nodes for Daughter1
     # Coordinates field
-    for n in range(len(x)):
+    print('length of parent with thickness = ',len(xDaughter1))
+
+    for n in range(len(xDaughter1)):
         node = nodes.createNode(nodeIdentifier, nodetemplate)
         cache.setNode(node)
         coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, xDaughter1[n])
@@ -764,7 +775,7 @@ def createAirwaySegmentNodesAndElements\
 
     # Create nodes for Daughter2
     # Coordinates field
-    for n in range(len(x)):
+    for n in range(len(xDaughter2)):
         node = nodes.createNode(nodeIdentifier, nodetemplate)
         cache.setNode(node)
         coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, xDaughter2[n])
