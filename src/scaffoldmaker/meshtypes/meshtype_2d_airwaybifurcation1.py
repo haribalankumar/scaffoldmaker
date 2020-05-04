@@ -152,10 +152,11 @@ class MeshType_2d_airwaybifurcation1(Scaffold_base):
 
         #######################################################################
         segmentCount = 1  # Hardcoded for starters
+        xlensegmentparent = 0.85
 
         # Central path
         cxparent = [ [ tracheaoriginx, tracheaoriginy, tracheaoriginz ],
-               [ tracheaoriginx, tracheaoriginy, tracheaoriginz + 0.85*parentsegmentLength ] ]
+               [ tracheaoriginx, tracheaoriginy, tracheaoriginz + xlensegmentparent*parentsegmentLength ] ]
         cd1parent = [ [ 0.0, 0.0, 1.0 ], [ 0.0, 0.0, 1.0 ] ]
         cd2parent = [ [ 0.0, 1.0, 0.0 ], [ 0.0, 1.0, 0.0 ] ]
         cd12parent = [ [0.0, 0.0, 0.0 ], [ 0.0, 0.0, 0.0 ] ]
@@ -167,7 +168,7 @@ class MeshType_2d_airwaybifurcation1(Scaffold_base):
         cosangled2 = math.cos(math.pi/180.0 * (daughter2angle))
         sinangled2 = math.sin(math.pi/180.0 * (daughter2angle))
 
-        segmentratioDaughter2 = 1.2
+        segmentratioDaughter2 = 1.12
         segmentratioDaughter1 = (startRadiusDaugh1/endRadiusparent)*cosangled1\
                                 -(startRadiusDaugh2/endRadiusparent)*cosangled2+segmentratioDaughter2
         print('segment ratios = ', segmentratioDaughter1, segmentratioDaughter2)
@@ -246,7 +247,7 @@ class MeshType_2d_airwaybifurcation1(Scaffold_base):
 
         airwaysegmentTubeMeshInnerPoints = AirwaySegmentTubeMeshInnerPoints(
             region, elementsCountAround, elementsCountAlongSegment,
-            parentsegmentLength, daughter1segmentLength, daughter2segmentLength,
+            xlensegmentparent*parentsegmentLength, xlensegmentd1*daughter1segmentLength, xlensegmentd2*daughter2segmentLength,
             wallThickness, radiusparentAlongSegment, radiusDaugh1AlongSegment,
             radiusDaugh2AlongSegment, dRadiusDaugh2AlongSegment,
             dRadiusDaugh1AlongSegment, dRadiusDaugh2AlongSegment, startPhase)
@@ -274,7 +275,7 @@ class MeshType_2d_airwaybifurcation1(Scaffold_base):
             d1ParentInner, d1Daugh1Inner, d1Daugh2Inner,
             d2ParentInner, d2Daugh1Inner, d2Daugh2Inner,
             segmentAxisParent, segmentAxisDaughter1, segmentAxisDaughter2,
-            parentsegmentLength, daughter1segmentLength, daughter2segmentLength,
+            xlensegmentparent*parentsegmentLength, xlensegmentd2*daughter1segmentLength, xlensegmentd2*daughter2segmentLength,
             sxparent, sxDaugh1, sxDaugh2,
             sd1parent, sd1Daugh1, sd1Daugh2,
             sd2parent, sd2Daugh1, sd2Daugh2,
