@@ -126,10 +126,9 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
 
         elementsCountAlongSegment = 2
 
-        wallThickness = 0.06
+        wallThickness = 0.02
         startPhase = 360.0
         ########################################################################
-
 
         startRadiusparent = 0.3
         endRadiusparent = 0.3
@@ -270,7 +269,7 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
         xParentWarpedList, xDaugh1WarpedList, xDaugh2WarpedList, \
         d1ParentWarpedList, d1Daugh1WarpedList, d1Daugh2WarpedList,\
         d2ParentWarpedList, d2Daugh1WarpedList, d2Daugh2WarpedList,\
-        d3ParentWarpedUnitList, d3Daugh1WarpedList, d3Daugh2WarpedList \
+        d3ParentWarpedUnitList, d3Daugh1WarpedUnitList, d3Daugh2WarpedUnitList \
             = tubebifurcationmesh.warpAirwaySegmentPoints(
             xParentInner, xDaugh1Inner, xDaugh2Inner,
             d1ParentInner, d1Daugh1Inner, d1Daugh2Inner,
@@ -287,7 +286,8 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
 
         # Form junction  points
         ###############################
-        xjunctionOuter, xjunctionInner, d1junction, d2junction \
+        xjunctionOuter, xjunctionInner, d1junctionOuter, d2junctionOuter, d3junctionOuter,\
+            d1junctionInner, d2junctionInner, d3junctionInner\
             = tubebifurcationmesh.createjunctionAirwaySegmentPoints(
             xParentWarpedList, xDaugh1WarpedList, xDaugh2WarpedList,
             d1ParentWarpedList, d1Daugh1WarpedList, d1Daugh2WarpedList,
@@ -299,7 +299,7 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
             sd2parent, sd2Daugh1, sd2Daugh2,
             elementsCountAround, elementsCountAlongSegment, nSegment)
 
-        # Create coordinates and derivatives
+        # Create coordinates and derivatives - PARENT AND DAUGHERS1,2
         xParentList, d1ParentList, d2ParentList, d3ParentList, \
         xDaughter1List, d1Daughter1List, d2Daughter1List, d3Daughter1List, \
         xDaughter2List, d1Daughter2List, d2Daughter2List, d3Daughter2List, \
@@ -308,10 +308,23 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
                 xParentWarpedList, xDaugh1WarpedList, xDaugh2WarpedList,
                 d1ParentWarpedList, d1Daugh1WarpedList, d1Daugh2WarpedList,
                 d2ParentWarpedList, d2Daugh1WarpedList, d2Daugh2WarpedList,
-                d3ParentWarpedUnitList, d3Daugh1WarpedList, d3Daugh2WarpedList,
+                d3ParentWarpedUnitList, d3Daugh1WarpedUnitList, d3Daugh2WarpedUnitList,
                 contractedWallThicknessList,
                 elementsCountAround, elementsCountAlongSegment,
                 elementsCountThroughWall, transitElementList)
+
+
+        # Create coordinates and derivatives - JUNCTION
+        xJunctionOuterList, d1JunctionOuterList, d2JunctionOuterList, d3JunctionOuterList, \
+        xJunctionInnerList, d1JunctionInnerList, d2JunctionInnerList, d3JunctionInnerList, \
+        curvatureList = \
+            tubebifurcationmesh.getAirwayJunctionCoordinatesFromInner(
+                xjunctionOuter,d1junctionOuter,d2junctionOuter,d3junctionOuter,
+                xjunctionInner,d1junctionInner,d2junctionInner,d3junctionInner,
+                contractedWallThicknessList,
+                elementsCountAround, elementsCountAlongSegment,
+                elementsCountThroughWall, transitElementList)
+
 
         ##Create nodes and elements
         ##############################
@@ -321,7 +334,9 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
                  xParentList, d1ParentList, d2ParentList, d3ParentList,
                  xDaughter1List, d1Daughter1List, d2Daughter1List, d3Daughter1List,
                  xDaughter2List, d1Daughter2List, d2Daughter2List, d3Daughter2List,
-                 xjunctionOuter, xjunctionInner, d1junction, d2junction,
+                 xJunctionOuterList, xJunctionInnerList, d1JunctionOuterList, d1JunctionInnerList,
+                 d2JunctionOuterList,d2JunctionInnerList,
+                 d3JunctionOuterList, d3JunctionInnerList,
                  elementsCountAround, elementsCountAlongSegment,
                  nodeIdentifier, elementIdentifier, useCubicHermiteThroughWall, useCrossDerivatives)
 
@@ -433,9 +448,9 @@ class AirwaySegmentTubeMeshInnerPoints:
         contractedWallThickness = contractedWallThicknessSegment[startIdx:self._elementsCountAlongSegment + 1]
         self._contractedWallThicknessList += contractedWallThickness
 
-        return xParentInner, xDaugh1Inner, xDaugh2Inner, \
-        d1ParentInner, d1Daugh1Inner, d1Daugh2Inner, \
-        d2ParentInner, d2Daugh1Inner, d2Daugh2Inner, transitElementList, \
+        return xParentInner, xDaugh1Inner, xDaugh2Inner,\
+               d1ParentInner, d1Daugh1Inner, d1Daugh2Inner, \
+               d2ParentInner, d2Daugh1Inner, d2Daugh2Inner, transitElementList, \
                segmentAxisParent, segmentAxisDaughter1, segmentAxisDaughter2, \
                ParentfaceMidPointsZ, Daughter1faceMidPointsZ, Daughter2faceMidPointsZ
 
@@ -624,14 +639,17 @@ def getAirwaySegmentInnerPoints(region, elementsCountAround, elementsCountAlongS
 
     # Calculate z mid-point for each element set along the segment
     faceDaughter2MidPointsZ = []
-    lengthToFirstPhase = startPhase / 360.0 * daugh1segmentLength
+    lengthToFirstPhase = startPhase / 360.0 * daugh2segmentLength
     for n2 in range(elementsCountAlongSegment + 1):
         faceDaughter2MidPointsZ += [lengthToFirstPhase +
                                  n2 * daugh2segmentLength / elementsCountAlongSegment]
 
-        # WALL THICKNESS
+
+    # WALL THICKNESS - variable thickness not coded yet
+    for n2 in range(elementsCountAlongSegment + 1):
         contractedWallThickness = wallThickness
         contractedWallThicknessList.append(contractedWallThickness)
+
 
     return xParentFinal, xDaugh1Final, xDaugh2Final, \
            d1ParentFinal, d1Daugh1Final, d1Daugh2Final, \
