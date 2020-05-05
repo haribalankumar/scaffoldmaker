@@ -64,8 +64,9 @@ def createjunctionAirwaySurfaceSegmentPoints(
     xParentAlongSegment = xParentWarpedList[9]
     xDaugh1AlongSegment = xDaugh1WarpedList[2]
     xmid = [(xParentAlongSegment[j]+sxparent[n2][j])/2.0 for j in range(3)]
-    xjunctionOuter1 = [(xmid[j]+xDaugh1AlongSegment[j])/2.0 for j in range(3)]
+    xjunctionOuter1 = [0.35*xmid[j]+0.65*xDaugh1AlongSegment[j] for j in range(3)]
     xjunctionOuterList.append(xjunctionOuter1)
+
     #deriv calc next
     nx.append(xParentAlongSegment)
     nx.append(xjunctionOuter1)
@@ -81,8 +82,9 @@ def createjunctionAirwaySurfaceSegmentPoints(
     xParentAlongSegment = xParentWarpedList[11]
     xDaugh2AlongSegment = xDaugh2WarpedList[2]
     xmid = [(xParentAlongSegment[j]+sxparent[n2][j])/2.0 for j in range(3)]
-    xjunctionOuter2 = [(xmid[j]+xDaugh2AlongSegment[j])/2.0 for j in range(3)]
+    xjunctionOuter2 = [0.35*xmid[j]+0.65*xDaugh2AlongSegment[j] for j in range(3)]
     xjunctionOuterList.append(xjunctionOuter2)
+
     #deriv calc next
     nx.append(xParentAlongSegment)
     nx.append(xjunctionOuter2)
@@ -511,9 +513,7 @@ def warpAirwaySegmentPoints(x1ListParent, x1ListDaugh1, x1ListDaugh2,
             thetaRot = math.acos(vector.dotproduct(segmentAxisDaughter1, unitTangent))
             rotFrame = matrix.getRotationMatrixFromAxisAngle(axisRot, thetaRot)
             midRot = [rotFrame[j][0]*xMid[0] + rotFrame[j][1]*xMid[1] + rotFrame[j][2]*xMid[2] for j in range(3)]
-            print('daughter1 warping')
         else: # path tangent parallel to segment axis (z-axis)
-            print('daughter1 warping parallel to zxia')
             if dp == -1.0: # path tangent opposite direction to segment axis
                 thetaRot = math.pi
                 #axisRot = [1.0, 0, 0]
@@ -802,7 +802,6 @@ def getAirwayJunctionCoordinatesFromInner(
     return xOuterList, d1OuterList, d2OuterList, d3OuterList, \
            xInnerList, d1InnerList, d2InnerList, d3InnerList,\
            curvatureList
-
 
 
 def getAirwaySegmentCoordinatesFromInner(
@@ -1303,7 +1302,6 @@ def createAirwaySegmentSurfaceNodesAndElements(region,
         if useCrossDerivatives:
             coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS2, 1, zero)
         nodeIdentifier = nodeIdentifier + 1
-        print('daughter2 nodes list', nodeIdentifier)
 
     # Create nodes - JUNCTION
     nodeIdentifierOuter = []

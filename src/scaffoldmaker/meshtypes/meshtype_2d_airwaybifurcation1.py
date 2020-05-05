@@ -37,8 +37,8 @@ class MeshType_2d_airwaybifurcation1(Scaffold_base):
         return {
             'Number of elements along' : 2,
             'Number of elements around' : 4,
-            'Daughter1 angle': 45,
-            'Daughter2 angle': 45,
+            'Daughter1 angle': 25,
+            'Daughter2 angle': 55,
             'Daughter interradius factor': 1.0,
             'Use cross derivatives' : False,
             'Refine': False,
@@ -113,13 +113,13 @@ class MeshType_2d_airwaybifurcation1(Scaffold_base):
         ########################################################################
         #### centerline details
         ## typically comes from a centerline definition. currently hardcoding it
-        parentsegmentLength = 1.1 ##When using centerline this is trach length - junctionheight
-        daughter1segmentLength = 0.9 ##When using centerline this is trach length - junctionheight
-        daughter2segmentLength = 0.9 ##When using centerline this is trach length - junctionheight
+        parentsegmentLength = 1.0 ##When using centerline this is trach length - junctionheight
+        daughter1segmentLength = 0.8 ##When using centerline this is trach length - junctionheight
+        daughter2segmentLength = 0.8 ##When using centerline this is trach length - junctionheight
 
         elementsCountAlongSegment = 2
 
-        wallThickness = 0.06
+        wallThickness = 0.03
         startPhase = 360.0
         ########################################################################
         #
@@ -152,15 +152,8 @@ class MeshType_2d_airwaybifurcation1(Scaffold_base):
         endRadiusDaugh2Derivative = 0.0
 
         #######################################################################
-        segmentCount = 1  # Hardcoded for starters
-        xlensegmentparent = 0.85
-
-        # Central path
-        cxparent = [ [ tracheaoriginx, tracheaoriginy, tracheaoriginz ],
-               [ tracheaoriginx, tracheaoriginy, tracheaoriginz + xlensegmentparent*parentsegmentLength ] ]
-        cd1parent = [ [ 0.0, 0.0, 1.0 ], [ 0.0, 0.0, 1.0 ] ]
-        cd2parent = [ [ 0.0, 1.0, 0.0 ], [ 0.0, 1.0, 0.0 ] ]
-        cd12parent = [ [0.0, 0.0, 0.0 ], [ 0.0, 0.0, 0.0 ] ]
+        segmentCount = 1
+        xlensegmentparent = 0.9
 
         #Split ratio - decide where branching starts in daughter branches
         #################################################################
@@ -169,13 +162,41 @@ class MeshType_2d_airwaybifurcation1(Scaffold_base):
         cosangled2 = math.cos(math.pi/180.0 * (daughter2angle))
         sinangled2 = math.sin(math.pi/180.0 * (daughter2angle))
 
-        segmentratioDaughter2 = 1.12
-        segmentratioDaughter1 = (startRadiusDaugh1/endRadiusparent)*cosangled1\
-                                -(startRadiusDaugh2/endRadiusparent)*cosangled2+segmentratioDaughter2
-        print('segment ratios = ', segmentratioDaughter1, segmentratioDaughter2)
+        # xlensegment is the proportion of branch lengths1 at which the branchlength starts
+        # This offset value will be calculated from branch angle, daughter radius and daughter lengths.
+        # The offset ensures smooth transition from parent to daughter
+        # Having some bugs in this algorithm. Need to revisit
 
-        xlensegmentd1 = endRadiusparent*segmentratioDaughter1/(daughter1segmentLength*sinangled1)
-        xlensegmentd2 = endRadiusparent*segmentratioDaughter2/(daughter2segmentLength*sinangled2)
+        # segmentratioDaughter1 = 2.0*startRadiusDaugh1*cosangled1/(daughter1segmentLength*sinangled1)
+        # segmentratioDaughter2 = 2.0*startRadiusDaugh2*cosangled2/(daughter2segmentLength*sinangled2)
+        # print('segment ratios = ', segmentratioDaughter1, segmentratioDaughter2)
+
+        cval = -math.pow(1.3*endRadiusparent,2) + math.pow(cosangled1*startRadiusDaugh1,2)
+        aval = math.pow(daughter1segmentLength,2)*math.pow(sinangled1,2)
+        bval = 2 * daughter1segmentLength * endRadiusDaugh1 * cosangled1 * sinangled1
+        segmentratioDaughter11 = -0.5*(bval/aval)+math.sqrt(math.pow(bval,2)-4.0*aval*cval)/(2.0*aval)
+
+        cval = -math.pow(1.3*endRadiusparent,2) + math.pow(cosangled2*endRadiusDaugh2,2)
+        aval = math.pow(daughter2segmentLength,2)*math.pow(sinangled2,2)
+        bval = 2 * daughter2segmentLength * endRadiusDaugh2 * cosangled2 * sinangled2
+        segmentratioDaughter21 = -0.5*(bval/aval)+math.sqrt(math.pow(bval,2)-4.0*aval*cval)/(2.0*aval)
+        print('segment ratios = ', segmentratioDaughter11, segmentratioDaughter21)
+
+        # #FIND THE BIGGEST and pick that
+        # xlensegmentd1 = segmentratioDaughter1 if(segmentratioDaughter1>segmentratioDaughter11) else segmentratioDaughter11
+        # xlensegmentd2 = segmentratioDaughter2 if(segmentratioDaughter2>segmentratioDaughter21) else segmentratioDaughter21
+        xlensegmentd1 = segmentratioDaughter11
+        xlensegmentd2 = segmentratioDaughter21
+
+        print('xlen seg ratios = ', xlensegmentd1, xlensegmentd2)
+
+        ###########################################################################################
+        # Central path
+        cxparent = [ [ tracheaoriginx, tracheaoriginy, tracheaoriginz ],
+               [ tracheaoriginx, tracheaoriginy, tracheaoriginz + xlensegmentparent*parentsegmentLength ] ]
+        cd1parent = [ [ 0.0, 0.0, 1.0 ], [ 0.0, 0.0, 1.0 ] ]
+        cd2parent = [ [ 0.0, 1.0, 0.0 ], [ 0.0, 1.0, 0.0 ] ]
+        cd12parent = [ [0.0, 0.0, 0.0 ], [ 0.0, 0.0, 0.0 ] ]
 
         ##DAUGHETER 1
         cxdaughter1 = [[tracheaoriginx + xlensegmentd1 * daughter1segmentLength * sinangled1, tracheaoriginy,
@@ -194,6 +215,8 @@ class MeshType_2d_airwaybifurcation1(Scaffold_base):
         cd1daughter2 = [ [ -sinangled2, 0.0, cosangled2 ], [ -sinangled2, 0.0, cosangled2 ] ]
         cd2daughter2 = [ [ cosangled2, 0.0, sinangled2 ], [ cosangled2, 0.0, sinangled2 ] ]
         cd12daughter2 = [ [0.0, 0.0, 0.0 ], [ 0.0, 0.0, 0.0 ] ]
+
+        ###########################################################################################
 
         # Sample central path - PARENT
         sxparent, sd1parent, separent, sxiparent, ssfparent = \
@@ -248,7 +271,7 @@ class MeshType_2d_airwaybifurcation1(Scaffold_base):
 
         airwaysegmentTubeMeshInnerPoints = AirwaySegmentTubeMeshInnerPoints(
             region, elementsCountAround, elementsCountAlongSegment,
-            xlensegmentparent*parentsegmentLength, xlensegmentd1*daughter1segmentLength, xlensegmentd2*daughter2segmentLength,
+            xlensegmentparent*parentsegmentLength, (1-xlensegmentd1)*daughter1segmentLength, (1-xlensegmentd2)*daughter2segmentLength,
             wallThickness, radiusparentAlongSegment, radiusDaugh1AlongSegment,
             radiusDaugh2AlongSegment, dRadiusDaugh2AlongSegment,
             dRadiusDaugh1AlongSegment, dRadiusDaugh2AlongSegment, startPhase)
@@ -276,7 +299,7 @@ class MeshType_2d_airwaybifurcation1(Scaffold_base):
             d1ParentInner, d1Daugh1Inner, d1Daugh2Inner,
             d2ParentInner, d2Daugh1Inner, d2Daugh2Inner,
             segmentAxisParent, segmentAxisDaughter1, segmentAxisDaughter2,
-            xlensegmentparent*parentsegmentLength, xlensegmentd2*daughter1segmentLength, xlensegmentd2*daughter2segmentLength,
+            xlensegmentparent*parentsegmentLength, (1-xlensegmentd1)*daughter1segmentLength, (1-xlensegmentd2)*daughter2segmentLength,
             sxparent, sxDaugh1, sxDaugh2,
             sd1parent, sd1Daugh1, sd1Daugh2,
             sd2parent, sd2Daugh1, sd2Daugh2,
@@ -320,7 +343,6 @@ class MeshType_2d_airwaybifurcation1(Scaffold_base):
                  d2junctionOuter, d2junctionInner,
                  elementsCountAround, elementsCountAlongSegment,
                 nodeIdentifier, elementIdentifier, useCrossDerivatives)
-
 
         # print('calling create surf node = ', nodeIdentifier)
         # print('NodeIdentifier = ', nodeIdentifier)
@@ -537,6 +559,7 @@ def getAirwaySegmentInnerPoints(region, elementsCountAround, elementsCountAlongS
         radius = interp.interpolateCubicHermite([startRadiusDaugh1], [startRadiusDaugh1Derivative],
                                                 [endRadiusDaugh1], [endRadiusDaugh1Derivative], xi)[0]
         sRadiusDaugh1AlongSegment.append(radius)
+
         z = daugh1segmentLength / elementsCountAlongSegment * n2 + startPhase / 360.0 * daugh1segmentLength
 
         if n2 == elementsCountAlongSegment:

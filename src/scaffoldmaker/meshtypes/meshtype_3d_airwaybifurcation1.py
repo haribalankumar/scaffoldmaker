@@ -39,8 +39,8 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
             'Number of elements along' : 2,
             'Number of elements around' : 4,
             'Number of elements through wall': 1,
-            'Daughter1 angle': 45,
-            'Daughter2 angle': 45,
+            'Daughter1 angle': 25,
+            'Daughter2 angle': 55,
             'Daughter interradius factor': 1.0,
             'Use cross derivatives' : False,
             'Use linear through wall': True,
@@ -120,9 +120,9 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
         ########################################################################
         #### centerline details
         ## typically comes from a centerline definition. currently hardcoding it
-        parentsegmentLength = 1.1 ##When using centerline this is trach length - junctionheight
-        daughter1segmentLength = 0.9 ##When using centerline this is trach length - junctionheight
-        daughter2segmentLength = 0.9 ##When using centerline this is trach length - junctionheight
+        parentsegmentLength = 1.0 ##When using centerline this is trach length - junctionheight
+        daughter1segmentLength = 0.8 ##When using centerline this is trach length - junctionheight
+        daughter2segmentLength = 0.6 ##When using centerline this is trach length - junctionheight
 
         elementsCountAlongSegment = 2
 
@@ -154,14 +154,8 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
         segmentCount = 1  # Hardcoded for starters
 
 
-        xlensegmentparent = 0.85
+        xlensegmentparent = 0.9
 
-        # Central path
-        cxparent = [ [ tracheaoriginx, tracheaoriginy, tracheaoriginz ],
-               [ tracheaoriginx, tracheaoriginy, tracheaoriginz + xlensegmentparent*parentsegmentLength ] ]
-        cd1parent = [ [ 0.0, 0.0, 1.0 ], [ 0.0, 0.0, 1.0 ] ]
-        cd2parent = [ [ 0.0, 1.0, 0.0 ], [ 0.0, 1.0, 0.0 ] ]
-        cd12parent = [ [0.0, 0.0, 0.0 ], [ 0.0, 0.0, 0.0 ] ]
 
         #Split ratio - decide where branching starts in daughter branches
         #################################################################
@@ -170,14 +164,45 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
         cosangled2 = math.cos(math.pi/180.0 * (daughter2angle))
         sinangled2 = math.sin(math.pi/180.0 * (daughter2angle))
 
-        segmentratioDaughter2 = 1.12
-        segmentratioDaughter1 = (startRadiusDaugh1/endRadiusparent)*cosangled1\
-                                -(startRadiusDaugh2/endRadiusparent)*cosangled2+segmentratioDaughter2
 
-        xlensegmentd1 = endRadiusparent*segmentratioDaughter1/(daughter1segmentLength*sinangled1)
-        xlensegmentd2 = endRadiusparent*segmentratioDaughter2/(daughter2segmentLength*sinangled2)
+        # xlensegment is the proportion of branch lengths1 at which the branchlength starts
+        # This offset value will be calculated from branch angle, daughter radius and daughter lengths.
+        # The offset ensures smooth transition from parent to daughter
+        # Having some bugs in this algorithm. Need to revisit
 
-        ##DAUGHETER 1
+        # segmentratioDaughter1 = 2.0*startRadiusDaugh1*cosangled1/(daughter1segmentLength*sinangled1)
+        # segmentratioDaughter2 = 2.0*startRadiusDaugh2*cosangled2/(daughter2segmentLength*sinangled2)
+        # print('segment ratios = ', segmentratioDaughter1, segmentratioDaughter2)
+
+        cval = -math.pow(1.3*endRadiusparent,2) + math.pow(cosangled1*startRadiusDaugh1,2)
+        aval = math.pow(daughter1segmentLength,2)*math.pow(sinangled1,2)
+        bval = 2 * daughter1segmentLength * endRadiusDaugh1 * cosangled1 * sinangled1
+        segmentratioDaughter11 = -0.5*(bval/aval)+math.sqrt(math.pow(bval,2)-4.0*aval*cval)/(2.0*aval)
+
+        cval = -math.pow(1.3*endRadiusparent,2) + math.pow(cosangled2*endRadiusDaugh2,2)
+        aval = math.pow(daughter2segmentLength,2)*math.pow(sinangled2,2)
+        bval = 2 * daughter2segmentLength * endRadiusDaugh2 * cosangled2 * sinangled2
+        segmentratioDaughter21 = -0.5*(bval/aval)+math.sqrt(math.pow(bval,2)-4.0*aval*cval)/(2.0*aval)
+        print('segment ratios = ', segmentratioDaughter11, segmentratioDaughter21)
+
+        # #FIND THE BIGGEST and pick that
+        # xlensegmentd1 = segmentratioDaughter1 if(segmentratioDaughter1>segmentratioDaughter11) else segmentratioDaughter11
+        # xlensegmentd2 = segmentratioDaughter2 if(segmentratioDaughter2>segmentratioDaughter21) else segmentratioDaughter21
+        xlensegmentd1 = segmentratioDaughter11
+        xlensegmentd2 = segmentratioDaughter21
+
+        print('xlen seg ratios = ', xlensegmentd1, xlensegmentd2)
+
+
+        ####################################################################################
+        # Central path - SAMPLE
+        cxparent = [[tracheaoriginx, tracheaoriginy, tracheaoriginz],
+                    [tracheaoriginx, tracheaoriginy, tracheaoriginz + xlensegmentparent * parentsegmentLength]]
+        cd1parent = [[0.0, 0.0, 1.0], [0.0, 0.0, 1.0]]
+        cd2parent = [[0.0, 1.0, 0.0], [0.0, 1.0, 0.0]]
+        cd12parent = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
+
+        ##DAUGHETER 1 - SAMPLE SEGMENT
         cxdaughter1 = [[tracheaoriginx + xlensegmentd1 * daughter1segmentLength * sinangled1, tracheaoriginy,
                tracheaoriginz + parentsegmentLength + xlensegmentd1 * daughter1segmentLength * cosangled1],
               [tracheaoriginx + daughter1segmentLength * sinangled1, tracheaoriginy,
@@ -186,7 +211,7 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
         cd2daughter1 = [[-cosangled1, 0.0, sinangled1], [-cosangled1, 0.0, sinangled1]]
         cd12daughter1 = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
 
-        ##DAUGHETER 2
+        ##DAUGHETER 2 - SAMPLE SEGMENT
         cxdaughter2 = [ [ tracheaoriginx-xlensegmentd2*daughter2segmentLength*sinangled2, tracheaoriginy,
                  tracheaoriginz+parentsegmentLength+xlensegmentd2*daughter2segmentLength*cosangled2 ],
                [ tracheaoriginx-daughter2segmentLength*sinangled2, tracheaoriginy,
@@ -209,7 +234,6 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
         sxDaugh2, sd1Daugh2, seDaugh2, sxiDaugh2, ssfDaugh2 = \
             interp.sampleCubicHermiteCurves(cxdaughter2, cd1daughter2, elementsCountAlongSegment*segmentCount)
         sd2Daugh2 = interp.interpolateSampleCubicHermite(cd2daughter2, cd12daughter2, seDaugh2, sxiDaugh2, ssfDaugh2)[0]
-
 
         # Find parameter variation along elementsCountAlongSegment
         radiusparentAlongSegment = []
@@ -275,7 +299,7 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
             d1ParentInner, d1Daugh1Inner, d1Daugh2Inner,
             d2ParentInner, d2Daugh1Inner, d2Daugh2Inner,
             segmentAxisParent, segmentAxisDaughter1, segmentAxisDaughter2,
-            xlensegmentparent*parentsegmentLength, xlensegmentd2*daughter1segmentLength, xlensegmentd2*daughter2segmentLength,
+            xlensegmentparent*parentsegmentLength, xlensegmentd1*daughter1segmentLength, xlensegmentd2*daughter2segmentLength,
             sxparent, sxDaugh1, sxDaugh2,
             sd1parent, sd1Daugh1, sd1Daugh2,
             sd2parent, sd2Daugh1, sd2Daugh2,
