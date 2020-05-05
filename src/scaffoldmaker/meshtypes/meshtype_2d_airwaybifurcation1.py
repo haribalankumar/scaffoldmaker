@@ -192,7 +192,7 @@ class MeshType_2d_airwaybifurcation1(Scaffold_base):
                [ tracheaoriginx-daughter2segmentLength*sinangled2, tracheaoriginy,
                  tracheaoriginz+parentsegmentLength+daughter2segmentLength*cosangled2] ]
         cd1daughter2 = [ [ -sinangled2, 0.0, cosangled2 ], [ -sinangled2, 0.0, cosangled2 ] ]
-        cd2daughter2 = [ [ cosangled2, 0.0, sinangled2 ], [ sinangled2, 0.0, sinangled2 ] ]
+        cd2daughter2 = [ [ cosangled2, 0.0, sinangled2 ], [ cosangled2, 0.0, sinangled2 ] ]
         cd12daughter2 = [ [0.0, 0.0, 0.0 ], [ 0.0, 0.0, 0.0 ] ]
 
         # Sample central path - PARENT
@@ -285,8 +285,10 @@ class MeshType_2d_airwaybifurcation1(Scaffold_base):
 
         # Form junction  points
         ###############################
-        xjunctionOuter, xjunctionInner, d1junction, d2junction \
-            = tubebifurcationmesh.createjunctionAirwaySegmentPoints(
+        xjunctionOuter, xjunctionInner, \
+        d1junctionOuter, d1junctionInner, \
+        d2junctionOuter, d2junctionInner \
+            = tubebifurcationmesh.createjunctionAirwaySurfaceSegmentPoints(
             xParentWarpedList, xDaugh1WarpedList, xDaugh2WarpedList,
             d1ParentWarpedList, d1Daugh1WarpedList, d1Daugh2WarpedList,
             d2ParentWarpedList, d2Daugh1WarpedList, d2Daugh2WarpedList,
@@ -313,7 +315,9 @@ class MeshType_2d_airwaybifurcation1(Scaffold_base):
                  xParentWarpedList, d1ParentWarpedList, d2ParentWarpedList,
                  xDaugh1WarpedList, d1Daugh1WarpedList, d2Daugh1WarpedList,
                  xDaugh2WarpedList, d1Daugh2WarpedList, d2Daugh2WarpedList,
-                 xjunctionOuter, xjunctionInner, d1junction,d2junction,
+                 xjunctionOuter, xjunctionInner,
+                 d1junctionOuter, d1junctionInner,
+                 d2junctionOuter, d2junctionInner,
                  elementsCountAround, elementsCountAlongSegment,
                 nodeIdentifier, elementIdentifier, useCrossDerivatives)
 

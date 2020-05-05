@@ -192,7 +192,7 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
                [ tracheaoriginx-daughter2segmentLength*sinangled2, tracheaoriginy,
                  tracheaoriginz+parentsegmentLength+daughter2segmentLength*cosangled2] ]
         cd1daughter2 = [ [ -sinangled2, 0.0, cosangled2 ], [ -sinangled2, 0.0, cosangled2 ] ]
-        cd2daughter2 = [ [ cosangled2, 0.0, sinangled2 ], [ sinangled2, 0.0, sinangled2 ] ]
+        cd2daughter2 = [ [ cosangled2, 0.0, sinangled2 ], [ cosangled2, 0.0, sinangled2 ] ]
         cd12daughter2 = [ [0.0, 0.0, 0.0 ], [ 0.0, 0.0, 0.0 ] ]
 
         # Sample central path - PARENT
@@ -313,7 +313,6 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
                 elementsCountAround, elementsCountAlongSegment,
                 elementsCountThroughWall, transitElementList)
 
-
         # Create coordinates and derivatives - JUNCTION
         xJunctionOuterList, d1JunctionOuterList, d2JunctionOuterList, d3JunctionOuterList, \
         xJunctionInnerList, d1JunctionInnerList, d2JunctionInnerList, d3JunctionInnerList, \
@@ -325,7 +324,6 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
                 elementsCountAround, elementsCountAlongSegment,
                 elementsCountThroughWall, transitElementList)
 
-
         ##Create nodes and elements
         ##############################
         nextNodeIdentifier, nextElementIdentifier = \
@@ -335,7 +333,7 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
                  xDaughter1List, d1Daughter1List, d2Daughter1List, d3Daughter1List,
                  xDaughter2List, d1Daughter2List, d2Daughter2List, d3Daughter2List,
                  xJunctionOuterList, xJunctionInnerList, d1JunctionOuterList, d1JunctionInnerList,
-                 d2JunctionOuterList,d2JunctionInnerList,
+                 d2JunctionOuterList, d2JunctionInnerList,
                  d3JunctionOuterList, d3JunctionInnerList,
                  elementsCountAround, elementsCountAlongSegment,
                  nodeIdentifier, elementIdentifier, useCubicHermiteThroughWall, useCrossDerivatives)
@@ -639,17 +637,15 @@ def getAirwaySegmentInnerPoints(region, elementsCountAround, elementsCountAlongS
 
     # Calculate z mid-point for each element set along the segment
     faceDaughter2MidPointsZ = []
-    lengthToFirstPhase = startPhase / 360.0 * daugh2segmentLength
+    lengthToFirstPhase = startPhase / 360.0 * daugh1segmentLength
     for n2 in range(elementsCountAlongSegment + 1):
         faceDaughter2MidPointsZ += [lengthToFirstPhase +
                                  n2 * daugh2segmentLength / elementsCountAlongSegment]
-
 
     # WALL THICKNESS - variable thickness not coded yet
     for n2 in range(elementsCountAlongSegment + 1):
         contractedWallThickness = wallThickness
         contractedWallThicknessList.append(contractedWallThickness)
-
 
     return xParentFinal, xDaugh1Final, xDaugh2Final, \
            d1ParentFinal, d1Daugh1Final, d1Daugh2Final, \
@@ -657,3 +653,205 @@ def getAirwaySegmentInnerPoints(region, elementsCountAround, elementsCountAlongS
            transitElementList, contractedWallThicknessList,\
            segmentAxisParent, segmentAxisDaugh1, segmentAxisDaugh2, \
            faceParentMidPointsZ, faceDaughter1MidPointsZ, faceDaughter2MidPointsZ
+
+
+
+# def getAirwaySegmentInnerPoints(region, elementsCountAround, elementsCountAlongSegment,
+#                                 parentsegmentLength, daugh1segmentLength, daugh2segmentLength,
+#                                 wallThickness, startRadiusParent, startRadiusDaugh1, startRadiusDaugh2,
+#                                 startRadiusParentDerivative, startRadiusDaugh1Derivative, startRadiusDaugh2Derivative,
+#                                 endRadiusParent, endRadiusDaugh1, endRadiusDaugh2,
+#                                 endRadiusParentDerivative, endRadiusDaugh1Derivative, endRadiusDaugh2Derivative,
+#                                      startPhase):
+#     """
+#     Generates a 3-D cylindrical segment mesh with variable numbers of elements
+#     around, along the central path, and through wall.
+#     :param elementsCountAround: Number of elements around.
+#     :param elementsCountAlongSegment: Number of elements along cylindrical segment.
+#     :param segmentLength: Length of a cylindrical segment.
+#     :param wallThickness: Thickness of wall.
+#     :param startRadius: Inner radius at proximal end.
+#     :param startRadiusDerivative: Rate of change of inner radius at proximal end.
+#     :param endRadius: Inner radius at distal end.
+#     :param endRadiusDerivative: Rate of change of inner radius at distal end.
+#     :param startPhase: Phase at start.
+#     :return coordinates, derivatives on inner surface of a cylindrical segment.
+#     :return transitElementList: stores true if element around is an element that
+#     transits between a big and small element.
+#     :return faceMidPointsZ: z-coordinate of midpoints for each element group
+#     along segment.
+#     """
+#
+#     transitElementList = [0] * elementsCountAround
+#
+#     contractedWallThicknessList = []
+#
+#     # create nodes - PARENT
+#     #######################
+#     segmentAxisParent = [0.0, 0.0, 1.0]
+#
+#     xParentFinal = []
+#     d1ParentFinal = []
+#     d2ParentFinal = []
+#     sRadiusParentAlongSegment = []
+#
+#
+#     for n2 in range(elementsCountAlongSegment + 1):
+#         phase = startPhase + n2 * 360.0 / elementsCountAlongSegment
+#         xi = (phase if phase <= 360.0 else phase - 360.0) / 360.0
+#         radius = interp.interpolateCubicHermite([startRadiusParent], [startRadiusParentDerivative],
+#                                                 [endRadiusParent], [endRadiusParentDerivative], xi)[0]
+#         sRadiusParentAlongSegment.append(radius)
+#         z = parentsegmentLength / elementsCountAlongSegment * n2 + startPhase / 360.0 * parentsegmentLength
+#
+#         if n2 == elementsCountAlongSegment:
+#             z = parentsegmentLength / elementsCountAlongSegment * (1.0*n2-0.25) + startPhase / 360.0 * parentsegmentLength
+#
+#         xLoop, d1Loop = createCirclePoints([0.0, 0.0, z], [radius, 0.0, 0.0], [0.0, radius, 0.0],
+#                                            elementsCountAround, startRadians=0.0)
+#         xParentFinal = xParentFinal + xLoop
+#         d1ParentFinal = d1ParentFinal + d1Loop
+#
+#     # Smooth d2 for segment
+#     smoothd2Raw = []
+#     for n1 in range(elementsCountAround):
+#         nx = []
+#         nd2 = []
+#         for n2 in range(elementsCountAlongSegment + 1):
+#             n = n2 * elementsCountAround + n1
+#             nx.append(xParentFinal[n])
+#             nd2.append(segmentAxisParent)
+#         smoothd2 = interp.smoothCubicHermiteDerivativesLine(nx, nd2)
+#         smoothd2Raw.append(smoothd2)
+#
+#     # Re-arrange smoothd2
+#     for n2 in range(elementsCountAlongSegment + 1):
+#         radius = sRadiusParentAlongSegment[n2]
+#         for n1 in range(elementsCountAround):
+#             d2ParentFinal.append(smoothd2Raw[n1][n2])
+#
+#     # Calculate z mid-point for each element set along the segment
+#     faceParentMidPointsZ = []
+#     lengthToFirstPhase = startPhase / 360.0 * parentsegmentLength
+#     for n2 in range(elementsCountAlongSegment + 1):
+#         faceParentMidPointsZ += [lengthToFirstPhase +
+#                                  n2 * parentsegmentLength / elementsCountAlongSegment]
+#
+#     # create nodes - DAUGHTER1
+#     ############################
+#     segmentAxisDaugh1 = [1.0, 0.0, 0.0]
+#
+#     xDaugh1Final = []
+#     d1Daugh1Final = []
+#     d2Daugh1Final = []
+#     sRadiusDaugh1AlongSegment = []
+#
+#     for n2 in range(elementsCountAlongSegment + 1):
+#         phase = startPhase + n2 * 360.0 / elementsCountAlongSegment
+#         xi = (phase if phase <= 360.0 else phase - 360.0) / 360.0
+#         radius = interp.interpolateCubicHermite([startRadiusDaugh1], [startRadiusDaugh1Derivative],
+#                                                 [endRadiusDaugh1], [endRadiusDaugh1Derivative], xi)[0]
+#         sRadiusDaugh1AlongSegment.append(radius)
+#         z = daugh1segmentLength / elementsCountAlongSegment * n2 + startPhase / 360.0 * daugh1segmentLength
+#
+#         if n2 == elementsCountAlongSegment:
+#             z = daugh1segmentLength / elementsCountAlongSegment * (1.0*n2-0.25) + startPhase / 360.0 * daugh1segmentLength
+#
+#         #xLoop, d1Loop = createCirclePoints([0.0, 0.0, z], [radius, 0.0, 0.0], [0.0, radius, 0.0],
+#         #                                   elementsCountAround, startRadians=0.0)
+#         xLoop, d1Loop = createCirclePoints([z, 0.0, 0.0], [0.0, radius, 0.0], [0.0, 0.0, radius],
+#                                           elementsCountAround, startRadians=0.0)
+#         xDaugh1Final = xDaugh1Final + xLoop
+#         d1Daugh1Final = d1Daugh1Final + d1Loop
+#
+#     # Smooth d2 for segment
+#     smoothd2Raw = []
+#     for n1 in range(elementsCountAround):
+#         nx = []
+#         nd2 = []
+#         for n2 in range(elementsCountAlongSegment + 1):
+#             n = n2 * elementsCountAround + n1
+#             nx.append(xDaugh1Final[n])
+#             nd2.append(segmentAxisDaugh1)
+#         smoothd2 = interp.smoothCubicHermiteDerivativesLine(nx, nd2)
+#         smoothd2Raw.append(smoothd2)
+#
+#     # Re-arrange smoothd2
+#     for n2 in range(elementsCountAlongSegment + 1):
+#         radius = sRadiusDaugh1AlongSegment[n2]
+#         for n1 in range(elementsCountAround):
+#             d2Daugh1Final.append(smoothd2Raw[n1][n2])
+#
+#     # Calculate z mid-point for each element set along the segment
+#     faceDaughter1MidPointsZ = []
+#     lengthToFirstPhase = startPhase / 360.0 * daugh1segmentLength
+#     for n2 in range(elementsCountAlongSegment + 1):
+#         faceDaughter1MidPointsZ += [lengthToFirstPhase +
+#                                  n2 * daugh1segmentLength / elementsCountAlongSegment]
+#
+#     # create nodes - DAUGHTER2
+#     ############################
+#     segmentAxisDaugh2 = [-1.0, 0.0, 0.0]
+#
+#     xDaugh2Final = []
+#     d1Daugh2Final = []
+#     d2Daugh2Final = []
+#     sRadiusDaugh2AlongSegment = []
+#
+#     for n2 in range(elementsCountAlongSegment + 1):
+#         phase = startPhase + n2 * 360.0 / elementsCountAlongSegment
+#         xi = (phase if phase <= 360.0 else phase - 360.0) / 360.0
+#         radius = interp.interpolateCubicHermite([startRadiusDaugh2], [startRadiusDaugh2Derivative],
+#                                                 [endRadiusDaugh2], [endRadiusDaugh2Derivative], xi)[0]
+#         sRadiusDaugh2AlongSegment.append(radius)
+#         z = daugh2segmentLength / elementsCountAlongSegment * n2 + startPhase / 360.0 * daugh2segmentLength
+#
+#         if (n2 == elementsCountAlongSegment):
+#             z = daugh2segmentLength / elementsCountAlongSegment * (1.0*n2 - 0.25) + startPhase / 360.0 * daugh2segmentLength
+#
+#         # xLoop, d1Loop = createCirclePoints([0.0, 0.0, z], [radius, 0.0, 0.0], [0.0, radius, 0.0],
+#         #                                    elementsCountAround, startRadians=0.0)
+#         xLoop, d1Loop = createCirclePoints([-z, 0.0, 0.0], [0.0, radius, 0.0], [0.0, 0.0, radius],
+#                                            elementsCountAround, startRadians=0.0)
+#
+#         xDaugh2Final = xDaugh2Final + xLoop
+#         d1Daugh2Final = d1Daugh2Final + d1Loop
+#
+#     # Smooth d2 for segment
+#     smoothd2Raw = []
+#     for n1 in range(elementsCountAround):
+#         nx = []
+#         nd2 = []
+#         for n2 in range(elementsCountAlongSegment + 1):
+#             n = n2 * elementsCountAround + n1
+#             nx.append(xDaugh2Final[n])
+#             nd2.append(segmentAxisDaugh2)
+#         smoothd2 = interp.smoothCubicHermiteDerivativesLine(nx, nd2)
+#         smoothd2Raw.append(smoothd2)
+#
+#     # Re-arrange smoothd2
+#     for n2 in range(elementsCountAlongSegment + 1):
+#         radius = sRadiusDaugh2AlongSegment[n2]
+#         for n1 in range(elementsCountAround):
+#             d2Daugh2Final.append(smoothd2Raw[n1][n2])
+#
+#     # Calculate z mid-point for each element set along the segment
+#     faceDaughter2MidPointsZ = []
+#     lengthToFirstPhase = startPhase / 360.0 * daugh2segmentLength
+#     for n2 in range(elementsCountAlongSegment + 1):
+#         faceDaughter2MidPointsZ += [lengthToFirstPhase +
+#                                  n2 * daugh2segmentLength / elementsCountAlongSegment]
+#
+#
+#     # WALL THICKNESS - variable thickness not coded yet
+#     for n2 in range(elementsCountAlongSegment + 1):
+#         contractedWallThickness = wallThickness
+#         contractedWallThicknessList.append(contractedWallThickness)
+#
+#
+#     return xParentFinal, xDaugh1Final, xDaugh2Final, \
+#            d1ParentFinal, d1Daugh1Final, d1Daugh2Final, \
+#            d2ParentFinal, d2Daugh1Final, d2Daugh2Final, \
+#            transitElementList, contractedWallThicknessList,\
+#            segmentAxisParent, segmentAxisDaugh1, segmentAxisDaugh2, \
+#            faceParentMidPointsZ, faceDaughter1MidPointsZ, faceDaughter2MidPointsZ
