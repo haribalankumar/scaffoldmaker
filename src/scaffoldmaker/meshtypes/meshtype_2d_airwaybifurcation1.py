@@ -151,17 +151,16 @@ class MeshType_2d_airwaybifurcation1(Scaffold_base):
         startRadiusDaugh2Derivative = 0.0
         endRadiusDaugh2Derivative = 0.0
 
+        cosangled1 = math.cos(math.pi/180.0 * (daughter1angle))
+        sinangled1 = math.sin(math.pi/180.0 * (daughter1angle))
+        cosangled2 = math.cos(math.pi/180.0 * (daughter2angle))
+        sinangled2 = math.sin(math.pi/180.0 * (daughter2angle))
         #######################################################################
         segmentCount = 1
         xlensegmentparent = 0.9
 
         #Split ratio - decide where branching starts in daughter branches
         #################################################################
-        cosangled1 = math.cos(math.pi/180.0 * (daughter1angle))
-        sinangled1 = math.sin(math.pi/180.0 * (daughter1angle))
-        cosangled2 = math.cos(math.pi/180.0 * (daughter2angle))
-        sinangled2 = math.sin(math.pi/180.0 * (daughter2angle))
-
         # xlensegment is the proportion of branch lengths1 at which the branchlength starts
         # This offset value will be calculated from branch angle, daughter radius and daughter lengths.
         # The offset ensures smooth transition from parent to daughter

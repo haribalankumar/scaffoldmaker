@@ -193,7 +193,6 @@ def createjunctionAirwaySegmentPoints(
         d1ParentWarpedList, d1Daugh1WarpedList, d1Daugh2WarpedList,
         d2ParentWarpedList, d2Daugh1WarpedList, d2Daugh2WarpedList,
         segmentAxisParent, segmentAxisDaughter1, segmentAxisDaughter2,
-        parentsegmentLength, daughter1segmentLength, daughter2segmentLength,
         sxparent, sxDaugh1, sxDaugh2,
         sd1parent, sd1Daugh1, sd1Daugh2,
         sd2parent, sd2Daugh1, sd2Daugh2,
@@ -1057,7 +1056,7 @@ def createAirwaySegmentNodesAndElements\
                  xjunctionOuter, xjunctionInner, d1junctionOuter, d1junctionInner,
                  d2junctionOuter, d2junctionInner,
                  d3junctionOuter, d3junctionInner,
-                 elementsCountAround, elementsCountAlong,
+                 elementsCountAround, elementsCountAlong, elementsCountThroughWall,
                  firstNodeIdentifier, firstElementIdentifier,
                  useCubicHermiteThroughWall,
                  useCrossDerivatives):
@@ -1085,6 +1084,7 @@ def createAirwaySegmentNodesAndElements\
     coordinates = findOrCreateFieldCoordinates(fm)
     nodes = fm.findNodesetByFieldDomainType(Field.DOMAIN_TYPE_NODES)
     nodetemplate = nodes.createNodetemplate()
+
     nodetemplate.defineField(coordinates)
     nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_VALUE, 1)
     nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_D_DS1, 1)
@@ -1168,15 +1168,14 @@ def createAirwaySegmentNodesAndElements\
             coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D3_DS1DS2DS3, 1, zero)
         nodeIdentifier = nodeIdentifier + 1
 
-
     # Coordinates field
     for n in range(len(xjunctionOuter)):
         node = nodes.createNode(nodeIdentifier, nodetemplate)
         cache.setNode(node)
         coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, xjunctionOuter[n])
-        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS1, 1, zero)
-        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS2, 1, zero)
-        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS3, 1, zero)
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS1, 1, d1junctionOuter[n])
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS2, 1, d2junctionOuter[n])
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS3, 1, d3junctionOuter[n])
         if useCrossDerivatives:
             coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS2, 1, zero)
             coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS3, 1, zero)
@@ -1189,15 +1188,61 @@ def createAirwaySegmentNodesAndElements\
         node = nodes.createNode(nodeIdentifier, nodetemplate)
         cache.setNode(node)
         coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, xjunctionInner[n])
-        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS1, 1, zero)
-        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS2, 1, zero)
-        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS3, 1, zero)
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS1, 1, d1junctionInner[n])
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS2, 1, d2junctionInner[n])
+        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS3, 1, d3junctionInner[n])
         if useCrossDerivatives:
             coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS2, 1, zero)
             coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS3, 1, zero)
             coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS2DS3, 1, zero)
             coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D3_DS1DS2DS3, 1, zero)
         nodeIdentifier = nodeIdentifier + 1
+
+    #######################
+    # create elements
+    ########################
+    now = elementsCountAround*(elementsCountThroughWall+1)
+    for e2 in range(elementsCountAlong):
+        for e3 in range(elementsCountThroughWall):
+            for e1 in range(elementsCountAround):
+                bni11 = e2*now + e3*elementsCountAround + e1 + 1
+                bni12 = e2*now + e3*elementsCountAround + (e1 + 1) % elementsCountAround + 1
+                bni21 = e2*now + (e3 + 1)*elementsCountAround + e1 + 1
+                bni22 = e2*now + (e3 + 1)*elementsCountAround + (e1 + 1) % elementsCountAround + 1
+                nodeIdentifiers = [ bni11, bni12, bni11 + now, bni12 + now, bni21, bni22, bni21 + now, bni22 + now ]
+
+#               onOpening = e1 > elementsCountAround - 2
+                element = mesh.createElement(elementIdentifier, elementtemplate)
+                element.setNodesByIdentifier(eft, nodeIdentifiers)
+                elementIdentifier = elementIdentifier + 1
+
+    now = elementsCountAround * (elementsCountThroughWall + 1)
+    offset = (elementsCountAlong+1) * elementsCountAround * (elementsCountThroughWall + 1)
+    for e2 in range(elementsCountAlong):
+        for e3 in range(elementsCountThroughWall):
+            for e1 in range(elementsCountAround):
+                bni11 = e2 * now + e3 * elementsCountAround + e1 + (offset+1)
+                bni12 = e2 * now + e3 * elementsCountAround + (e1 + 1) % elementsCountAround + (offset+1)
+                bni21 = e2 * now + (e3 + 1) * elementsCountAround + e1 + (offset+1)
+                bni22 = e2 * now + (e3 + 1) * elementsCountAround + (e1 + 1) % elementsCountAround + (offset+1)
+                nodeIdentifiers = [bni11, bni12, bni11 + now, bni12 + now, bni21, bni22, bni21 + now, bni22 + now]
+                element = mesh.createElement(elementIdentifier, elementtemplate)
+                element.setNodesByIdentifier(eft, nodeIdentifiers)
+                elementIdentifier = elementIdentifier + 1
+
+    now = elementsCountAround * (elementsCountThroughWall + 1)
+    offset = 2 * (elementsCountAlong+1) * elementsCountAround * (elementsCountThroughWall + 1)
+    for e2 in range(elementsCountAlong):
+        for e3 in range(elementsCountThroughWall):
+            for e1 in range(elementsCountAround):
+                bni11 = e2 * now + e3 * elementsCountAround + e1 + (offset+1)
+                bni12 = e2 * now + e3 * elementsCountAround + (e1 + 1) % elementsCountAround + (offset+1)
+                bni21 = e2 * now + (e3 + 1) * elementsCountAround + e1 + (offset+1)
+                bni22 = e2 * now + (e3 + 1) * elementsCountAround + (e1 + 1) % elementsCountAround + (offset+1)
+                nodeIdentifiers = [bni11, bni12, bni11 + now, bni12 + now, bni21, bni22, bni21 + now, bni22 + now]
+                element = mesh.createElement(elementIdentifier, elementtemplate)
+                element.setNodesByIdentifier(eft, nodeIdentifiers)
+                elementIdentifier = elementIdentifier + 1
 
     fm.endChange()
 

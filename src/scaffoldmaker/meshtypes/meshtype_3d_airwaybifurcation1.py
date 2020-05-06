@@ -39,8 +39,8 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
             'Number of elements along' : 2,
             'Number of elements around' : 4,
             'Number of elements through wall': 1,
-            'Daughter1 angle': 25,
-            'Daughter2 angle': 55,
+            'Daughter1 angle': 30,
+            'Daughter2 angle': 50,
             'Daughter interradius factor': 1.0,
             'Use cross derivatives' : False,
             'Use linear through wall': True,
@@ -122,7 +122,7 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
         ## typically comes from a centerline definition. currently hardcoding it
         parentsegmentLength = 1.0 ##When using centerline this is trach length - junctionheight
         daughter1segmentLength = 0.8 ##When using centerline this is trach length - junctionheight
-        daughter2segmentLength = 0.6 ##When using centerline this is trach length - junctionheight
+        daughter2segmentLength = 0.8 ##When using centerline this is trach length - junctionheight
 
         elementsCountAlongSegment = 2
 
@@ -150,21 +150,18 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
         startRadiusDaugh2Derivative = 0.0
         endRadiusDaugh2Derivative = 0.0
 
-        #######################################################################
-        segmentCount = 1  # Hardcoded for starters
-
-
-        xlensegmentparent = 0.9
-
-
-        #Split ratio - decide where branching starts in daughter branches
-        #################################################################
         cosangled1 = math.cos(math.pi/180.0 * (daughter1angle))
         sinangled1 = math.sin(math.pi/180.0 * (daughter1angle))
         cosangled2 = math.cos(math.pi/180.0 * (daughter2angle))
         sinangled2 = math.sin(math.pi/180.0 * (daughter2angle))
 
+        #######################################################################
+        segmentCount = 1  # Hardcoded for starters
 
+        xlensegmentparent = 0.9
+
+        #Split ratio - decide where branching starts in daughter branches
+        #################################################################
         # xlensegment is the proportion of branch lengths1 at which the branchlength starts
         # This offset value will be calculated from branch angle, daughter radius and daughter lengths.
         # The offset ensures smooth transition from parent to daughter
@@ -174,12 +171,12 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
         # segmentratioDaughter2 = 2.0*startRadiusDaugh2*cosangled2/(daughter2segmentLength*sinangled2)
         # print('segment ratios = ', segmentratioDaughter1, segmentratioDaughter2)
 
-        cval = -math.pow(1.3*endRadiusparent,2) + math.pow(cosangled1*startRadiusDaugh1,2)
+        cval = -math.pow(1.4*endRadiusparent,2) + math.pow(cosangled1*startRadiusDaugh1,2)
         aval = math.pow(daughter1segmentLength,2)*math.pow(sinangled1,2)
         bval = 2 * daughter1segmentLength * endRadiusDaugh1 * cosangled1 * sinangled1
         segmentratioDaughter11 = -0.5*(bval/aval)+math.sqrt(math.pow(bval,2)-4.0*aval*cval)/(2.0*aval)
 
-        cval = -math.pow(1.3*endRadiusparent,2) + math.pow(cosangled2*endRadiusDaugh2,2)
+        cval = -math.pow(1.4*endRadiusparent,2) + math.pow(cosangled2*endRadiusDaugh2,2)
         aval = math.pow(daughter2segmentLength,2)*math.pow(sinangled2,2)
         bval = 2 * daughter2segmentLength * endRadiusDaugh2 * cosangled2 * sinangled2
         segmentratioDaughter21 = -0.5*(bval/aval)+math.sqrt(math.pow(bval,2)-4.0*aval*cval)/(2.0*aval)
@@ -273,7 +270,7 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
 
         airwaysegmentTubeMeshInnerPoints = AirwaySegmentTubeMeshInnerPoints(
             region, elementsCountAround, elementsCountAlongSegment,
-            xlensegmentparent*parentsegmentLength, xlensegmentd1*daughter1segmentLength, xlensegmentd2*daughter2segmentLength,
+            xlensegmentparent*parentsegmentLength, (1-xlensegmentd1)*daughter1segmentLength, (1-xlensegmentd2)*daughter2segmentLength,
             wallThickness, radiusparentAlongSegment, radiusDaugh1AlongSegment,
             radiusDaugh2AlongSegment, dRadiusDaugh2AlongSegment,
             dRadiusDaugh1AlongSegment, dRadiusDaugh2AlongSegment, startPhase)
@@ -299,7 +296,7 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
             d1ParentInner, d1Daugh1Inner, d1Daugh2Inner,
             d2ParentInner, d2Daugh1Inner, d2Daugh2Inner,
             segmentAxisParent, segmentAxisDaughter1, segmentAxisDaughter2,
-            xlensegmentparent*parentsegmentLength, xlensegmentd1*daughter1segmentLength, xlensegmentd2*daughter2segmentLength,
+            xlensegmentparent*parentsegmentLength, (1-xlensegmentd1)*daughter1segmentLength, (1-xlensegmentd2)*daughter2segmentLength,
             sxparent, sxDaugh1, sxDaugh2,
             sd1parent, sd1Daugh1, sd1Daugh2,
             sd2parent, sd2Daugh1, sd2Daugh2,
@@ -317,7 +314,6 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
             d1ParentWarpedList, d1Daugh1WarpedList, d1Daugh2WarpedList,
             d2ParentWarpedList, d2Daugh1WarpedList, d2Daugh2WarpedList,
             segmentAxisParent, segmentAxisDaughter1, segmentAxisDaughter2,
-            parentsegmentLength, daughter1segmentLength, daughter2segmentLength,
             sxparent, sxDaugh1, sxDaugh2,
             sd1parent, sd1Daugh1, sd1Daugh2,
             sd2parent, sd2Daugh1, sd2Daugh2,
@@ -359,7 +355,7 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
                  xJunctionOuterList, xJunctionInnerList, d1JunctionOuterList, d1JunctionInnerList,
                  d2JunctionOuterList, d2JunctionInnerList,
                  d3JunctionOuterList, d3JunctionInnerList,
-                 elementsCountAround, elementsCountAlongSegment,
+                 elementsCountAround, elementsCountAlongSegment, elementsCountThroughWall,
                  nodeIdentifier, elementIdentifier, useCubicHermiteThroughWall, useCrossDerivatives)
 
         # nextNodeIdentifier, nextElementIdentifier = \
