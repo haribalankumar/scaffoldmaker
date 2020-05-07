@@ -56,12 +56,13 @@ def createjunctionAirwaySurfaceSegmentPoints(
 
     n2 = elementsCountAlongSegment * nSegment + elementsCountAlongSegment
     n2t = elementsCountAround*(elementsCountAlongSegment+1)
+    lastring = (elementsCountAlongSegment) * elementsCountAround
 
     #JUNCTION OUTER
     #################
     nx = []
     nd2 = []
-    xParentAlongSegment = xParentWarpedList[9]
+    xParentAlongSegment = xParentWarpedList[lastring+1]
     xDaugh1AlongSegment = xDaugh1WarpedList[2]
     xmid = [(xParentAlongSegment[j]+sxparent[n2][j])/2.0 for j in range(3)]
     xjunctionOuter1 = [0.35*xmid[j]+0.65*xDaugh1AlongSegment[j] for j in range(3)]
@@ -71,7 +72,7 @@ def createjunctionAirwaySurfaceSegmentPoints(
     nx.append(xParentAlongSegment)
     nx.append(xjunctionOuter1)
     nx.append(xDaugh1AlongSegment)
-    nd2.append(d2ParentWarpedList[9])
+    nd2.append(d2ParentWarpedList[lastring+1])
     nd2.append(zero)
     nd2.append(d2Daugh1WarpedList[2])
     smoothedd2 = interp.smoothCubicHermiteDerivativesLine(nx, nd2, fixStartDerivative = True, fixEndDerivative = True)
@@ -79,17 +80,16 @@ def createjunctionAirwaySurfaceSegmentPoints(
 
     nx = []
     nd2 = []
-    xParentAlongSegment = xParentWarpedList[11]
+    xParentAlongSegment = xParentWarpedList[lastring+3]
     xDaugh2AlongSegment = xDaugh2WarpedList[2]
     xmid = [(xParentAlongSegment[j]+sxparent[n2][j])/2.0 for j in range(3)]
     xjunctionOuter2 = [0.35*xmid[j]+0.65*xDaugh2AlongSegment[j] for j in range(3)]
     xjunctionOuterList.append(xjunctionOuter2)
-
     #deriv calc next
     nx.append(xParentAlongSegment)
     nx.append(xjunctionOuter2)
     nx.append(xDaugh2AlongSegment)
-    nd2.append(d2ParentWarpedList[11])
+    nd2.append(d2ParentWarpedList[lastring+3])
     nd2.append(zero)
     nd2.append(d2Daugh2WarpedList[2])
     smoothedd2 = interp.smoothCubicHermiteDerivativesLine(nx, nd2, fixStartDerivative = True, fixEndDerivative = True)
@@ -99,7 +99,7 @@ def createjunctionAirwaySurfaceSegmentPoints(
     nd2 = []
     xDaugh1AlongSegment = xDaugh1WarpedList[0]
     xDaugh2AlongSegment = xDaugh2WarpedList[0]
-    xjunctionOuter3 = [(2*(xDaugh1AlongSegment[j]+xDaugh2AlongSegment[j])+sxparent[n2][j])/5.0 for j in range(3)]
+    xjunctionOuter3 = [(7*(xDaugh1AlongSegment[j]+xDaugh2AlongSegment[j])+2*sxparent[n2][j])/16.0 for j in range(3)]
     xjunctionOuterList.append(xjunctionOuter3)
     nx.append(xDaugh1AlongSegment)
     nx.append(xjunctionOuter3)
@@ -113,34 +113,36 @@ def createjunctionAirwaySurfaceSegmentPoints(
 
     #JUNCTION INNER
     ##################
-    xParentAlongSegment = xParentWarpedList[8]
+    xParentAlongSegment = xParentWarpedList[lastring]
     xDaugh1AlongSegment = xDaugh1WarpedList[1]
-    xDaugh2AlongSegment = xDaugh2WarpedList[1]
+    xDaugh2AlongSegment = xDaugh2WarpedList[3]
     xjunctionInner1 = [(xParentAlongSegment[j]+xDaugh1AlongSegment[j]+xDaugh2AlongSegment[j])/3.0 for j in range(3)]
     xjunctionInnerList.append(xjunctionInner1)
 
-    xParentAlongSegment = xParentWarpedList[10]
+    xParentAlongSegment = xParentWarpedList[lastring+2]
     xDaugh1AlongSegment = xDaugh1WarpedList[3]
-    xDaugh2AlongSegment = xDaugh2WarpedList[3]
+    xDaugh2AlongSegment = xDaugh2WarpedList[1]
     xjunctionInner2 = [(xParentAlongSegment[j]+xDaugh1AlongSegment[j]+xDaugh2AlongSegment[j])/3.0 for j in range(3)]
     xjunctionInnerList.append(xjunctionInner2)
 
     ##DERIVS
+    #-----------
     nx = []
     nd2 = []
-    nx.append(xDaugh2WarpedList[elementsCountAround-1])
+    nx.append(xDaugh2WarpedList[elementsCountAround-3])
     nx.append(xjunctionInner2)
     nx.append(xjunctionOuter1)
     nx.append(xjunctionInner1)
-    nx.append(xDaugh2WarpedList[elementsCountAround-2])
-    d2temp = [-1.0 * d2Daugh2WarpedList[elementsCountAround-1][j] for j in range(3)]
+    nx.append(xDaugh2WarpedList[elementsCountAround-1])
+    d2temp = [-1.0 * d2Daugh2WarpedList[elementsCountAround-3][j] for j in range(3)]
     nd2.append(d2temp)
     nd2.append(zero)
     nd2.append(zero)
     nd2.append(zero)
-    nd2.append(d2Daugh2WarpedList[elementsCountAround-2])
+    nd2.append(d2Daugh2WarpedList[elementsCountAround-1])
     smoothedd2 = interp.smoothCubicHermiteDerivativesLine(nx, nd2, fixStartDerivative = True, fixEndDerivative = True)
-    d1junctionOuterList.append(smoothedd2[2])
+    d2temp = [-1.0 * smoothedd2[2][j] for j in range(3)]
+    d1junctionOuterList.append(d2temp)
     d2junctionInnerList.append(smoothedd2[3])
     d1junctionInnerList.append(smoothedd2[1])
     d1junctionInnerList.append(smoothedd2[3])
@@ -152,14 +154,15 @@ def createjunctionAirwaySurfaceSegmentPoints(
     nx.append(xjunctionInner2)
     nx.append(xjunctionOuter2)
     nx.append(xjunctionInner1)
-    nx.append(xDaugh1WarpedList[elementsCountAround-2])
+    nx.append(xDaugh1WarpedList[elementsCountAround-3])
     d2temp = [-1.0 * d2Daugh1WarpedList[elementsCountAround-1][j] for j in range(3)]
     nd2.append(d2temp)
     nd2.append(zero)
     nd2.append(zero)
     nd2.append(zero)
-    nd2.append(d2Daugh1WarpedList[elementsCountAround-2])
+    nd2.append(d2Daugh1WarpedList[elementsCountAround-3])
     smoothedd2 = interp.smoothCubicHermiteDerivativesLine(nx, nd2, fixStartDerivative = True, fixEndDerivative = True)
+    d2temp = [-1.0 * smoothedd2[2][j] for j in range(3)]
     d1junctionOuterList.append(smoothedd2[2])
     d2temp = [-1.0 * smoothedd2[1][j] for j in range(3)]
     d2junctionInnerList.append(d2temp)
@@ -225,21 +228,146 @@ def createjunctionAirwaySegmentPoints(
 
     n2 = elementsCountAlongSegment * nSegment + elementsCountAlongSegment
     n2t = elementsCountAround*(elementsCountAlongSegment+1)
+    lastring = (elementsCountAlongSegment) * elementsCountAround
+
+    # #JUNCTION OUTER
+    # #################
+    # nx = []
+    # nd2 = []
+    # xParentAlongSegment = xParentWarpedList[9]
+    # xDaugh1AlongSegment = xDaugh1WarpedList[2]
+    # xmid = [(xParentAlongSegment[j]+sxparent[n2][j])/2.0 for j in range(3)]
+    # xjunctionOuter1 = [(xmid[j]+xDaugh1AlongSegment[j])/2.0 for j in range(3)]
+    # xjunctionOuterList.append(xjunctionOuter1)
+    # ###deriv calc next
+    # nx.append(xParentAlongSegment)
+    # nx.append(xjunctionOuter1)
+    # nx.append(xDaugh1AlongSegment)
+    # nd2.append(d2ParentWarpedList[9])
+    # nd2.append(zero)
+    # nd2.append(d2Daugh1WarpedList[2])
+    # smoothedd2 = interp.smoothCubicHermiteDerivativesLine(nx, nd2, fixStartDerivative = True, fixEndDerivative = True)
+    # d2junctionOuterList.append(smoothedd2[1])
+    #
+    # nx = []
+    # nd2 = []
+    # xParentAlongSegment = xParentWarpedList[11]
+    # xDaugh2AlongSegment = xDaugh2WarpedList[2]
+    # xmid = [(xParentAlongSegment[j]+sxparent[n2][j])/2.0 for j in range(3)]
+    # xjunctionOuter2 = [(xmid[j]+xDaugh2AlongSegment[j])/2.0 for j in range(3)]
+    # xjunctionOuterList.append(xjunctionOuter2)
+    # ###deriv calc next
+    # nx.append(xParentAlongSegment)
+    # nx.append(xjunctionOuter2)
+    # nx.append(xDaugh2AlongSegment)
+    # nd2.append(d2ParentWarpedList[11])
+    # nd2.append(zero)
+    # nd2.append(d2Daugh2WarpedList[2])
+    # smoothedd2 = interp.smoothCubicHermiteDerivativesLine(nx, nd2, fixStartDerivative = True, fixEndDerivative = True)
+    # d2junctionOuterList.append(smoothedd2[1])
+    #
+    # nx = []
+    # nd2 = []
+    # xDaugh1AlongSegment = xDaugh1WarpedList[0]
+    # xDaugh2AlongSegment = xDaugh2WarpedList[0]
+    # xjunctionOuter3 = [(2*(xDaugh1AlongSegment[j]+xDaugh2AlongSegment[j])+sxparent[n2][j])/5.0 for j in range(3)]
+    # xjunctionOuterList.append(xjunctionOuter3)
+    # nx.append(xDaugh1AlongSegment)
+    # nx.append(xjunctionOuter3)
+    # nx.append(xDaugh2AlongSegment)
+    # nd2.append(d1ParentWarpedList[0])
+    # nd2.append(zero)
+    # d2temp = [-1.0 * d2Daugh2WarpedList[0][j] for j in range(3)]
+    # nd2.append(d2temp)
+    # smoothedd2 = interp.smoothCubicHermiteDerivativesLine(nx, nd2, fixStartDerivative = True, fixEndDerivative = True)
+    # d2junctionOuterList.append(smoothedd2[1])
+    #
+    # ###JUNCTION INNER
+    # ##################
+    # xParentAlongSegment = xParentWarpedList[8]
+    # xDaugh1AlongSegment = xDaugh1WarpedList[1]
+    # xDaugh2AlongSegment = xDaugh2WarpedList[1]
+    # xjunctionInner1 = [(xParentAlongSegment[j]+xDaugh1AlongSegment[j]+xDaugh2AlongSegment[j])/3.0 for j in range(3)]
+    # xjunctionInnerList.append(xjunctionInner1)
+    #
+    # xParentAlongSegment = xParentWarpedList[10]
+    # xDaugh1AlongSegment = xDaugh1WarpedList[3]
+    # xDaugh2AlongSegment = xDaugh2WarpedList[3]
+    # xjunctionInner2 = [(xParentAlongSegment[j]+xDaugh1AlongSegment[j]+xDaugh2AlongSegment[j])/3.0 for j in range(3)]
+    # xjunctionInnerList.append(xjunctionInner2)
+    #
+    # ###DERIVS
+    # nx = []
+    # nd2 = []
+    # nx.append(xDaugh2WarpedList[elementsCountAround-1])
+    # nx.append(xjunctionInner2)
+    # nx.append(xjunctionOuter1)
+    # nx.append(xjunctionInner1)
+    # nx.append(xDaugh2WarpedList[elementsCountAround-2])
+    # d2temp = [-1.0 * d2Daugh2WarpedList[elementsCountAround-1][j] for j in range(3)]
+    # nd2.append(d2temp)
+    # nd2.append(zero)
+    # nd2.append(zero)
+    # nd2.append(zero)
+    # nd2.append(d2Daugh2WarpedList[elementsCountAround-2])
+    # smoothedd2 = interp.smoothCubicHermiteDerivativesLine(nx, nd2, fixStartDerivative = True, fixEndDerivative = True)
+    # d1junctionOuterList.append(smoothedd2[2])
+    # d2junctionInnerList.append(smoothedd2[3])
+    # d1junctionInnerList.append(smoothedd2[1])
+    # d1junctionInnerList.append(smoothedd2[3])
+    #
+    # ###DERIVS
+    # nx = []
+    # nd2 = []
+    # nx.append(xDaugh1WarpedList[elementsCountAround-1])
+    # nx.append(xjunctionInner2)
+    # nx.append(xjunctionOuter2)
+    # nx.append(xjunctionInner1)
+    # nx.append(xDaugh1WarpedList[elementsCountAround-2])
+    # d2temp = [-1.0 * d2Daugh1WarpedList[elementsCountAround-1][j] for j in range(3)]
+    # nd2.append(d2temp)
+    # nd2.append(zero)
+    # nd2.append(zero)
+    # nd2.append(zero)
+    # nd2.append(d2Daugh1WarpedList[elementsCountAround-2])
+    # smoothedd2 = interp.smoothCubicHermiteDerivativesLine(nx, nd2, fixStartDerivative = True, fixEndDerivative = True)
+    # d1junctionOuterList.append(smoothedd2[2])
+    # d2temp = [-1.0 * smoothedd2[1][j] for j in range(3)]
+    # d2junctionInnerList.append(d2temp)
+    #
+    # ###DERIVS
+    # nx = []
+    # nd2 = []
+    # nx.append(xParentWarpedList[n2t-2])
+    # nx.append(xjunctionInner2)
+    # nx.append(xjunctionOuter3)
+    # nx.append(xjunctionInner1)
+    # nx.append(xParentWarpedList[n2t-4])
+    # nd2.append(d2ParentWarpedList[n2t-2])
+    # nd2.append(zero)
+    # nd2.append(zero)
+    # nd2.append(zero)
+    # d2temp = [(-1.0 * d2ParentWarpedList[n2t-4][j]) for j in range(3)]
+    # nd2.append(d2temp)
+    # smoothedd2 = interp.smoothCubicHermiteDerivativesLine(nx, nd2, fixStartDerivative = True, fixEndDerivative = True)
+    # d2temp = [-1.0 * smoothedd2[2][j] for j in range(3)]
+    # d1junctionOuterList.append(d2temp)
 
     #JUNCTION OUTER
     #################
     nx = []
     nd2 = []
-    xParentAlongSegment = xParentWarpedList[9]
+    xParentAlongSegment = xParentWarpedList[lastring+1]
     xDaugh1AlongSegment = xDaugh1WarpedList[2]
     xmid = [(xParentAlongSegment[j]+sxparent[n2][j])/2.0 for j in range(3)]
-    xjunctionOuter1 = [(xmid[j]+xDaugh1AlongSegment[j])/2.0 for j in range(3)]
+    xjunctionOuter1 = [0.35*xmid[j]+0.65*xDaugh1AlongSegment[j] for j in range(3)]
     xjunctionOuterList.append(xjunctionOuter1)
+
     #deriv calc next
     nx.append(xParentAlongSegment)
     nx.append(xjunctionOuter1)
     nx.append(xDaugh1AlongSegment)
-    nd2.append(d2ParentWarpedList[9])
+    nd2.append(d2ParentWarpedList[lastring+1])
     nd2.append(zero)
     nd2.append(d2Daugh1WarpedList[2])
     smoothedd2 = interp.smoothCubicHermiteDerivativesLine(nx, nd2, fixStartDerivative = True, fixEndDerivative = True)
@@ -247,16 +375,16 @@ def createjunctionAirwaySegmentPoints(
 
     nx = []
     nd2 = []
-    xParentAlongSegment = xParentWarpedList[11]
+    xParentAlongSegment = xParentWarpedList[lastring+3]
     xDaugh2AlongSegment = xDaugh2WarpedList[2]
     xmid = [(xParentAlongSegment[j]+sxparent[n2][j])/2.0 for j in range(3)]
-    xjunctionOuter2 = [(xmid[j]+xDaugh2AlongSegment[j])/2.0 for j in range(3)]
+    xjunctionOuter2 = [0.35*xmid[j]+0.65*xDaugh2AlongSegment[j] for j in range(3)]
     xjunctionOuterList.append(xjunctionOuter2)
     #deriv calc next
     nx.append(xParentAlongSegment)
     nx.append(xjunctionOuter2)
     nx.append(xDaugh2AlongSegment)
-    nd2.append(d2ParentWarpedList[11])
+    nd2.append(d2ParentWarpedList[lastring+3])
     nd2.append(zero)
     nd2.append(d2Daugh2WarpedList[2])
     smoothedd2 = interp.smoothCubicHermiteDerivativesLine(nx, nd2, fixStartDerivative = True, fixEndDerivative = True)
@@ -266,7 +394,7 @@ def createjunctionAirwaySegmentPoints(
     nd2 = []
     xDaugh1AlongSegment = xDaugh1WarpedList[0]
     xDaugh2AlongSegment = xDaugh2WarpedList[0]
-    xjunctionOuter3 = [(2*(xDaugh1AlongSegment[j]+xDaugh2AlongSegment[j])+sxparent[n2][j])/5.0 for j in range(3)]
+    xjunctionOuter3 = [(7*(xDaugh1AlongSegment[j]+xDaugh2AlongSegment[j])+2*sxparent[n2][j])/16.0 for j in range(3)]
     xjunctionOuterList.append(xjunctionOuter3)
     nx.append(xDaugh1AlongSegment)
     nx.append(xjunctionOuter3)
@@ -280,34 +408,36 @@ def createjunctionAirwaySegmentPoints(
 
     #JUNCTION INNER
     ##################
-    xParentAlongSegment = xParentWarpedList[8]
+    xParentAlongSegment = xParentWarpedList[lastring]
     xDaugh1AlongSegment = xDaugh1WarpedList[1]
-    xDaugh2AlongSegment = xDaugh2WarpedList[1]
+    xDaugh2AlongSegment = xDaugh2WarpedList[3]
     xjunctionInner1 = [(xParentAlongSegment[j]+xDaugh1AlongSegment[j]+xDaugh2AlongSegment[j])/3.0 for j in range(3)]
     xjunctionInnerList.append(xjunctionInner1)
 
-    xParentAlongSegment = xParentWarpedList[10]
+    xParentAlongSegment = xParentWarpedList[lastring+2]
     xDaugh1AlongSegment = xDaugh1WarpedList[3]
-    xDaugh2AlongSegment = xDaugh2WarpedList[3]
+    xDaugh2AlongSegment = xDaugh2WarpedList[1]
     xjunctionInner2 = [(xParentAlongSegment[j]+xDaugh1AlongSegment[j]+xDaugh2AlongSegment[j])/3.0 for j in range(3)]
     xjunctionInnerList.append(xjunctionInner2)
 
     ##DERIVS
+    #-----------
     nx = []
     nd2 = []
-    nx.append(xDaugh2WarpedList[elementsCountAround-1])
+    nx.append(xDaugh2WarpedList[elementsCountAround-3])
     nx.append(xjunctionInner2)
     nx.append(xjunctionOuter1)
     nx.append(xjunctionInner1)
-    nx.append(xDaugh2WarpedList[elementsCountAround-2])
-    d2temp = [-1.0 * d2Daugh2WarpedList[elementsCountAround-1][j] for j in range(3)]
+    nx.append(xDaugh2WarpedList[elementsCountAround-1])
+    d2temp = [-1.0 * d2Daugh2WarpedList[elementsCountAround-3][j] for j in range(3)]
     nd2.append(d2temp)
     nd2.append(zero)
     nd2.append(zero)
     nd2.append(zero)
-    nd2.append(d2Daugh2WarpedList[elementsCountAround-2])
+    nd2.append(d2Daugh2WarpedList[elementsCountAround-1])
     smoothedd2 = interp.smoothCubicHermiteDerivativesLine(nx, nd2, fixStartDerivative = True, fixEndDerivative = True)
-    d1junctionOuterList.append(smoothedd2[2])
+    d2temp = [-1.0 * smoothedd2[2][j] for j in range(3)]
+    d1junctionOuterList.append(d2temp)
     d2junctionInnerList.append(smoothedd2[3])
     d1junctionInnerList.append(smoothedd2[1])
     d1junctionInnerList.append(smoothedd2[3])
@@ -315,18 +445,19 @@ def createjunctionAirwaySegmentPoints(
     ##DERIVS
     nx = []
     nd2 = []
-    nx.append(xDaugh1WarpedList[elementsCountAround-1])
+    nx.append(xDaugh1WarpedList[elementsCountAround - 1])
     nx.append(xjunctionInner2)
     nx.append(xjunctionOuter2)
     nx.append(xjunctionInner1)
-    nx.append(xDaugh1WarpedList[elementsCountAround-2])
-    d2temp = [-1.0 * d2Daugh1WarpedList[elementsCountAround-1][j] for j in range(3)]
+    nx.append(xDaugh1WarpedList[elementsCountAround - 3])
+    d2temp = [-1.0 * d2Daugh1WarpedList[elementsCountAround - 1][j] for j in range(3)]
     nd2.append(d2temp)
     nd2.append(zero)
     nd2.append(zero)
     nd2.append(zero)
-    nd2.append(d2Daugh1WarpedList[elementsCountAround-2])
-    smoothedd2 = interp.smoothCubicHermiteDerivativesLine(nx, nd2, fixStartDerivative = True, fixEndDerivative = True)
+    nd2.append(d2Daugh1WarpedList[elementsCountAround - 3])
+    smoothedd2 = interp.smoothCubicHermiteDerivativesLine(nx, nd2, fixStartDerivative=True, fixEndDerivative=True)
+    d2temp = [-1.0 * smoothedd2[2][j] for j in range(3)]
     d1junctionOuterList.append(smoothedd2[2])
     d2temp = [-1.0 * smoothedd2[1][j] for j in range(3)]
     d2junctionInnerList.append(d2temp)

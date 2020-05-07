@@ -610,7 +610,9 @@ def getAirwaySegmentInnerPoints(region, elementsCountAround, elementsCountAlongS
                                  n2 * daugh1segmentLength / elementsCountAlongSegment]
 
     # create nodes - DAUGHTER2
-    ############################
+    # NOTE: THe circle of points axis goes opposite
+    # this has been done to allow appending multiple units past this segment
+    #########################################################################
     segmentAxisDaugh2 = [-1.0, 0.0, 0.0]
 
     xDaugh2Final = []
@@ -631,7 +633,7 @@ def getAirwaySegmentInnerPoints(region, elementsCountAround, elementsCountAlongS
 
         # xLoop, d1Loop = createCirclePoints([0.0, 0.0, z], [radius, 0.0, 0.0], [0.0, radius, 0.0],
         #                                    elementsCountAround, startRadians=0.0)
-        xLoop, d1Loop = createCirclePoints([-z, 0.0, 0.0], [0.0, radius, 0.0], [0.0, 0.0, radius],
+        xLoop, d1Loop = createCirclePoints([-z, 0.0, 0.0], [0.0, -radius, 0.0], [0.0, 0.0, radius],
                                            elementsCountAround, startRadians=0.0)
 
         xDaugh2Final = xDaugh2Final + xLoop

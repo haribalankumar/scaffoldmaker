@@ -37,8 +37,8 @@ class MeshType_2d_airwaybifurcation1(Scaffold_base):
         return {
             'Number of elements along' : 2,
             'Number of elements around' : 4,
-            'Daughter1 angle': 25,
-            'Daughter2 angle': 55,
+            'Daughter1 angle': 30,
+            'Daughter2 angle': 50,
             'Daughter interradius factor': 1.0,
             'Use cross derivatives' : False,
             'Refine': False,
@@ -157,7 +157,28 @@ class MeshType_2d_airwaybifurcation1(Scaffold_base):
         sinangled2 = math.sin(math.pi/180.0 * (daughter2angle))
         #######################################################################
         segmentCount = 1
+
+        #SMOOTHING PARAMETERS FOR EVERY SEGMENT
         xlensegmentparent = 0.9
+        xradsmoothing = 1.3
+        if daughter_xrad>=1.2 and daughter_xrad<1.4:
+            xlensegmentparent = 0.85
+            xradsmoothing = 1.4
+        if daughter_xrad >= 1.4 and daughter_xrad < 1.6:
+            xlensegmentparent = 0.8
+            xradsmoothing = 1.5
+        if daughter_xrad>=1.6:
+            xlensegmentparent = 0.75
+            xradsmoothing = 1.6
+
+        if daughter1angle>=45 or daughter1angle<50:
+            xlensegmentparent = xlensegmentparent * 0.9
+        if daughter1angle >= 50 or daughter1angle < 55:
+            xlensegmentparent = xlensegmentparent * 0.85
+        if daughter2angle>=45 or daughter2angle<50:
+            xlensegmentparent = xlensegmentparent * 0.9
+        if daughter2angle >= 50 or daughter2angle < 55:
+            xlensegmentparent = xlensegmentparent * 0.85
 
         #Split ratio - decide where branching starts in daughter branches
         #################################################################
@@ -170,12 +191,12 @@ class MeshType_2d_airwaybifurcation1(Scaffold_base):
         # segmentratioDaughter2 = 2.0*startRadiusDaugh2*cosangled2/(daughter2segmentLength*sinangled2)
         # print('segment ratios = ', segmentratioDaughter1, segmentratioDaughter2)
 
-        cval = -math.pow(1.3*endRadiusparent,2) + math.pow(cosangled1*startRadiusDaugh1,2)
+        cval = -math.pow(xradsmoothing*endRadiusparent,2) + math.pow(cosangled1*startRadiusDaugh1,2)
         aval = math.pow(daughter1segmentLength,2)*math.pow(sinangled1,2)
         bval = 2 * daughter1segmentLength * endRadiusDaugh1 * cosangled1 * sinangled1
         segmentratioDaughter11 = -0.5*(bval/aval)+math.sqrt(math.pow(bval,2)-4.0*aval*cval)/(2.0*aval)
 
-        cval = -math.pow(1.3*endRadiusparent,2) + math.pow(cosangled2*endRadiusDaugh2,2)
+        cval = -math.pow(xradsmoothing*endRadiusparent,2) + math.pow(cosangled2*endRadiusDaugh2,2)
         aval = math.pow(daughter2segmentLength,2)*math.pow(sinangled2,2)
         bval = 2 * daughter2segmentLength * endRadiusDaugh2 * cosangled2 * sinangled2
         segmentratioDaughter21 = -0.5*(bval/aval)+math.sqrt(math.pow(bval,2)-4.0*aval*cval)/(2.0*aval)
@@ -597,7 +618,9 @@ def getAirwaySegmentInnerPoints(region, elementsCountAround, elementsCountAlongS
                                  n2 * daugh1segmentLength / elementsCountAlongSegment]
 
     # create nodes - DAUGHTER2
-    ############################
+    # NOTE: THe circle of points axis goes opposite
+    # this has been done to allow appending multiple units past this segment
+    #########################################################################
     segmentAxisDaugh2 = [-1.0, 0.0, 0.0]
 
     xDaugh2Final = []
@@ -618,7 +641,7 @@ def getAirwaySegmentInnerPoints(region, elementsCountAround, elementsCountAlongS
 
         # xLoop, d1Loop = createCirclePoints([0.0, 0.0, z], [radius, 0.0, 0.0], [0.0, radius, 0.0],
         #                                    elementsCountAround, startRadians=0.0)
-        xLoop, d1Loop = createCirclePoints([-z, 0.0, 0.0], [0.0, radius, 0.0], [0.0, 0.0, radius],
+        xLoop, d1Loop = createCirclePoints([-z, 0.0, 0.0], [0.0, -radius, 0.0], [0.0, 0.0, radius],
                                            elementsCountAround, startRadians=0.0)
 
         xDaugh2Final = xDaugh2Final + xLoop
