@@ -1590,66 +1590,68 @@ def createAirwaySegmentSurfaceNodesAndElements(region,
     #     elementIdentifier = elementIdentifier + 1
     #
 
-        element = mesh.createElement(elementIdentifier, elementtemplate)
-        nodeIdentifiers = [9, 10, 40, 37]
-        result = element.setNodesByIdentifier(eft, nodeIdentifiers)
-        elementIdentifier = elementIdentifier + 1
+    element = mesh.createElement(elementIdentifier, elementtemplate)
+    nodeIdentifiers = [9, 10, 40, 37]
+    result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+    elementIdentifier = elementIdentifier + 1
 
-        element = mesh.createElement(elementIdentifier, elementtemplate)
-        nodeIdentifiers = [12, 9, 38, 40]
-        result = element.setNodesByIdentifier(eft, nodeIdentifiers)
-        elementIdentifier = elementIdentifier + 1
+    element = mesh.createElement(elementIdentifier, elementtemplate)
+    nodeIdentifiers = [40, 37, 14, 15]
+    result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+    elementIdentifier = elementIdentifier + 1
+    #------------------
+    element = mesh.createElement(elementIdentifier, elementtemplate)
+    nodeIdentifiers = [10, 11, 37, 41]
+    result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+    elementIdentifier = elementIdentifier + 1
 
-        element = mesh.createElement(elementIdentifier, elementtemplate)
-        nodeIdentifiers = [39, 40, 13, 14]
-        result = element.setNodesByIdentifier(eft, nodeIdentifiers)
-        elementIdentifier = elementIdentifier + 1
+    element = mesh.createElement(elementIdentifier, elementtemplate)
+    nodeIdentifiers = [37, 41, 15, 16]
+    result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+    elementIdentifier = elementIdentifier + 1
+    #--------------
+    element = mesh.createElement(elementIdentifier, elementtemplate)
+    nodeIdentifiers = [12, 9, 38, 40]
+    result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+    elementIdentifier = elementIdentifier + 1
 
-        element = mesh.createElement(elementIdentifier, elementtemplate)
-        nodeIdentifiers = [40, 37, 14, 15]
-        result = element.setNodesByIdentifier(eft, nodeIdentifiers)
-        elementIdentifier = elementIdentifier + 1
+    element = mesh.createElement(elementIdentifier, elementtemplate)
+    nodeIdentifiers = [38, 40, 27, 28]
+    result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+    elementIdentifier = elementIdentifier + 1
+    #--------------
+    # JUNCTION BACK
+    element = mesh.createElement(elementIdentifier, elementtemplate)
+    nodeIdentifiers = [11, 12, 41, 38]
+    result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+    elementIdentifier = elementIdentifier + 1
 
-        element = mesh.createElement(elementIdentifier, elementtemplate)
-        nodeIdentifiers = [40, 38, 26, 27]
-        result = element.setNodesByIdentifier(eft, nodeIdentifiers)
-        elementIdentifier = elementIdentifier + 1
+    element = mesh.createElement(elementIdentifier, elementtemplate)
+    nodeIdentifiers = [41, 38, 26, 27]
+    result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+    elementIdentifier = elementIdentifier + 1
+    #--------------
 
-        element = mesh.createElement(elementIdentifier, elementtemplate)
-        nodeIdentifiers = [39, 40, 25, 26]
-        result = element.setNodesByIdentifier(eft, nodeIdentifiers)
-        elementIdentifier = elementIdentifier + 1
+    element = mesh.createElement(elementIdentifier, elementtemplate)
+    nodeIdentifiers = [39, 40, 13, 14]
+    result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+    elementIdentifier = elementIdentifier + 1
 
-        #JUNCTION BACK
-        element = mesh.createElement(elementIdentifier, elementtemplate)
-        nodeIdentifiers = [11, 12, 41, 38]
-        result = element.setNodesByIdentifier(eft, nodeIdentifiers)
-        elementIdentifier = elementIdentifier + 1
+    element = mesh.createElement(elementIdentifier, elementtemplate)
+    nodeIdentifiers = [41, 39, 16, 13]
+    result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+    elementIdentifier = elementIdentifier + 1
+    #------------
 
-        element = mesh.createElement(elementIdentifier, elementtemplate)
-        nodeIdentifiers = [10, 11, 37, 41]
-        result = element.setNodesByIdentifier(eft, nodeIdentifiers)
-        elementIdentifier = elementIdentifier + 1
+    element = mesh.createElement(elementIdentifier, elementtemplate)
+    nodeIdentifiers = [40, 39, 28, 25]
+    result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+    elementIdentifier = elementIdentifier + 1
 
-        element = mesh.createElement(elementIdentifier, elementtemplate)
-        nodeIdentifiers = [41, 39, 28, 25]
-        result = element.setNodesByIdentifier(eft, nodeIdentifiers)
-        elementIdentifier = elementIdentifier + 1
-
-        element = mesh.createElement(elementIdentifier, elementtemplate)
-        nodeIdentifiers = [38, 41, 27, 28]
-        result = element.setNodesByIdentifier(eft, nodeIdentifiers)
-        elementIdentifier = elementIdentifier + 1
-
-        element = mesh.createElement(elementIdentifier, elementtemplate)
-        nodeIdentifiers = [41, 39, 16, 13]
-        result = element.setNodesByIdentifier(eft, nodeIdentifiers)
-        elementIdentifier = elementIdentifier + 1
-
-        element = mesh.createElement(elementIdentifier, elementtemplate)
-        nodeIdentifiers = [37, 41, 15, 16]
-        result = element.setNodesByIdentifier(eft, nodeIdentifiers)
-        elementIdentifier = elementIdentifier + 1
+    element = mesh.createElement(elementIdentifier, elementtemplate)
+    nodeIdentifiers = [39, 41, 25, 26]
+    result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+    elementIdentifier = elementIdentifier + 1
 
 
     # node0 = 3 * (elementsCountAround) * (elementsCountAlong + 1) + 1
