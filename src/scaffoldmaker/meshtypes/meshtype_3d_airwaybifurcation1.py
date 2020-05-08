@@ -158,7 +158,27 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
         #######################################################################
         segmentCount = 1  # Hardcoded for starters
 
+        #SMOOTHING PARAMETERS FOR EVERY SEGMENT
         xlensegmentparent = 0.9
+        xradsmoothing = 1.3
+        if daughter_xrad>=1.2 and daughter_xrad<1.4:
+            xlensegmentparent = 0.85
+            xradsmoothing = 1.4
+        if daughter_xrad >= 1.4 and daughter_xrad < 1.6:
+            xlensegmentparent = 0.8
+            xradsmoothing = 1.5
+        if daughter_xrad>=1.6:
+            xlensegmentparent = 0.75
+            xradsmoothing = 1.6
+
+        if daughter1angle>=45 or daughter1angle<50:
+            xlensegmentparent = xlensegmentparent * 0.9
+        if daughter1angle >= 50 or daughter1angle < 55:
+            xlensegmentparent = xlensegmentparent * 0.85
+        if daughter2angle>=45 or daughter2angle<50:
+            xlensegmentparent = xlensegmentparent * 0.9
+        if daughter2angle >= 50 or daughter2angle < 55:
+            xlensegmentparent = xlensegmentparent * 0.85
 
         #Split ratio - decide where branching starts in daughter branches
         #################################################################
@@ -309,7 +329,7 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
         ###############################
         xjunctionOuter, xjunctionInner, d1junctionOuter, d2junctionOuter, d3junctionOuter,\
             d1junctionInner, d2junctionInner, d3junctionInner\
-            = tubebifurcationmesh.createjunctionAirwaySegmentPoints(
+                = tubebifurcationmesh.createjunctionAirwaySegmentPoints(
             xParentWarpedList, xDaugh1WarpedList, xDaugh2WarpedList,
             d1ParentWarpedList, d1Daugh1WarpedList, d1Daugh2WarpedList,
             d2ParentWarpedList, d2Daugh1WarpedList, d2Daugh2WarpedList,

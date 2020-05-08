@@ -13,11 +13,27 @@ from scaffoldmaker.meshtypes.scaffold_base import Scaffold_base
 
 from scaffoldmaker.utils.eftfactory_bicubichermitelinear import eftfactory_bicubichermitelinear
 from scaffoldmaker.utils.eftfactory_tricubichermite import eftfactory_tricubichermite
+from scaffoldmaker.utils.eft_utils import remapEftNodeValueLabel, setEftScaleFactorIds
 
 from scaffoldmaker.utils.geometry import createCirclePoints
 from scaffoldmaker.utils import interpolation as interp
 from scaffoldmaker.utils import matrix
 from scaffoldmaker.utils import vector
+
+
+def derivativeSignsToExpressionTerms(valueLabels, signs):
+    '''
+    Return remap expression terms for summing derivative[i]*sign[i]
+    :param valueLabels: List of node value labels to possibly include.
+    :param signs: List of 1 (no scaling), -1 (scale by scale factor 1) or 0 (no term).
+    '''
+    expressionTerms = []
+    for i in range(len(valueLabels)):
+        if signs[i] is 1:
+            expressionTerms.append( ( valueLabels[i], [] ) )
+        elif signs[i] is -1:
+            expressionTerms.append( ( valueLabels[i], [1] ) )
+    return expressionTerms
 
 
 def createjunctionAirwaySurfaceSegmentPoints(
@@ -143,9 +159,9 @@ def createjunctionAirwaySurfaceSegmentPoints(
     smoothedd2 = interp.smoothCubicHermiteDerivativesLine(nx, nd2, fixStartDerivative = True, fixEndDerivative = True)
     d2temp = [-1.0 * smoothedd2[2][j] for j in range(3)]
     d1junctionOuterList.append(d2temp)
-    d2junctionInnerList.append(smoothedd2[3])
+    d2temp = [-1.0 * smoothedd2[3][j] for j in range(3)]
+    d1junctionInnerList.append(d2temp)
     d1junctionInnerList.append(smoothedd2[1])
-    d1junctionInnerList.append(smoothedd2[3])
 
     ##DERIVS
     nx = []
@@ -164,8 +180,6 @@ def createjunctionAirwaySurfaceSegmentPoints(
     smoothedd2 = interp.smoothCubicHermiteDerivativesLine(nx, nd2, fixStartDerivative = True, fixEndDerivative = True)
     d2temp = [-1.0 * smoothedd2[2][j] for j in range(3)]
     d1junctionOuterList.append(smoothedd2[2])
-    d2temp = [-1.0 * smoothedd2[1][j] for j in range(3)]
-    d2junctionInnerList.append(d2temp)
 
     ##DERIVS
     nx = []
@@ -175,15 +189,21 @@ def createjunctionAirwaySurfaceSegmentPoints(
     nx.append(xjunctionOuter3)
     nx.append(xjunctionInner1)
     nx.append(xParentWarpedList[n2t-4])
-    nd2.append(d2ParentWarpedList[n2t-2])
-    nd2.append(zero)
-    nd2.append(zero)
-    nd2.append(zero)
-    d2temp = [(-1.0 * d2ParentWarpedList[n2t-4][j]) for j in range(3)]
+
+    #nd2.append(d2ParentWarpedList[n2t-2])
+    d2temp = [(-1.0 * d2ParentWarpedList[n2t-2][j]) for j in range(3)]
     nd2.append(d2temp)
+    nd2.append(zero)
+    nd2.append(zero)
+    nd2.append(zero)
+    nd2.append(d2ParentWarpedList[n2t-4])
     smoothedd2 = interp.smoothCubicHermiteDerivativesLine(nx, nd2, fixStartDerivative = True, fixEndDerivative = True)
     d2temp = [-1.0 * smoothedd2[2][j] for j in range(3)]
     d1junctionOuterList.append(d2temp)
+    d2temp = [-1.0 * smoothedd2[3][j] for j in range(3)]
+    d2junctionInnerList.append(d2temp)
+    d2temp = [1.0 * smoothedd2[1][j] for j in range(3)]
+    d2junctionInnerList.append(d2temp)
 
     return xjunctionOuterList, xjunctionInnerList, \
            d1junctionOuterList, d1junctionInnerList, \
@@ -352,6 +372,133 @@ def createjunctionAirwaySegmentPoints(
     # smoothedd2 = interp.smoothCubicHermiteDerivativesLine(nx, nd2, fixStartDerivative = True, fixEndDerivative = True)
     # d2temp = [-1.0 * smoothedd2[2][j] for j in range(3)]
     # d1junctionOuterList.append(d2temp)
+    #
+    # #JUNCTION OUTER
+    # #################
+    # nx = []
+    # nd2 = []
+    # xParentAlongSegment = xParentWarpedList[lastring+1]
+    # xDaugh1AlongSegment = xDaugh1WarpedList[2]
+    # xmid = [(xParentAlongSegment[j]+sxparent[n2][j])/2.0 for j in range(3)]
+    # xjunctionOuter1 = [0.35*xmid[j]+0.65*xDaugh1AlongSegment[j] for j in range(3)]
+    # xjunctionOuterList.append(xjunctionOuter1)
+    #
+    # #deriv calc next
+    # nx.append(xParentAlongSegment)
+    # nx.append(xjunctionOuter1)
+    # nx.append(xDaugh1AlongSegment)
+    # nd2.append(d2ParentWarpedList[lastring+1])
+    # nd2.append(zero)
+    # nd2.append(d2Daugh1WarpedList[2])
+    # smoothedd2 = interp.smoothCubicHermiteDerivativesLine(nx, nd2, fixStartDerivative = True, fixEndDerivative = True)
+    # d2junctionOuterList.append(smoothedd2[1])
+    #
+    # nx = []
+    # nd2 = []
+    # xParentAlongSegment = xParentWarpedList[lastring+3]
+    # xDaugh2AlongSegment = xDaugh2WarpedList[2]
+    # xmid = [(xParentAlongSegment[j]+sxparent[n2][j])/2.0 for j in range(3)]
+    # xjunctionOuter2 = [0.35*xmid[j]+0.65*xDaugh2AlongSegment[j] for j in range(3)]
+    # xjunctionOuterList.append(xjunctionOuter2)
+    # #deriv calc next
+    # nx.append(xParentAlongSegment)
+    # nx.append(xjunctionOuter2)
+    # nx.append(xDaugh2AlongSegment)
+    # nd2.append(d2ParentWarpedList[lastring+3])
+    # nd2.append(zero)
+    # nd2.append(d2Daugh2WarpedList[2])
+    # smoothedd2 = interp.smoothCubicHermiteDerivativesLine(nx, nd2, fixStartDerivative = True, fixEndDerivative = True)
+    # d2junctionOuterList.append(smoothedd2[1])
+    #
+    # nx = []
+    # nd2 = []
+    # xDaugh1AlongSegment = xDaugh1WarpedList[0]
+    # xDaugh2AlongSegment = xDaugh2WarpedList[0]
+    # xjunctionOuter3 = [(7*(xDaugh1AlongSegment[j]+xDaugh2AlongSegment[j])+2*sxparent[n2][j])/16.0 for j in range(3)]
+    # xjunctionOuterList.append(xjunctionOuter3)
+    # nx.append(xDaugh1AlongSegment)
+    # nx.append(xjunctionOuter3)
+    # nx.append(xDaugh2AlongSegment)
+    # nd2.append(d1ParentWarpedList[0])
+    # nd2.append(zero)
+    # d2temp = [-1.0 * d2Daugh2WarpedList[0][j] for j in range(3)]
+    # nd2.append(d2temp)
+    # smoothedd2 = interp.smoothCubicHermiteDerivativesLine(nx, nd2, fixStartDerivative = True, fixEndDerivative = True)
+    # d2junctionOuterList.append(smoothedd2[1])
+    #
+    # #JUNCTION INNER
+    # ##################
+    # xParentAlongSegment = xParentWarpedList[lastring]
+    # xDaugh1AlongSegment = xDaugh1WarpedList[1]
+    # xDaugh2AlongSegment = xDaugh2WarpedList[3]
+    # xjunctionInner1 = [(xParentAlongSegment[j]+xDaugh1AlongSegment[j]+xDaugh2AlongSegment[j])/3.0 for j in range(3)]
+    # xjunctionInnerList.append(xjunctionInner1)
+    #
+    # xParentAlongSegment = xParentWarpedList[lastring+2]
+    # xDaugh1AlongSegment = xDaugh1WarpedList[3]
+    # xDaugh2AlongSegment = xDaugh2WarpedList[1]
+    # xjunctionInner2 = [(xParentAlongSegment[j]+xDaugh1AlongSegment[j]+xDaugh2AlongSegment[j])/3.0 for j in range(3)]
+    # xjunctionInnerList.append(xjunctionInner2)
+    #
+    # ##DERIVS
+    # #-----------
+    # nx = []
+    # nd2 = []
+    # nx.append(xDaugh2WarpedList[elementsCountAround-3])
+    # nx.append(xjunctionInner2)
+    # nx.append(xjunctionOuter1)
+    # nx.append(xjunctionInner1)
+    # nx.append(xDaugh2WarpedList[elementsCountAround-1])
+    # d2temp = [-1.0 * d2Daugh2WarpedList[elementsCountAround-3][j] for j in range(3)]
+    # nd2.append(d2temp)
+    # nd2.append(zero)
+    # nd2.append(zero)
+    # nd2.append(zero)
+    # nd2.append(d2Daugh2WarpedList[elementsCountAround-1])
+    # smoothedd2 = interp.smoothCubicHermiteDerivativesLine(nx, nd2, fixStartDerivative = True, fixEndDerivative = True)
+    # d2temp = [-1.0 * smoothedd2[2][j] for j in range(3)]
+    # d1junctionOuterList.append(d2temp)
+    # d2junctionInnerList.append(smoothedd2[3])
+    # d1junctionInnerList.append(smoothedd2[1])
+    # d1junctionInnerList.append(smoothedd2[3])
+    #
+    # ##DERIVS
+    # nx = []
+    # nd2 = []
+    # nx.append(xDaugh1WarpedList[elementsCountAround - 1])
+    # nx.append(xjunctionInner2)
+    # nx.append(xjunctionOuter2)
+    # nx.append(xjunctionInner1)
+    # nx.append(xDaugh1WarpedList[elementsCountAround - 3])
+    # d2temp = [-1.0 * d2Daugh1WarpedList[elementsCountAround - 1][j] for j in range(3)]
+    # nd2.append(d2temp)
+    # nd2.append(zero)
+    # nd2.append(zero)
+    # nd2.append(zero)
+    # nd2.append(d2Daugh1WarpedList[elementsCountAround - 3])
+    # smoothedd2 = interp.smoothCubicHermiteDerivativesLine(nx, nd2, fixStartDerivative=True, fixEndDerivative=True)
+    # d2temp = [-1.0 * smoothedd2[2][j] for j in range(3)]
+    # d1junctionOuterList.append(smoothedd2[2])
+    # d2temp = [-1.0 * smoothedd2[1][j] for j in range(3)]
+    # d2junctionInnerList.append(d2temp)
+    #
+    # ##DERIVS
+    # nx = []
+    # nd2 = []
+    # nx.append(xParentWarpedList[n2t-2])
+    # nx.append(xjunctionInner2)
+    # nx.append(xjunctionOuter3)
+    # nx.append(xjunctionInner1)
+    # nx.append(xParentWarpedList[n2t-4])
+    # nd2.append(d2ParentWarpedList[n2t-2])
+    # nd2.append(zero)
+    # nd2.append(zero)
+    # nd2.append(zero)
+    # d2temp = [(-1.0 * d2ParentWarpedList[n2t-4][j]) for j in range(3)]
+    # nd2.append(d2temp)
+    # smoothedd2 = interp.smoothCubicHermiteDerivativesLine(nx, nd2, fixStartDerivative = True, fixEndDerivative = True)
+    # d2temp = [-1.0 * smoothedd2[2][j] for j in range(3)]
+    # d1junctionOuterList.append(d2temp)
 
     #JUNCTION OUTER
     #################
@@ -438,29 +585,28 @@ def createjunctionAirwaySegmentPoints(
     smoothedd2 = interp.smoothCubicHermiteDerivativesLine(nx, nd2, fixStartDerivative = True, fixEndDerivative = True)
     d2temp = [-1.0 * smoothedd2[2][j] for j in range(3)]
     d1junctionOuterList.append(d2temp)
-    d2junctionInnerList.append(smoothedd2[3])
-    d1junctionInnerList.append(smoothedd2[1])
-    d1junctionInnerList.append(smoothedd2[3])
+    d2temp = [-1.0 * smoothedd2[3][j] for j in range(3)]
+    d1junctionInnerList.append(d2temp)
+    d2temp = [-1.0 * smoothedd2[1][j] for j in range(3)]
+    d1junctionInnerList.append(d2temp)
 
     ##DERIVS
     nx = []
     nd2 = []
-    nx.append(xDaugh1WarpedList[elementsCountAround - 1])
+    nx.append(xDaugh1WarpedList[elementsCountAround-1])
     nx.append(xjunctionInner2)
     nx.append(xjunctionOuter2)
     nx.append(xjunctionInner1)
-    nx.append(xDaugh1WarpedList[elementsCountAround - 3])
-    d2temp = [-1.0 * d2Daugh1WarpedList[elementsCountAround - 1][j] for j in range(3)]
+    nx.append(xDaugh1WarpedList[elementsCountAround-3])
+    d2temp = [-1.0 * d2Daugh1WarpedList[elementsCountAround-1][j] for j in range(3)]
     nd2.append(d2temp)
     nd2.append(zero)
     nd2.append(zero)
     nd2.append(zero)
-    nd2.append(d2Daugh1WarpedList[elementsCountAround - 3])
-    smoothedd2 = interp.smoothCubicHermiteDerivativesLine(nx, nd2, fixStartDerivative=True, fixEndDerivative=True)
+    nd2.append(d2Daugh1WarpedList[elementsCountAround-3])
+    smoothedd2 = interp.smoothCubicHermiteDerivativesLine(nx, nd2, fixStartDerivative = True, fixEndDerivative = True)
     d2temp = [-1.0 * smoothedd2[2][j] for j in range(3)]
     d1junctionOuterList.append(smoothedd2[2])
-    d2temp = [-1.0 * smoothedd2[1][j] for j in range(3)]
-    d2junctionInnerList.append(d2temp)
 
     ##DERIVS
     nx = []
@@ -470,17 +616,23 @@ def createjunctionAirwaySegmentPoints(
     nx.append(xjunctionOuter3)
     nx.append(xjunctionInner1)
     nx.append(xParentWarpedList[n2t-4])
-    nd2.append(d2ParentWarpedList[n2t-2])
-    nd2.append(zero)
-    nd2.append(zero)
-    nd2.append(zero)
-    d2temp = [(-1.0 * d2ParentWarpedList[n2t-4][j]) for j in range(3)]
+
+    #nd2.append(d2ParentWarpedList[n2t-2])
+    d2temp = [(-1.0 * d2ParentWarpedList[n2t-2][j]) for j in range(3)]
     nd2.append(d2temp)
+    nd2.append(zero)
+    nd2.append(zero)
+    nd2.append(zero)
+    nd2.append(d2ParentWarpedList[n2t-4])
     smoothedd2 = interp.smoothCubicHermiteDerivativesLine(nx, nd2, fixStartDerivative = True, fixEndDerivative = True)
     d2temp = [-1.0 * smoothedd2[2][j] for j in range(3)]
     d1junctionOuterList.append(d2temp)
+    d2temp = [-1.0 * smoothedd2[3][j] for j in range(3)]
+    d2junctionInnerList.append(d2temp)
+    d2temp = [1.0 * smoothedd2[1][j] for j in range(3)]
+    d2junctionInnerList.append(d2temp)
 
-    # Calculate unit d3
+    ## Calculate unit d3
     #########################
     for n in range(len(xjunctionOuterList)):
         d3Unit = vector.normalise(vector.crossproduct3(vector.normalise(d1junctionOuterList[n]),
@@ -1239,11 +1391,45 @@ def createAirwaySegmentNodesAndElements\
     else:
         eftfactory = eftfactory_bicubichermitelinear(mesh, useCrossDerivatives)
 
-    eft = eftfactory.createEftBasic()
+    eft1 = eftfactory.createEftBasic()
+
+
+
+    elementtemplateStandard = mesh.createElementtemplate()
+    elementtemplateStandard.setElementShapeType(Element.SHAPE_TYPE_CUBE)
 
     elementtemplate = mesh.createElementtemplate()
     elementtemplate.setElementShapeType(Element.SHAPE_TYPE_CUBE)
-    result = elementtemplate.defineField(coordinates, -1, eft)
+
+    elementtemplateX = mesh.createElementtemplate()
+    elementtemplateX.setElementShapeType(Element.SHAPE_TYPE_CUBE)
+
+    result = elementtemplate.defineField(coordinates, -1, eft1)
+
+
+    mapDerivatives = False
+    mapEndDerivatives = True
+    mapStartDerivatives = False
+
+
+    # if mapDerivatives:
+    #     eft1 = eftfactory.createEftNoCrossDerivatives()
+    #     setEftScaleFactorIds(eft1, [1], [])
+    #
+    #     elementtemplateX.defineField(coordinates, -1, eft1)
+    #     elementtemplate = elementtemplateX
+    # else:
+    #     eft1 = eft
+        # elementtemplate = elementtemplate
+
+    # element = mesh.createElement(elementIdentifier, elementtemplate)
+
+
+    #
+    #
+    # if mapDerivatives:
+    #     result3 = element.setScaleFactors(eft1, [-1.0])
+
 
     ###################
     # Create nodes
@@ -1332,6 +1518,7 @@ def createAirwaySegmentNodesAndElements\
     #######################
     # create elements
     ########################
+
     now = elementsCountAround*(elementsCountThroughWall+1)
     for e2 in range(elementsCountAlong):
         for e3 in range(elementsCountThroughWall):
@@ -1344,7 +1531,7 @@ def createAirwaySegmentNodesAndElements\
 
 #               onOpening = e1 > elementsCountAround - 2
                 element = mesh.createElement(elementIdentifier, elementtemplate)
-                element.setNodesByIdentifier(eft, nodeIdentifiers)
+                element.setNodesByIdentifier(eft1, nodeIdentifiers)
                 elementIdentifier = elementIdentifier + 1
 
     now = elementsCountAround * (elementsCountThroughWall + 1)
@@ -1358,7 +1545,7 @@ def createAirwaySegmentNodesAndElements\
                 bni22 = e2 * now + (e3 + 1) * elementsCountAround + (e1 + 1) % elementsCountAround + (offset+1)
                 nodeIdentifiers = [bni11, bni12, bni11 + now, bni12 + now, bni21, bni22, bni21 + now, bni22 + now]
                 element = mesh.createElement(elementIdentifier, elementtemplate)
-                element.setNodesByIdentifier(eft, nodeIdentifiers)
+                element.setNodesByIdentifier(eft1, nodeIdentifiers)
                 elementIdentifier = elementIdentifier + 1
 
     now = elementsCountAround * (elementsCountThroughWall + 1)
@@ -1372,8 +1559,106 @@ def createAirwaySegmentNodesAndElements\
                 bni22 = e2 * now + (e3 + 1) * elementsCountAround + (e1 + 1) % elementsCountAround + (offset+1)
                 nodeIdentifiers = [bni11, bni12, bni11 + now, bni12 + now, bni21, bni22, bni21 + now, bni22 + now]
                 element = mesh.createElement(elementIdentifier, elementtemplate)
-                element.setNodesByIdentifier(eft, nodeIdentifiers)
+                element.setNodesByIdentifier(eft1, nodeIdentifiers)
                 elementIdentifier = elementIdentifier + 1
+
+    ### FORM JUNCTION ELEMS
+    ################################
+    # now = (elementsCountThroughWall+1)*elementsCountAround * (elementsCountThroughWall + 1)
+    # offset = 3 * (elementsCountAlong+1) * elementsCountAround * (elementsCountThroughWall + 1)
+    # for e2 in range(len(xjunctionOuter)+len(xjunctionInner)):
+    #     for e3 in range(elementsCountThroughWall):
+    #         bni11 = e2 * now + e3 * elementsCountAround + e1 + (offset+1)
+    #         bni12 = e2 * now + e3 * elementsCountAround + (e1 + 1) % elementsCountAround + (offset+1)
+    #         bni21 = e2 * now + (e3 + 1) * elementsCountAround + e1 + (offset+1)
+    #         bni22 = e2 * now + (e3 + 1) * elementsCountAround + (e1 + 1) % elementsCountAround + (offset+1)
+    #         nodeIdentifiers = [bni11, bni12, bni11 + now, bni12 + now, bni21, bni22, bni21 + now, bni22 + now]
+    #         element = mesh.createElement(elementIdentifier, elementtemplate)
+    #         element.setNodesByIdentifier(eft, nodeIdentifiers)
+    #         elementIdentifier = elementIdentifier + 1
+
+    nodeIdentifiers = [17, 18, 79, 73, 21, 22, 81, 76]
+    element = mesh.createElement(elementIdentifier, elementtemplate)
+    element.setNodesByIdentifier(eft1, nodeIdentifiers)
+    elementIdentifier = elementIdentifier + 1
+
+    nodeIdentifiers = [79, 73, 26, 27, 81, 76, 30, 31]
+
+    # startDerivativesMap[0][1]=(None, (1, 1, 0), None)
+    # startDerivativesMap[1][1]=(None, (1, 1, 0), None)
+
+    # for i in range(2):
+        # lns = [1, 5] if (i == 0) else [2, 6]
+        # for n3 in range(2):
+            # derivativesMap = startDerivativesMap[n3][e1]
+            # handle different d1 on each side of node
+    # if mapDerivatives:
+    #     d2Map = (1,1,0)
+    #     lns = [1,5]
+    #     for n3 in range(2):
+    #         ln = [lns[n3]]
+    #         remapEftNodeValueLabel(eft1, ln, Node.VALUE_LABEL_D_DS2, \
+    #                            derivativeSignsToExpressionTerms(
+    #                                (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3), d2Map))
+    #         elementtemplateX.defineField(coordinates, -1, eft1)
+    #         elementtemplate = elementtemplateX
+
+
+    element = mesh.createElement(elementIdentifier, elementtemplate)
+    element.setNodesByIdentifier(eft1, nodeIdentifiers)
+    elementIdentifier = elementIdentifier + 1
+
+
+
+    nodeIdentifiers = [18, 19, 73, 80, 22, 23, 76, 82]
+    element = mesh.createElement(elementIdentifier, elementtemplate)
+    element.setNodesByIdentifier(eft1, nodeIdentifiers)
+    elementIdentifier = elementIdentifier + 1
+
+    nodeIdentifiers = [73, 80, 27, 28, 76, 82, 31, 32]
+    element = mesh.createElement(elementIdentifier, elementtemplate)
+    element.setNodesByIdentifier(eft1, nodeIdentifiers)
+    elementIdentifier = elementIdentifier + 1
+
+    nodeIdentifiers = [20, 17, 74, 79, 24, 21, 77, 81]
+    element = mesh.createElement(elementIdentifier, elementtemplate)
+    element.setNodesByIdentifier(eft1, nodeIdentifiers)
+    elementIdentifier = elementIdentifier + 1
+
+    nodeIdentifiers = [74, 79, 51, 52, 77, 81, 55, 56]
+    element = mesh.createElement(elementIdentifier, elementtemplate)
+    element.setNodesByIdentifier(eft1, nodeIdentifiers)
+    elementIdentifier = elementIdentifier + 1
+
+    nodeIdentifiers = [19, 20, 80, 74, 23, 24, 82, 77]
+    element = mesh.createElement(elementIdentifier, elementtemplate)
+    element.setNodesByIdentifier(eft1, nodeIdentifiers)
+    elementIdentifier = elementIdentifier + 1
+
+    nodeIdentifiers = [80, 74, 50, 51, 82, 77, 54, 55]
+    element = mesh.createElement(elementIdentifier, elementtemplate)
+    element.setNodesByIdentifier(eft1, nodeIdentifiers)
+    elementIdentifier = elementIdentifier + 1
+
+    nodeIdentifiers = [75, 79, 25, 26, 78, 81, 29, 30]
+    element = mesh.createElement(elementIdentifier, elementtemplate)
+    element.setNodesByIdentifier(eft1, nodeIdentifiers)
+    elementIdentifier = elementIdentifier + 1
+
+    nodeIdentifiers = [79, 75, 52, 49, 81, 78, 56, 53]
+    element = mesh.createElement(elementIdentifier, elementtemplate)
+    element.setNodesByIdentifier(eft1, nodeIdentifiers)
+    elementIdentifier = elementIdentifier + 1
+
+    nodeIdentifiers = [80, 75, 28, 29, 82, 78, 32, 29]
+    element = mesh.createElement(elementIdentifier, elementtemplate)
+    element.setNodesByIdentifier(eft1, nodeIdentifiers)
+    elementIdentifier = elementIdentifier + 1
+
+    nodeIdentifiers = [75, 80, 49, 50, 78, 82, 53, 54]
+    element = mesh.createElement(elementIdentifier, elementtemplate)
+    element.setNodesByIdentifier(eft1, nodeIdentifiers)
+    elementIdentifier = elementIdentifier + 1
 
     fm.endChange()
 
@@ -1594,6 +1879,21 @@ def createAirwaySegmentSurfaceNodesAndElements(region,
     nodeIdentifiers = [9, 10, 40, 37]
     result = element.setNodesByIdentifier(eft, nodeIdentifiers)
     elementIdentifier = elementIdentifier + 1
+
+
+    # element.setNodesByIdentifier(eftApex1, nodeIdentifiers)
+    # # set general linear map coefficients
+    # radiansAround = e1 * radiansPerElementAround
+    # radiansAroundNext = ((e1 + 1) % elementsCountAround) * radiansPerElementAround
+    # scalefactors = [
+    #     -1.0,
+    #     math.sin(radiansAround), math.cos(radiansAround), radiansPerElementAround,
+    #     math.sin(radiansAroundNext), math.cos(radiansAroundNext), radiansPerElementAround
+    # ]
+    # result = element.setScaleFactors(eftApex1, scalefactors)
+    # elementIdentifier = elementIdentifier + 1
+
+
 
     element = mesh.createElement(elementIdentifier, elementtemplate)
     nodeIdentifiers = [40, 37, 14, 15]
