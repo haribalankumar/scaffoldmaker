@@ -1383,7 +1383,7 @@ def createAirwaySegmentNodesAndElements\
 
     mesh = fm.findMeshByDimension(3)
 
-    eftfactory = eftfactory_tricubichermite(mesh, useCrossDerivatives)
+    # eftfactory = eftfactory_tricubichermite(mesh, useCrossDerivatives)
 
 
     if useCubicHermiteThroughWall:
@@ -1391,12 +1391,14 @@ def createAirwaySegmentNodesAndElements\
     else:
         eftfactory = eftfactory_bicubichermitelinear(mesh, useCrossDerivatives)
 
-    eft1 = eftfactory.createEftBasic()
-
+    # eft1 = eftfactory.createEftBasic()
 
 
     elementtemplateStandard = mesh.createElementtemplate()
     elementtemplateStandard.setElementShapeType(Element.SHAPE_TYPE_CUBE)
+
+    eftStandard = eftfactory.createEftBasic()
+    elementtemplateStandard.defineField(coordinates, -1, eftStandard)
 
     elementtemplate = mesh.createElementtemplate()
     elementtemplate.setElementShapeType(Element.SHAPE_TYPE_CUBE)
@@ -1404,23 +1406,15 @@ def createAirwaySegmentNodesAndElements\
     elementtemplateX = mesh.createElementtemplate()
     elementtemplateX.setElementShapeType(Element.SHAPE_TYPE_CUBE)
 
-    result = elementtemplate.defineField(coordinates, -1, eft1)
+    # result = elementtemplate.defineField(coordinates, -1, eft1)
 
 
-    mapDerivatives = False
+    mapDerivatives = True
     mapEndDerivatives = True
     mapStartDerivatives = False
 
 
-    # if mapDerivatives:
-    #     eft1 = eftfactory.createEftNoCrossDerivatives()
-    #     setEftScaleFactorIds(eft1, [1], [])
-    #
-    #     elementtemplateX.defineField(coordinates, -1, eft1)
-    #     elementtemplate = elementtemplateX
-    # else:
-    #     eft1 = eft
-        # elementtemplate = elementtemplate
+
 
     # element = mesh.createElement(elementIdentifier, elementtemplate)
 
@@ -1518,6 +1512,18 @@ def createAirwaySegmentNodesAndElements\
     #######################
     # create elements
     ########################
+    elementtemplate = elementtemplateStandard
+    eft1 = eftStandard
+
+    # if mapDerivatives:
+    #     eft1 = eftfactory.createEftNoCrossDerivatives()
+    #     setEftScaleFactorIds(eft1, [1], [])
+    #
+    #     elementtemplateX.defineField(coordinates, -1, eft1)
+    #     elementtemplate = elementtemplateX
+    # else:
+    #     # eft1 = eft
+    #     elementtemplate = elementtemplateStandard
 
     now = elementsCountAround*(elementsCountThroughWall+1)
     for e2 in range(elementsCountAlong):
@@ -1531,8 +1537,9 @@ def createAirwaySegmentNodesAndElements\
 
 #               onOpening = e1 > elementsCountAround - 2
                 element = mesh.createElement(elementIdentifier, elementtemplate)
-                element.setNodesByIdentifier(eft1, nodeIdentifiers)
+                result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
                 elementIdentifier = elementIdentifier + 1
+
 
     now = elementsCountAround * (elementsCountThroughWall + 1)
     offset = (elementsCountAlong+1) * elementsCountAround * (elementsCountThroughWall + 1)
@@ -1545,8 +1552,12 @@ def createAirwaySegmentNodesAndElements\
                 bni22 = e2 * now + (e3 + 1) * elementsCountAround + (e1 + 1) % elementsCountAround + (offset+1)
                 nodeIdentifiers = [bni11, bni12, bni11 + now, bni12 + now, bni21, bni22, bni21 + now, bni22 + now]
                 element = mesh.createElement(elementIdentifier, elementtemplate)
-                element.setNodesByIdentifier(eft1, nodeIdentifiers)
+                result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
                 elementIdentifier = elementIdentifier + 1
+
+    # result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
+    # if mapDerivatives:
+    #     result3 = element.setScaleFactors(eft1, [-1.0])
 
     now = elementsCountAround * (elementsCountThroughWall + 1)
     offset = 2 * (elementsCountAlong+1) * elementsCountAround * (elementsCountThroughWall + 1)
@@ -1559,11 +1570,12 @@ def createAirwaySegmentNodesAndElements\
                 bni22 = e2 * now + (e3 + 1) * elementsCountAround + (e1 + 1) % elementsCountAround + (offset+1)
                 nodeIdentifiers = [bni11, bni12, bni11 + now, bni12 + now, bni21, bni22, bni21 + now, bni22 + now]
                 element = mesh.createElement(elementIdentifier, elementtemplate)
-                element.setNodesByIdentifier(eft1, nodeIdentifiers)
+                result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
                 elementIdentifier = elementIdentifier + 1
 
     ### FORM JUNCTION ELEMS
     ################################
+
     # now = (elementsCountThroughWall+1)*elementsCountAround * (elementsCountThroughWall + 1)
     # offset = 3 * (elementsCountAlong+1) * elementsCountAround * (elementsCountThroughWall + 1)
     # for e2 in range(len(xjunctionOuter)+len(xjunctionInner)):
@@ -1577,87 +1589,179 @@ def createAirwaySegmentNodesAndElements\
     #         element.setNodesByIdentifier(eft, nodeIdentifiers)
     #         elementIdentifier = elementIdentifier + 1
 
+    elementtemplate = elementtemplateStandard
+    eft1 = eftStandard
     nodeIdentifiers = [17, 18, 79, 73, 21, 22, 81, 76]
     element = mesh.createElement(elementIdentifier, elementtemplate)
-    element.setNodesByIdentifier(eft1, nodeIdentifiers)
+    result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
     elementIdentifier = elementIdentifier + 1
+
 
     nodeIdentifiers = [79, 73, 26, 27, 81, 76, 30, 31]
-
-    # startDerivativesMap[0][1]=(None, (1, 1, 0), None)
-    # startDerivativesMap[1][1]=(None, (1, 1, 0), None)
-
-    # for i in range(2):
-        # lns = [1, 5] if (i == 0) else [2, 6]
-        # for n3 in range(2):
-            # derivativesMap = startDerivativesMap[n3][e1]
-            # handle different d1 on each side of node
-    # if mapDerivatives:
-    #     d2Map = (1,1,0)
-    #     lns = [1,5]
-    #     for n3 in range(2):
-    #         ln = [lns[n3]]
-    #         remapEftNodeValueLabel(eft1, ln, Node.VALUE_LABEL_D_DS2, \
-    #                            derivativeSignsToExpressionTerms(
-    #                                (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3), d2Map))
-    #         elementtemplateX.defineField(coordinates, -1, eft1)
-    #         elementtemplate = elementtemplateX
-
-
+    eft1 = eftfactory.createEftNoCrossDerivatives()
+    setEftScaleFactorIds(eft1, [1], [])
+    if mapDerivatives:
+        d2Map = (1,1,0)
+        lns = [1,5]
+        for n3 in range(2):
+            ln = [lns[n3]]
+            remapEftNodeValueLabel(eft1, ln, Node.VALUE_LABEL_D_DS2, \
+                               derivativeSignsToExpressionTerms(
+                                   (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3), d2Map))
+    elementtemplateX.defineField(coordinates, -1, eft1)
+    elementtemplate = elementtemplateX
     element = mesh.createElement(elementIdentifier, elementtemplate)
-    element.setNodesByIdentifier(eft1, nodeIdentifiers)
+    result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
+    result3 = element.setScaleFactors(eft1, [-1.0])
     elementIdentifier = elementIdentifier + 1
 
 
-
+    elementtemplate = elementtemplateStandard
+    eft1 = eftStandard
     nodeIdentifiers = [18, 19, 73, 80, 22, 23, 76, 82]
     element = mesh.createElement(elementIdentifier, elementtemplate)
-    element.setNodesByIdentifier(eft1, nodeIdentifiers)
+    result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
     elementIdentifier = elementIdentifier + 1
+
 
     nodeIdentifiers = [73, 80, 27, 28, 76, 82, 31, 32]
+    eft1 = eftfactory.createEftNoCrossDerivatives()
+    setEftScaleFactorIds(eft1, [1], [])
+    if mapDerivatives:
+        d2Map = (1,1,0)
+        lns = [2,6]
+        for n3 in range(2):
+            ln = [lns[n3]]
+            remapEftNodeValueLabel(eft1, ln, Node.VALUE_LABEL_D_DS2, \
+                               derivativeSignsToExpressionTerms(
+                                   (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3), d2Map))
+        elementtemplateX.defineField(coordinates, -1, eft1)
+        elementtemplate = elementtemplateX
     element = mesh.createElement(elementIdentifier, elementtemplate)
-    element.setNodesByIdentifier(eft1, nodeIdentifiers)
+    result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
+    result3 = element.setScaleFactors(eft1, [-1.0])
     elementIdentifier = elementIdentifier + 1
 
+    elementtemplate = elementtemplateStandard
+    eft1 = eftStandard
     nodeIdentifiers = [20, 17, 74, 79, 24, 21, 77, 81]
     element = mesh.createElement(elementIdentifier, elementtemplate)
-    element.setNodesByIdentifier(eft1, nodeIdentifiers)
+    result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
     elementIdentifier = elementIdentifier + 1
 
     nodeIdentifiers = [74, 79, 51, 52, 77, 81, 55, 56]
+    eft1 = eftfactory.createEftNoCrossDerivatives()
+    setEftScaleFactorIds(eft1, [1], [])
+    if mapDerivatives:
+        d2Map = (-1,0,0)
+        lns = [2,6]
+        for n3 in range(2):
+            ln = [lns[n3]]
+            remapEftNodeValueLabel(eft1, ln, Node.VALUE_LABEL_D_DS2, \
+                               derivativeSignsToExpressionTerms(
+                                   (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3), d2Map))
+        elementtemplateX.defineField(coordinates, -1, eft1)
+        elementtemplate = elementtemplateX
     element = mesh.createElement(elementIdentifier, elementtemplate)
-    element.setNodesByIdentifier(eft1, nodeIdentifiers)
+    result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
+    result3 = element.setScaleFactors(eft1, [-1.0])
     elementIdentifier = elementIdentifier + 1
 
+
+    elementtemplate = elementtemplateStandard
+    eft1 = eftStandard
     nodeIdentifiers = [19, 20, 80, 74, 23, 24, 82, 77]
     element = mesh.createElement(elementIdentifier, elementtemplate)
-    element.setNodesByIdentifier(eft1, nodeIdentifiers)
+    result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
     elementIdentifier = elementIdentifier + 1
 
+
     nodeIdentifiers = [80, 74, 50, 51, 82, 77, 54, 55]
+    eft1 = eftfactory.createEftNoCrossDerivatives()
+    setEftScaleFactorIds(eft1, [1], [])
+    if mapDerivatives:
+        d2Map = (1,0,0)
+        lns = [1,5]
+        for n3 in range(2):
+            ln = [lns[n3]]
+            remapEftNodeValueLabel(eft1, ln, Node.VALUE_LABEL_D_DS2, \
+                               derivativeSignsToExpressionTerms(
+                                   (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3), d2Map))
+        elementtemplateX.defineField(coordinates, -1, eft1)
+        elementtemplate = elementtemplateX
     element = mesh.createElement(elementIdentifier, elementtemplate)
-    element.setNodesByIdentifier(eft1, nodeIdentifiers)
+    result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
+    result3 = element.setScaleFactors(eft1, [-1.0])
     elementIdentifier = elementIdentifier + 1
 
     nodeIdentifiers = [75, 79, 25, 26, 78, 81, 29, 30]
+    eft1 = eftfactory.createEftNoCrossDerivatives()
+    setEftScaleFactorIds(eft1, [1], [])
+    if mapDerivatives:
+        d1Map = (0,-1,0)
+        lns = [2,6]
+        for n3 in range(2):
+            ln = [lns[n3]]
+            remapEftNodeValueLabel(eft1, ln, Node.VALUE_LABEL_D_DS1, \
+                               derivativeSignsToExpressionTerms(
+                                   (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3), d1Map))
+        d2Map = (1,1,0)
+        lns = [2,6]
+        for n3 in range(2):
+            ln = [lns[n3]]
+            remapEftNodeValueLabel(eft1, ln, Node.VALUE_LABEL_D_DS2, \
+                               derivativeSignsToExpressionTerms(
+                                   (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3), d2Map))
+    elementtemplateX.defineField(coordinates, -1, eft1)
+    elementtemplate = elementtemplateX
     element = mesh.createElement(elementIdentifier, elementtemplate)
-    element.setNodesByIdentifier(eft1, nodeIdentifiers)
+    result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
+    result3 = element.setScaleFactors(eft1, [-1.0])
     elementIdentifier = elementIdentifier + 1
 
-    nodeIdentifiers = [79, 75, 52, 49, 81, 78, 56, 53]
+    nodeIdentifiers = [75, 79, 49, 52, 78, 81, 53, 56]
+    eft1 = eftfactory.createEftNoCrossDerivatives()
+    setEftScaleFactorIds(eft1, [1], [])
+    if mapDerivatives:
+        d1Map = (0,-1,0)
+        lns = [2,6]
+        for n3 in range(2):
+            ln = [lns[n3]]
+            remapEftNodeValueLabel(eft1, ln, Node.VALUE_LABEL_D_DS1, \
+                               derivativeSignsToExpressionTerms(
+                                   (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3), d1Map))
+        d2Map = (-1,0,0)
+        lns = [2,6]
+        for n3 in range(2):
+            ln = [lns[n3]]
+            remapEftNodeValueLabel(eft1, ln, Node.VALUE_LABEL_D_DS2, \
+                               derivativeSignsToExpressionTerms(
+                                   (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3), d2Map))
+        d2Map = (0,-1,0)
+        lns = [1,5]
+        for n3 in range(2):
+            ln = [lns[n3]]
+            remapEftNodeValueLabel(eft1, ln, Node.VALUE_LABEL_D_DS2, \
+                               derivativeSignsToExpressionTerms(
+                                   (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3), d2Map))
+    elementtemplateX.defineField(coordinates, -1, eft1)
+    elementtemplate = elementtemplateX
     element = mesh.createElement(elementIdentifier, elementtemplate)
-    element.setNodesByIdentifier(eft1, nodeIdentifiers)
+    result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
+    result3 = element.setScaleFactors(eft1, [-1.0])
     elementIdentifier = elementIdentifier + 1
 
+
+    elementtemplate = elementtemplateStandard
+    eft1 = eftStandard
     nodeIdentifiers = [80, 75, 28, 29, 82, 78, 32, 29]
     element = mesh.createElement(elementIdentifier, elementtemplate)
-    element.setNodesByIdentifier(eft1, nodeIdentifiers)
+    result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
     elementIdentifier = elementIdentifier + 1
 
     nodeIdentifiers = [75, 80, 49, 50, 78, 82, 53, 54]
     element = mesh.createElement(elementIdentifier, elementtemplate)
-    element.setNodesByIdentifier(eft1, nodeIdentifiers)
+    result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
     elementIdentifier = elementIdentifier + 1
 
     fm.endChange()
