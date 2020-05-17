@@ -95,7 +95,7 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
     @staticmethod
     def generateBaseMesh(region, options):
         '''
-        Generate the base bicubic Hermite mesh. See also generateMesh().
+        Generate the base Hermite mesh. See also generateMesh().
         :param region: Zinc region to define model in. Must be empty.
         :param options: Dict containing options. See getDefaultOptions().
         :return: list of AnnotationGroup
