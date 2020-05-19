@@ -873,7 +873,6 @@ def warpAirwaySegmentPoints(x1ListParent, x1ListDaugh1, x1ListDaugh2,
         cp = vector.crossproduct3(segmentAxisDaughter2, unitTangent)
         dp = vector.dotproduct(segmentAxisDaughter2, unitTangent)
         if vector.magnitude(cp)> 0.0: # path tangent not parallel to segment axis
-            print('path tnght not parallel to segment axis')
             axisRot = vector.normalise(cp)
             thetaRot = math.acos(vector.dotproduct(segmentAxisDaughter2, unitTangent))
             rotFrame = matrix.getRotationMatrixFromAxisAngle(axisRot, thetaRot)
@@ -887,7 +886,6 @@ def warpAirwaySegmentPoints(x1ListParent, x1ListDaugh1, x1ListDaugh2,
                 rotFrame = matrix.getRotationMatrixFromAxisAngle(axisRot, thetaRot)
                 midRot = [rotFrame[j][0]*xMid[0] + rotFrame[j][1]*xMid[1] + rotFrame[j][2]*xMid[2] for j in range(3)]
             else: # segment axis in same direction as unit tangent
-                #print('segment axis same direction as tngt for daugh2')
                 midRot = xMid
         translateMatrix = [sxDaugh2[n2][j] - midRot[j] for j in range(3)]
 
@@ -976,7 +974,6 @@ def warpAirwaySegmentPoints(x1ListParent, x1ListDaugh1, x1ListDaugh2,
         d3Unit = vector.normalise(vector.crossproduct3(vector.normalise(d1Daugh2WarpedList[n]),
                                                        vector.normalise(d2Daugh2WarpedList[n])))
         d3Daugh2WarpedUnitList.append(d3Unit)
-
 
     return x1ParentWarpedList, x1Daugh1WarpedList, x1Daugh2WarpedList, \
            d1ParentWarpedList, d1Daugh1WarpedList, d1Daugh2WarpedList, \
