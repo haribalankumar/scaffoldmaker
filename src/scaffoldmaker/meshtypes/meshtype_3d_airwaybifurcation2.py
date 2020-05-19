@@ -113,11 +113,11 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
         ## typically comes from a centerline definition. currently hardcoding it
 
 
-        startRadiusparentlist = [0.7, 0.52, 0.72]
+        startRadiusparentlist = [0.7, 0.6, 0.72]
         endRadiusparentlist = startRadiusparentlist
         startRadiusDaugh1list = [0.6, 0.35, 0.6]
         endRadiusDaugh1list = startRadiusDaugh1list
-        startRadiusDaugh2list = [0.74, 0.64, 0.34]
+        startRadiusDaugh2list = [0.72, 0.64, 0.34]
         endRadiusDaugh2list = startRadiusDaugh2list
 
         tracheaoriginx = 0
@@ -141,33 +141,33 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
         ##DAUGHETER 1 - SAMPLE SEGMENT
         daughter1anglelist = [17, 4, 46]
         daughter2anglelist = [12, 39, 10]
-        dirvecparentlist = [[0,0,1],[0.3864,0.0000,0.9223],[-0.4847,0.0000,0.87468]]
+        dirvecparentlist = [[0,0,1],[0.3864,0.0000,0.9223],[-0.485,0.0000,0.875]]
         # dirvecdaughter1list = [[-0.01513,0.28833,0.95741],[0.4100,1.7100,0.93000],[-0.1900,-0.34000,2.52000]]
         # dirvecdaughter2list= [[-0.07799,-0.20846,0.97492],[-0.150,-1.940,1.55000],[-0.290,0.3700,2.180]]
 
-        dirvecdaughter1list = [[0.3864,0.0000,0.922],[0.4100,1.7100,0.93000],[-0.1900,-0.34000,2.52000]]
-        dirvecdaughter2list = [[-0.485,0.0000,0.875],[-0.150,-1.940,1.55000],[-0.290,0.3700,2.180]]
+        dirvecdaughter1list = [[0.3864,0.0000,0.922],[0.87929,0.00000,0.47628],[-0.07125,0.00000,0.99746]]
+        dirvecdaughter2list = [[-0.485,0.0000,0.875],[0.05673,0.00000,0.99839],[-0.9445,0.00000,0.32852]]
 
-        radiusvecparentlist =  [[0.0, 1.0, 0.0],[-0.08206,5.1855,1.55829],[-0.27244,-3.39860,0.73252]]
-        radiusvecdaughter1list = [[-0.91,0.00000,0.3]]
-        radiusvecdaughter2list = [[0.93,0.0000,0.51055]]
+        radiusvecparentlist =  [[0.0, 1.0, 0.0],[-0.91,0.00000,0.3],[0.93,0.0000,0.51055]]
+        radiusvecdaughter1list = [[-0.91,0.00000,0.3],[-0.47628,0.00000,0.87929]]
+        radiusvecdaughter2list = [[0.93,0.0000,0.51055],[0.99839,0.00000,-0.05673]]
 
-        parentx0list = [[0,0,0],[0,0,2.380],[-0.108,-0.0330,2.380]]
-        daughter1x0list = [[0,0,4.000],[-0.190,1.5300,7.57000],[-0.3800,-0.760,5.780]]
-        daughter2x0list = [[0,0,4.000],[-0.190,1.5300,7.57000],[-0.3800,-0.760,5.780]]
+        parentx0list = [[0,0,0],[0,0,4.000],[-0.108,-0.0330,2.380]]
+        daughter1x0list = [[0,0,4.000],[2.50530,0.00000,9.98000],[-2.09470,0.00000,7.78000]]
+        daughter2x0list = [[0,0,4.000],[2.50530,0.00000,9.98000],[-2.09470,0.00000,7.78000]]
 
-        daughter1x1list = [[1.18830,0.00000,6.99000],[3.2400,0.220,8.500],[-0.570,-1.100,8.300]]
-        daughter2x1list = [[-1.11170,0.00000,5.89000],[-2.70000,-0.530,7.33000],[1.90000,-0.48000,9.75000]]
+        daughter1x1list = [[1.18830,0.00000,6.99000],[4.90530,0.00000,11.28000],[-0.570,-1.100,8.300]]
+        daughter2x1list = [[-1.11170,0.00000,5.89000],[2.70530,0.00000,13.50000],[1.90000,-0.48000,9.75000]]
 
         segmentlengthparentlist = [4, 3.23, 2.14]
-        segmentlengthdaughter1list = [3.23, 1.0, 1.275]
-        segmentlengthdaughter2list = [2.14, 1.11, 1.24]
+        segmentlengthdaughter1list = [3.23, 2.7, 1.275]
+        segmentlengthdaughter2list = [2.14, 3.5, 1.24]
         #####################################################################
 
         #SMOOTHING PARAMETERS FOR EVERY SEGMENT
         xlensegmentparentlist = [0.7, 0.35, 0.45]
-        xlensegmentd1list = [0.3, 0.3, 0.3]
-        xlensegmentd2list = [0.35, 0.34, 0.34]
+        xlensegmentd1list = [0.7, 0.3, 0.3]
+        xlensegmentd2list = [0.7, 0.34, 0.34]
 
         # if daughter1angle>=45 or daughter1angle<50:
         #     xlensegmentparent = xlensegmentparent * 0.9
@@ -204,7 +204,7 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
 
         ####################################################################################
         # Central path - SAMPLE
-        segmentCount = 1  # Hardcoded for starters
+        segmentCount = 2  # Hardcoded for starters
 
         for nSegment in range(segmentCount):
 
@@ -225,6 +225,8 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
             cdv_p1 = dirvecparentlist[nSegment]
             cdv_d1 = dirvecdaughter1list[nSegment]
             cdv_d2 = dirvecdaughter2list[nSegment]
+
+            cradv_p = radiusvecparentlist[nSegment]
             cradv_d1 = radiusvecdaughter1list[nSegment]
             cradv_d2 = radiusvecdaughter2list[nSegment]
 
@@ -245,6 +247,7 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
             print('parent xcoord =',cxparent)
 
             cd1parent = [[cdv_p1[0],cdv_p1[1],cdv_p1[2]],[cdv_p1[0],cdv_p1[1],cdv_p1[2]]]
+            cd2parent = [[cradv_p[0],cradv_p[1],cradv_p[2]],[cradv_p[0],cradv_p[1],cradv_p[2]]]
             print('parent dcs =',cd1parent)
             cd2parent = [[0.0, 1.0, 0.0], [0.0, 1.0, 0.0]]
             cd12parent = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
@@ -262,12 +265,12 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
             cxdaughter2 = [[cx0_d2[0] + cdv_d2[0] * xlensegmentd2 * daughter2segmentLength,
                             cx0_d2[1] + cdv_d2[1] * xlensegmentd2 * daughter2segmentLength,
                             cx0_d2[2] + cdv_d2[2] * xlensegmentd2 * daughter2segmentLength],
-                           [cx1_d2[0],cx1_d2[1],cx1_d2[2]]]
-            print ('cx of daugh2=',cxdaughter2)
+                           [cx0_d2[0] + cdv_d2[0] * daughter2segmentLength,
+                            cx0_d2[1] + cdv_d2[1] * daughter2segmentLength,
+                            cx0_d2[2] + cdv_d2[2] * daughter2segmentLength]]
+                           # [cx1_d2[0],cx1_d2[1],cx1_d2[2]]]
             cd1daughter2 = [[cdv_d2[0],cdv_d2[1],cdv_d2[2]],[cdv_d2[0],cdv_d2[1],cdv_d2[2]]]
-            print ('cd1 of daughter2=',cd1daughter2)
             cd2daughter2 = [[cradv_d2[0],cradv_d2[1],cradv_d2[2]], [cradv_d2[0],cradv_d2[1],cradv_d2[2]]]
-            print ('cd2 of daughter2=',cd2daughter2)
 
             cd12daughter2 = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
 
@@ -726,7 +729,7 @@ def getAirwaySegmentInnerPoints(region, elementsCountAround, elementsCountAlongS
 
     # Calculate z mid-point for each element set along the segment
     faceDaughter2MidPointsZ = []
-    lengthToFirstPhase = startPhase / 360.0 * daugh1segmentLength
+    lengthToFirstPhase = startPhase / 360.0 * daugh2segmentLength
     for n2 in range(elementsCountAlongSegment + 1):
         faceDaughter2MidPointsZ += [lengthToFirstPhase +
                                  n2 * daugh2segmentLength / elementsCountAlongSegment]

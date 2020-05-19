@@ -679,7 +679,7 @@ def getAirwaySegmentInnerPoints(region, elementsCountAround, elementsCountAlongS
 
     # Calculate z mid-point for each element set along the segment
     faceDaughter2MidPointsZ = []
-    lengthToFirstPhase = startPhase / 360.0 * daugh1segmentLength
+    lengthToFirstPhase = startPhase / 360.0 * daugh2segmentLength
     for n2 in range(elementsCountAlongSegment + 1):
         faceDaughter2MidPointsZ += [lengthToFirstPhase +
                                  n2 * daugh2segmentLength / elementsCountAlongSegment]

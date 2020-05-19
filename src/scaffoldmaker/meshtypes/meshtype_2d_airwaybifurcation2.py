@@ -139,6 +139,7 @@ class MeshType_2d_airwaybifurcation2(Scaffold_base):
         daughter1x0list = [[0,0,4.000],[-0.190,1.5300,7.57000],[-0.3800,-0.760,5.780]]
         daughter2x0list = [[0,0,4.000],[-0.190,1.5300,7.57000],[-0.3800,-0.760,5.780]]
 
+        parentx1list = [[0,0,4.000],[-0.108,-0.0330,2.380]]
         daughter1x1list = [[1.18830,0.00000,6.99000],[3.2400,0.220,8.500],[-0.570,-1.100,8.300]]
         daughter2x1list = [[-1.11170,0.00000,5.89000],[-2.70000,-0.530,7.33000],[1.90000,-0.48000,9.75000]]
 
@@ -207,18 +208,27 @@ class MeshType_2d_airwaybifurcation2(Scaffold_base):
             cd1daughter1 = [[cdv_d1[0],cdv_d1[1],cdv_d1[2]],[cdv_d1[0],cdv_d1[1],cdv_d1[2]]]
             cd2daughter1 = [[cradv_d1[0],cradv_d1[1],cradv_d1[2]], [cradv_d1[0],cradv_d1[1],cradv_d1[2]]]
             cd12daughter1 = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
+            print('daugh1 start coord =',cx0_d1)
+            print('daugh1 dir cos=',cdv_d1)
+            print('segmental length of daugh1=',xlensegmentd1)
+            print ('cx of daugh1=',cxdaughter1)
 
             # Daughter 2
             cxdaughter2 = [[cx0_d2[0] + cdv_d2[0] * xlensegmentd2 * daughter2segmentLength,
                             cx0_d2[1] + cdv_d2[1] * xlensegmentd2 * daughter2segmentLength,
                             cx0_d2[2] + cdv_d2[2] * xlensegmentd2 * daughter2segmentLength],
-                           [cx1_d2[0],cx1_d2[1],cx1_d2[2]]]
+                            [cx0_d2[0] + cdv_d2[0] * daughter2segmentLength,
+                             cx0_d2[1] + cdv_d2[1] * daughter2segmentLength,
+                             cx0_d2[2] + cdv_d2[2] * daughter2segmentLength]]
+                           # [cx1_d2[0],cx1_d2[1],cx1_d2[2]]]
+            print('daugh2 start coord =',cx0_d2)
+            print('daugh2 dir cos=',cdv_d2)
+            print('segmental length of daugh2=',xlensegmentd2)
             print ('cx of daugh2=',cxdaughter2)
             cd1daughter2 = [[cdv_d2[0],cdv_d2[1],cdv_d2[2]],[cdv_d2[0],cdv_d2[1],cdv_d2[2]]]
             print ('cd1 of daughter2=',cd1daughter2)
             cd2daughter2 = [[cradv_d2[0],cradv_d2[1],cradv_d2[2]], [cradv_d2[0],cradv_d2[1],cradv_d2[2]]]
             print ('cd2 of daughter2=',cd2daughter2)
-
             cd12daughter2 = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
 
             daughter1angle = daughter1anglelist[nSegment]
@@ -307,7 +317,9 @@ class MeshType_2d_airwaybifurcation2(Scaffold_base):
                 d1ParentInner, d1Daugh1Inner, d1Daugh2Inner,
                 d2ParentInner, d2Daugh1Inner, d2Daugh2Inner,
                 segmentAxisParent, segmentAxisDaughter1, segmentAxisDaughter2,
-                xlensegmentparent*parentsegmentLength, (1-xlensegmentd1)*daughter1segmentLength, (1-xlensegmentd2)*daughter2segmentLength,
+                xlensegmentparent*parentsegmentLength,
+                (1-xlensegmentd1)*daughter1segmentLength,
+                (1-xlensegmentd2)*daughter2segmentLength,
                 sxparent, sxDaugh1, sxDaugh2,
                 sd1parent, sd1Daugh1, sd1Daugh2,
                 sd2parent, sd2Daugh1, sd2Daugh2,
@@ -635,7 +647,7 @@ def getAirwaySegmentInnerPoints(region, elementsCountAround, elementsCountAlongS
 
     # Calculate z mid-point for each element set along the segment
     faceDaughter2MidPointsZ = []
-    lengthToFirstPhase = startPhase / 360.0 * daugh1segmentLength
+    lengthToFirstPhase = startPhase / 360.0 * daugh2segmentLength
     for n2 in range(elementsCountAlongSegment + 1):
         faceDaughter2MidPointsZ += [lengthToFirstPhase +
                                  n2 * daugh2segmentLength / elementsCountAlongSegment]
