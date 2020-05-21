@@ -707,6 +707,8 @@ def warpAirwaySegmentPoints(x1ListParent, x1ListDaugh1, x1ListDaugh2,
         d2ElementAlongSegment = d2ListParent[elementsCountAround*nAlongSegment: elementsCountAround*(nAlongSegment+1)]
         xMid = [0.0, 0.0, ParentfaceMidPointZ[nAlongSegment]]
         print('PARENT: xmid=', xMid)
+        if nAlongSegment == elementsCountAlongSegment:
+            print('parent,checking x input', xElementAlongSegment)
 
         # Rotate to align segment axis with tangent of central line
         unitTangent = vector.normalise(sd1Parent[n2])
@@ -729,7 +731,6 @@ def warpAirwaySegmentPoints(x1ListParent, x1ListDaugh1, x1ListDaugh2,
                 midRot = xMid
         translateMatrix = [sxParent[n2][j] - midRot[j] for j in range(3)]
 
-        print('PARENT, sd1, sd2 for n2=', sd1Parent, sd2Parent)
         for n1 in range(elementsCountAround):
             x = xElementAlongSegment[n1]
             d1 = d1ElementAlongSegment[n1]
@@ -747,14 +748,9 @@ def warpAirwaySegmentPoints(x1ListParent, x1ListDaugh1, x1ListDaugh2,
                     dist = vector.dotproduct(v, unitTangent)
                     ptOnPlane = [pt[j] - dist*unitTangent[j] for j in range(3)]
                     newVector = [ptOnPlane[j] - midRot[j] for j in range(3)]
-                    print('PARENT new vector=', newVector)
                     # Rotate first point to align with planar projection of sd2
                     firstVector = vector.normalise([xRot1[j] - midRot[j] for j in range(3)])
-                    print('PARENT xrot1',xRot1)
-                    print('PARENT midRot',midRot)
-                    print('PARENT first vec=xrot1-midRot',firstVector)
                     testdotproduct = vector.dotproduct(vector.normalise(newVector), firstVector)
-                    print('vec dot product=',testdotproduct)
                     thetaRot2 = math.acos(vector.dotproduct(vector.normalise(newVector), firstVector))
                     cp2 = vector.crossproduct3(vector.normalise(newVector), firstVector)
                     if vector.magnitude(cp2) > 0.0:
@@ -1208,10 +1204,10 @@ def getAirwaySegmentCoordinatesFromInner(
                 d3 = [c * wallThickness/elementsCountThroughWall for c in norm]
                 d3ParentList.append(d3)
 
+    #DAUGHTER1
     xOuter = []
     curvatureAroundInner = []
     curvatureAlong = []
-    #DAUGHTER1
     for n2 in range(elementsCountAlong + 1):
         wallThickness = wallThicknessList[n2]
         for n1 in range(elementsCountAround):
@@ -1274,10 +1270,10 @@ def getAirwaySegmentCoordinatesFromInner(
                 d3 = [c * wallThickness/elementsCountThroughWall for c in norm]
                 d3Daughter1List.append(d3)
 
+    #DAUGHTER2
     xOuter = []
     curvatureAroundInner = []
     curvatureAlong = []
-    #DAUGHTER2
     ###########
     for n2 in range(elementsCountAlong + 1):
         wallThickness = wallThicknessList[n2]

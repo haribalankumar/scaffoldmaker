@@ -148,7 +148,7 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
         elementsCountAlongSegment = 2
 
         wallThickness = 0.02
-        startPhase = 360.0
+        startPhase = 0.0
 
         ##DAUGHETER 1 - SAMPLE SEGMENT
         daughter1anglelist = [17, 4, 46]
@@ -295,6 +295,7 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
                 sxparent, sd1parent, separent, sxiparent, ssfparent = \
                     interp.sampleCubicHermiteCurves(cxparent, cd1parent, elementsCountAlongSegment)
                 sd2parent = interp.interpolateSampleCubicHermite(cd2parent, cd12parent, separent, sxiparent, ssfparent)[0]
+                print('after sampling hermite sxparent=',sxparent)
                 print('after sampling hermite sd1parent=',sd1parent)
                 print('after sampling hermite sd2parent=',sd2parent)
 
@@ -606,8 +607,10 @@ def getAirwaySegmentInnerPoints(region, elementsCountAround, elementsCountAlongS
         sRadiusParentAlongSegment.append(radius)
         z = parentsegmentLength / elementsCountAlongSegment * n2 + startPhase / 360.0 * parentsegmentLength
 
-        if n2 == elementsCountAlongSegment:
-            z = parentsegmentLength / elementsCountAlongSegment * (1.0*n2-0.25) + startPhase / 360.0 * parentsegmentLength
+        ##HARI COMMENTED _ IMPORTANT NOTE
+        # if n2 == elementsCountAlongSegment:
+        #     z = parentsegmentLength / elementsCountAlongSegment * (1.0*n2-0.25) + startPhase / 360.0 * parentsegmentLength
+
 
         xLoop, d1Loop = createCirclePoints([0.0, 0.0, z], [radius, 0.0, 0.0], [0.0, radius, 0.0],
                                            elementsCountAround, startRadians=0.0)
@@ -656,8 +659,9 @@ def getAirwaySegmentInnerPoints(region, elementsCountAround, elementsCountAlongS
         sRadiusDaugh1AlongSegment.append(radius)
         z = daugh1segmentLength / elementsCountAlongSegment * n2 + startPhase / 360.0 * daugh1segmentLength
 
-        if n2 == elementsCountAlongSegment:
-            z = daugh1segmentLength / elementsCountAlongSegment * (1.0*n2-0.25) + startPhase / 360.0 * daugh1segmentLength
+        ##HARI COMMENTED _ IMPORTANT NOTE
+        # if n2 == elementsCountAlongSegment:
+        #     z = daugh1segmentLength / elementsCountAlongSegment * (1.0*n2-0.25) + startPhase / 360.0 * daugh1segmentLength
 
         #xLoop, d1Loop = createCirclePoints([0.0, 0.0, z], [radius, 0.0, 0.0], [0.0, radius, 0.0],
         #                                   elementsCountAround, startRadians=0.0)
@@ -686,6 +690,11 @@ def getAirwaySegmentInnerPoints(region, elementsCountAround, elementsCountAlongS
 
     # Calculate z mid-point for each element set along the segment
     faceDaughter1MidPointsZ = []
+    # lengthToFirstPhase = startPhase / 360.0 * daugh1segmentLength
+    # for n2 in range(elementsCountAlongSegment + 1):
+    #     faceDaughter1MidPointsZ += [lengthToFirstPhase +
+    #                              n2 * daugh1segmentLength / elementsCountAlongSegment]
+
     lengthToFirstPhase = startPhase / 360.0 * daugh1segmentLength
     for n2 in range(elementsCountAlongSegment + 1):
         faceDaughter1MidPointsZ += [lengthToFirstPhase +
@@ -710,8 +719,9 @@ def getAirwaySegmentInnerPoints(region, elementsCountAround, elementsCountAlongS
         sRadiusDaugh2AlongSegment.append(radius)
         z = daugh2segmentLength / elementsCountAlongSegment * n2 + startPhase / 360.0 * daugh2segmentLength
 
-        if (n2 == elementsCountAlongSegment):
-            z = daugh2segmentLength / elementsCountAlongSegment * (1.0*n2 - 0.25) + startPhase / 360.0 * daugh2segmentLength
+        ##HARI COMMENTED _ IMPORTANT NOTE
+        # if (n2 == elementsCountAlongSegment):
+        #     z = daugh2segmentLength / elementsCountAlongSegment * (1.0*n2 - 0.25) + startPhase / 360.0 * daugh2segmentLength
 
         # xLoop, d1Loop = createCirclePoints([0.0, 0.0, z], [radius, 0.0, 0.0], [0.0, radius, 0.0],
         #                                    elementsCountAround, startRadians=0.0)
