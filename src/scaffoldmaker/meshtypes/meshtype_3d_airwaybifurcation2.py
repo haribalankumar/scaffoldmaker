@@ -39,8 +39,7 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
             'Number of elements along' : 2,
             'Number of elements around' : 4,
             'Number of elements through wall': 1,
-            'Daughter1 angle': 30,
-            'Daughter2 angle': 50,
+            'Use junction elements': False,
             'Use cross derivatives' : False,
             'Use linear through wall': True,
             'Refine': False,
@@ -55,10 +54,9 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
             'Number of elements along',
             'Number of elements around',
             'Number of elements through wall',
+            'Use junction elements',
             'Use cross derivatives',
             'Use linear through wall',
-            'Daughter1 angle',
-            'Daughter2 angle',
             'Refine',
             'Refine number of elements around',
             'Refine number of elements along segment',
@@ -75,15 +73,6 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
                 options['Number of elements around'] = 4
         elif (options['Number of elements around'] % 2) == 1:
             options['Number of elements around'] += 1
-        if (options['Daughter1 angle'] < 5):
-            options['Daughter1 angle'] = 5
-        if (options['Daughter1 angle'] > 60):
-            options['Daughter1 angle'] = 60
-
-        if (options['Daughter2 angle'] < 5):
-            options['Daughter2 angle'] = 5
-        if (options['Daughter2 angle'] > 60):
-            options['Daughter2 angle'] = 60
 
     @staticmethod
     def generateBaseMesh(region, options):
@@ -98,17 +87,32 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
         elementsCountAround = options['Number of elements around']
         elementsCountThroughWall = options['Number of elements through wall']
         useCrossDerivatives = options['Use cross derivatives']
+        useJunctionElements = options['Use junction elements']
         useCubicHermiteThroughWall = not(options['Use linear through wall'])
-
-        daughter1angle = options['Daughter1 angle']
-        daughter2angle = options['Daughter2 angle']
 
         nodeIdentifier = 1
         elementIdentifier = 1
         radiansPerElementAround = 2.0*math.pi/elementsCountAround
         radiansPerElementAlong = (math.pi/4)/elementsCountAlong
 
-        ########################################################################
+        xjunctionOuter = []
+        xjunctionInner = []
+        d1junctionOuter = []
+        d2junctionOuter = []
+        d3junctionOuter = []
+        d1junctionInner = []
+        d2junctionInner = []
+        d3junctionInner = []
+        xJunctionOuterList = []
+        d1JunctionOuterList = []
+        d2JunctionOuterList = []
+        d3JunctionOuterList = []
+        xJunctionInnerList = []
+        d1JunctionInnerList = []
+        d2JunctionInnerList = []
+        d3JunctionInnerList = []
+
+            ########################################################################
         #### centerline details
         ## typically comes from a centerline definition. currently hardcoding it
 
@@ -142,13 +146,12 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
         daughter1anglelist = [17, 4, 46]
         daughter2anglelist = [12, 39, 10]
         dirvecparentlist = [[0,0,1],[0.3864,0.0000,0.9223],[-0.485,0.0000,0.875]]
-        # dirvecdaughter1list = [[-0.01513,0.28833,0.95741],[0.4100,1.7100,0.93000],[-0.1900,-0.34000,2.52000]]
-        # dirvecdaughter2list= [[-0.07799,-0.20846,0.97492],[-0.150,-1.940,1.55000],[-0.290,0.3700,2.180]]
-
         dirvecdaughter1list = [[0.3864,0.0000,0.922],[0.87929,0.00000,0.47628],[-0.07125,0.00000,0.99746]]
         dirvecdaughter2list = [[-0.485,0.0000,0.875],[0.05673,0.00000,0.99839],[-0.9445,0.00000,0.32852]]
 
-        radiusvecparentlist =  [[0.0, 1.0, 0.0],[-0.91,0.00000,0.3],[0.93,0.0000,0.51055]]
+        # radiusvecparentlist =  [[0.0, 1.0, 0.0],[-0.91,0.00000,0.3],[0.93,0.0000,0.51055]]
+        radiusvecparentlist =  [[0.0, 1.0, 0.0],[0,1.00000,0.],[0.93,0.0000,0.51055]]
+
         radiusvecdaughter1list = [[-0.91,0.00000,0.3],[-0.47628,0.00000,0.87929]]
         radiusvecdaughter2list = [[0.93,0.0000,0.51055],[0.99839,0.00000,-0.05673]]
 
@@ -164,49 +167,31 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
         segmentlengthdaughter2list = [2.14, 3.5, 1.24]
         #####################################################################
 
-        #SMOOTHING PARAMETERS FOR EVERY SEGMENT
-        xlensegmentparentlist = [0.7, 0.35, 0.45]
-        xlensegmentd1list = [0.7, 0.3, 0.3]
-        xlensegmentd2list = [0.7, 0.34, 0.34]
+        # SMOOTHING PARAMETERS FOR EVERY SEGMENT
+        xlensegmentparentlist = [1.0, 0., 0.]
+        xlensegmentd1list = [0.0, 0.0, 0.0]
+        xlensegmentd2list = [0.0, 0.0, 0.0]
 
-        # if daughter1angle>=45 or daughter1angle<50:
-        #     xlensegmentparent = xlensegmentparent * 0.9
-        # if daughter1angle >= 50 or daughter1angle < 55:
-        #     xlensegmentparent = xlensegmentparent * 0.85
-        # if daughter2angle>=45 or daughter2angle<50:
-        #     xlensegmentparent = xlensegmentparent * 0.9
-        # if daughter2angle >= 50 or daughter2angle < 55:
-        #     xlensegmentparent = xlensegmentparent * 0.85
+        if useJunctionElements:
+            #SMOOTHING PARAMETERS FOR EVERY SEGMENT
+            xlensegmentparentlist = [0.7, 0.35, 0.45]
+            xlensegmentd1list = [0.7, 0.3, 0.3]
+            xlensegmentd2list = [0.7, 0.34, 0.34]
 
-        #Split ratio - decide where branching starts in daughter branches
-        #################################################################
-        # xlensegment is the proportion of branch lengths1 at which the branchlength starts
-        # This offset value will be calculated from branch angle, daughter radius and daughter lengths.
-        # The offset ensures smooth transition from parent to daughter
-        # Having some bugs in this algorithm. Need to revisit
-        #
-        # cval = -math.pow(1.4*endRadiusparent,2) + math.pow(cosangled1*startRadiusDaugh1,2)
-        # aval = math.pow(daughter1segmentLength,2)*math.pow(sinangled1,2)
-        # bval = 2 * daughter1segmentLength * endRadiusDaugh1 * cosangled1 * sinangled1
-        # segmentratioDaughter11 = -0.5*(bval/aval)+math.sqrt(math.pow(bval,2)-4.0*aval*cval)/(2.0*aval)
-        #
-        # cval = -math.pow(1.4*endRadiusparent,2) + math.pow(cosangled2*endRadiusDaugh2,2)
-        # aval = math.pow(daughter2segmentLength,2)*math.pow(sinangled2,2)
-        # bval = 2 * daughter2segmentLength * endRadiusDaugh2 * cosangled2 * sinangled2
-        # segmentratioDaughter21 = -0.5*(bval/aval)+math.sqrt(math.pow(bval,2)-4.0*aval*cval)/(2.0*aval)
-        # print('segment ratios = ', segmentratioDaughter11, segmentratioDaughter21)
-
-        # # #FIND THE BIGGEST and pick that
-        # xlensegmentd1 = segmentratioDaughter11
-        # xlensegmentd2 = segmentratioDaughter21
-        #
-        # print('xlen seg ratios = ', xlensegmentd1, xlensegmentd2)
+        segmentCount = 1
 
         ####################################################################################
-        # Central path - SAMPLE
-        segmentCount = 2  # Hardcoded for starters
+        # Central path
+        cxminus_d1 = []
+        cdvminus_d1 = []
+        xlensegmentparentminus = 0
+        parentsegmentLengthminus = 0
 
         for nSegment in range(segmentCount):
+
+            if nSegment > 0:
+                nodeIdentifier = nextnodeIdentifier
+                elementIdentifier = nextelementIdentifier
 
             startRadiusparent = startRadiusparentlist[nSegment]
             endRadiusparent = startRadiusparent
@@ -218,13 +203,16 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
             cx_p1 = parentx0list[nSegment]
             cx0_d1 = daughter1x0list[nSegment]
             cx0_d2 = daughter2x0list[nSegment]
-
             cx1_d1 = daughter1x1list[nSegment]
             cx1_d2 = daughter2x1list[nSegment]
 
             cdv_p1 = dirvecparentlist[nSegment]
             cdv_d1 = dirvecdaughter1list[nSegment]
             cdv_d2 = dirvecdaughter2list[nSegment]
+
+            if nSegment > 0:
+                cxminus_d1 = daughter1x0list[nSegment-1]
+                cdvminus_d1 = dirvecdaughter1list[nSegment-1]
 
             cradv_p = radiusvecparentlist[nSegment]
             cradv_d1 = radiusvecdaughter1list[nSegment]
@@ -237,19 +225,26 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
             xlensegmentparent = xlensegmentparentlist[nSegment]
             xlensegmentd1 = xlensegmentd1list[nSegment]
             xlensegmentd2 = xlensegmentd2list[nSegment]
+            if nSegment > 0:
+                xlensegmentparentminus = xlensegmentd1list[nSegment-1]
+                parentsegmentLengthminus = segmentlengthdaughter1list[nSegment-1]
+
 
             if nSegment == 0:
                 cxparent = [[cx_p1[0],cx_p1[1],cx_p1[2]],
                             [cx_p1[0]+cdv_p1[0]*xlensegmentparent*parentsegmentLength,
                              cx_p1[1]+cdv_p1[1]*xlensegmentparent*parentsegmentLength,
                              cx_p1[2]+cdv_p1[2]*xlensegmentparent*parentsegmentLength]]
-
+            else:
+                cxparent = [[cxminus_d1[0] + cdvminus_d1[0] * xlensegmentparentminus * parentsegmentLengthminus,
+                            cxminus_d1[1] + cdvminus_d1[1] * xlensegmentparentminus * parentsegmentLengthminus,
+                            cxminus_d1[2] + cdvminus_d1[2] * xlensegmentparentminus * parentsegmentLengthminus],
+                            [cxminus_d1[0] + cdvminus_d1[0]  * 2 * parentsegmentLengthminus,
+                            cxminus_d1[1] + cdvminus_d1[1] * 2 * parentsegmentLengthminus,
+                            cxminus_d1[2] + cdvminus_d1[2] * 2 * parentsegmentLengthminus]]
             print('parent xcoord =',cxparent)
-
             cd1parent = [[cdv_p1[0],cdv_p1[1],cdv_p1[2]],[cdv_p1[0],cdv_p1[1],cdv_p1[2]]]
             cd2parent = [[cradv_p[0],cradv_p[1],cradv_p[2]],[cradv_p[0],cradv_p[1],cradv_p[2]]]
-            print('parent dcs =',cd1parent)
-            cd2parent = [[0.0, 1.0, 0.0], [0.0, 1.0, 0.0]]
             cd12parent = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
 
             #Daughter 1
@@ -274,28 +269,30 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
 
             cd12daughter2 = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
 
-            daughter1angle = daughter1anglelist[nSegment]
-            daughter2angle = daughter2anglelist[nSegment]
+            # daughter1angle = daughter1anglelist[nSegment]
+            # daughter2angle = daughter2anglelist[nSegment]
         #######################################################################
 
-            # cosangled1 = math.cos(math.pi/180.0 * (daughter1angle))
-            # sinangled1 = math.sin(math.pi/180.0 * (daughter1angle))
-            # cosangled2 = math.cos(math.pi/180.0 * (daughter2angle))
-            # sinangled2 = math.sin(math.pi/180.0 * (daughter2angle))
-
             # Sample central path - PARENT
+            # sxparent, sd1parent, separent, sxiparent, ssfparent = \
+            #     interp.sampleCubicHermiteCurves(cxparent, cd1parent, elementsCountAlongSegment*segmentCount)
             sxparent, sd1parent, separent, sxiparent, ssfparent = \
-                interp.sampleCubicHermiteCurves(cxparent, cd1parent, elementsCountAlongSegment*segmentCount)
+                interp.sampleCubicHermiteCurves(cxparent, cd1parent, elementsCountAlongSegment)
             sd2parent = interp.interpolateSampleCubicHermite(cd2parent, cd12parent, separent, sxiparent, ssfparent)[0]
+            print('after sampling hermite sd1parent=',sd1parent)
 
             # Sample central path - DAUGHTER1
+            # sxDaugh1, sd1Daugh1, seDaugh1, sxiDaugh1, ssfDaugh1 = \
+            #     interp.sampleCubicHermiteCurves(cxdaughter1, cd1daughter1, elementsCountAlongSegment*segmentCount)
             sxDaugh1, sd1Daugh1, seDaugh1, sxiDaugh1, ssfDaugh1 = \
-                interp.sampleCubicHermiteCurves(cxdaughter1, cd1daughter1, elementsCountAlongSegment*segmentCount)
+                interp.sampleCubicHermiteCurves(cxdaughter1, cd1daughter1, elementsCountAlongSegment)
             sd2Daugh1 = interp.interpolateSampleCubicHermite(cd2daughter1, cd12daughter1, seDaugh1, sxiDaugh1, ssfDaugh1)[0]
 
             # Sample central path - DAUGHTER2
+            # sxDaugh2, sd1Daugh2, seDaugh2, sxiDaugh2, ssfDaugh2 = \
+            #     interp.sampleCubicHermiteCurves(cxdaughter2, cd1daughter2, elementsCountAlongSegment*segmentCount)
             sxDaugh2, sd1Daugh2, seDaugh2, sxiDaugh2, ssfDaugh2 = \
-                interp.sampleCubicHermiteCurves(cxdaughter2, cd1daughter2, elementsCountAlongSegment*segmentCount)
+                interp.sampleCubicHermiteCurves(cxdaughter2, cd1daughter2, elementsCountAlongSegment)
             sd2Daugh2 = interp.interpolateSampleCubicHermite(cd2daughter2, cd12daughter2, seDaugh2, sxiDaugh2, ssfDaugh2)[0]
 
             # Find parameter variation along elementsCountAlongSegment
@@ -340,7 +337,7 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
                 (1-xlensegmentd1)*daughter1segmentLength,
                 (1-xlensegmentd2)*daughter2segmentLength,
                 wallThickness, radiusparentAlongSegment, radiusDaugh1AlongSegment,
-                radiusDaugh2AlongSegment, dRadiusDaugh2AlongSegment,
+                radiusDaugh2AlongSegment, dRadiusparentAlongSegment,
                 dRadiusDaugh1AlongSegment, dRadiusDaugh2AlongSegment, startPhase)
 
             #Create inner points
@@ -375,19 +372,18 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
 
             contractedWallThicknessList = airwaysegmentTubeMeshInnerPoints.getContractedWallThicknessList()
 
-        # Form junction  points
-        ###############################
-            xjunctionOuter, xjunctionInner, d1junctionOuter, d2junctionOuter, d3junctionOuter,\
-            d1junctionInner, d2junctionInner, d3junctionInner\
-                = tubebifurcationmesh.createjunctionAirwaySegmentPoints(
-            xParentWarpedList, xDaugh1WarpedList, xDaugh2WarpedList,
-            d1ParentWarpedList, d1Daugh1WarpedList, d1Daugh2WarpedList,
-            d2ParentWarpedList, d2Daugh1WarpedList, d2Daugh2WarpedList,
-            segmentAxisParent, segmentAxisDaughter1, segmentAxisDaughter2,
-            sxparent, sxDaugh1, sxDaugh2,
-            sd1parent, sd1Daugh1, sd1Daugh2,
-            sd2parent, sd2Daugh1, sd2Daugh2,
-            elementsCountAround, elementsCountAlongSegment, nSegment)
+            if useJunctionElements:
+                # Form junction  points
+                ###############################
+                xjunctionOuter, xjunctionInner, d1junctionOuter, d2junctionOuter, d3junctionOuter,\
+                d1junctionInner, d2junctionInner, d3junctionInner\
+                    = tubebifurcationmesh.createjunctionAirwaySegmentPoints(
+                xParentWarpedList, xDaugh1WarpedList, xDaugh2WarpedList,
+                d1ParentWarpedList, d1Daugh1WarpedList, d1Daugh2WarpedList,
+                d2ParentWarpedList, d2Daugh1WarpedList, d2Daugh2WarpedList,
+                segmentAxisParent, segmentAxisDaughter1, segmentAxisDaughter2,
+                sxparent, sxDaugh1, sxDaugh2, sd1parent, sd1Daugh1, sd1Daugh2, sd2parent, sd2Daugh1, sd2Daugh2,
+                elementsCountAround, elementsCountAlongSegment, nSegment)
 
             # Create coordinates and derivatives - PARENT AND DAUGHERS1,2
             xParentList, d1ParentList, d2ParentList, d3ParentList, \
@@ -403,11 +399,12 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
                     elementsCountAround, elementsCountAlongSegment,
                     elementsCountThroughWall, transitElementList)
 
-            # Create coordinates and derivatives - JUNCTION
-            xJunctionOuterList, d1JunctionOuterList, d2JunctionOuterList, d3JunctionOuterList, \
-            xJunctionInnerList, d1JunctionInnerList, d2JunctionInnerList, d3JunctionInnerList, \
-            curvatureList = \
-                tubebifurcationmesh.getAirwayJunctionCoordinatesFromInner(
+            if useJunctionElements:
+                # Create coordinates and derivatives - JUNCTION
+                xJunctionOuterList, d1JunctionOuterList, d2JunctionOuterList, d3JunctionOuterList, \
+                xJunctionInnerList, d1JunctionInnerList, d2JunctionInnerList, d3JunctionInnerList, \
+                curvatureList = \
+                    tubebifurcationmesh.getAirwayJunctionCoordinatesFromInner(
                     xjunctionOuter,d1junctionOuter,d2junctionOuter,d3junctionOuter,
                     xjunctionInner,d1junctionInner,d2junctionInner,d3junctionInner,
                     contractedWallThicknessList,
@@ -416,7 +413,12 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
 
             ##Create nodes and elements
             ##############################
-            nextNodeIdentifier, nextElementIdentifier = \
+            # if nSegment == 1:
+            #     nodeIdentifier = 3*elementsCountAround*(1+elementsCountAlongSegment)*(elementsCountThroughWall+1)+10
+            #     elementIdentifier = 3*elementsCountAround*(elementsCountAlongSegment)*elementsCountThroughWall+10
+
+            print('checking node identified BEFORE create node and elems =', nodeIdentifier, elementIdentifier)
+            nextnodeIdentifier, nextelementIdentifier = \
                 tubebifurcationmesh.createAirwaySegmentNodesAndElements\
                     (region,
                     xParentList, d1ParentList, d2ParentList, d3ParentList,
@@ -428,16 +430,7 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
                     elementsCountAround, elementsCountAlongSegment, elementsCountThroughWall,
                     nodeIdentifier, elementIdentifier, useCubicHermiteThroughWall, useCrossDerivatives)
 
-        # nextNodeIdentifier, nextElementIdentifier = \
-        #     tubebifurcationmesh.createAirwaySegmentSurfaceNodesAndElements\
-        #         (region,
-        #          xParentWarpedList, d1ParentWarpedList, d2ParentWarpedList,
-        #          xDaugh1WarpedList, d1Daugh1WarpedList, d2Daugh1WarpedList,
-        #          xDaugh2WarpedList, d1Daugh2WarpedList, d2Daugh2WarpedList,
-        #          xjunctionOuter, xjunctionInner, d1junction,d2junction,
-        #          elementsCountAround, elementsCountAlongSegment,
-        #         nodeIdentifier, elementIdentifier, useCrossDerivatives)
-
+            print('checking node identifie after create node and elems =', nodeIdentifier, elementIdentifier)
         # fm.endChange()
        # return annotationGroups
 
@@ -528,8 +521,9 @@ class AirwaySegmentTubeMeshInnerPoints:
                                           endRadiusDaugh2Derivative,
                                           self._startPhase)
 
-        startIdx = 0 if nSegment == 0 else 1
+        # startIdx = 0 if nSegment == 0 else 1
 
+        startIdx = 0
         # xi = xiSegment[startIdx:self._elementsCountAlongSegment + 1]
         # self._xiList += xi
 

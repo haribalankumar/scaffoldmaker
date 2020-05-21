@@ -292,7 +292,7 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
             region, elementsCountAround, elementsCountAlongSegment,
             xlensegmentparent*parentsegmentLength, (1-xlensegmentd1)*daughter1segmentLength, (1-xlensegmentd2)*daughter2segmentLength,
             wallThickness, radiusparentAlongSegment, radiusDaugh1AlongSegment,
-            radiusDaugh2AlongSegment, dRadiusDaugh2AlongSegment,
+            radiusDaugh2AlongSegment, dRadiusparentAlongSegment,
             dRadiusDaugh1AlongSegment, dRadiusDaugh2AlongSegment, startPhase)
 
         # Create inner points
@@ -316,7 +316,9 @@ class MeshType_3d_airwaybifurcation1(Scaffold_base):
             d1ParentInner, d1Daugh1Inner, d1Daugh2Inner,
             d2ParentInner, d2Daugh1Inner, d2Daugh2Inner,
             segmentAxisParent, segmentAxisDaughter1, segmentAxisDaughter2,
-            xlensegmentparent*parentsegmentLength, (1-xlensegmentd1)*daughter1segmentLength, (1-xlensegmentd2)*daughter2segmentLength,
+            xlensegmentparent*parentsegmentLength,
+            (1-xlensegmentd1)*daughter1segmentLength,
+            (1-xlensegmentd2)*daughter2segmentLength,
             sxparent, sxDaugh1, sxDaugh2,
             sd1parent, sd1Daugh1, sd1Daugh2,
             sd2parent, sd2Daugh1, sd2Daugh2,
