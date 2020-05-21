@@ -147,13 +147,13 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
 
         elementsCountAlongSegment = 2
 
-        wallThickness = 0.02
+        wallThickness = 0.06
         startPhase = 0.0
 
         ##DAUGHETER 1 - SAMPLE SEGMENT
         daughter1anglelist = [17, 4, 46]
         daughter2anglelist = [12, 39, 10]
-        dirvecparentlist = [[0,0,1],[0.3864,0.0000,0.9223],[-0.485,0.0000,0.875]]
+        dirvecparentlist = [[0,0,1],[0.3864,0.0000,0.922],[-0.485,0.0000,0.875]]
         dirvecdaughter1list = [[0.3864,0.0000,0.922],[0.87929,0.00000,0.47628],[-0.07125,0.00000,0.99746]]
         dirvecdaughter2list = [[-0.485,0.0000,0.875],[0.05673,0.00000,0.99839],[-0.9445,0.00000,0.32852]]
 
@@ -171,8 +171,8 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
         daughter2x0list = [[0,0,4.000],[2.50530,0.00000,9.98000],[-2.09470,0.00000,7.78000]]
 
         parentx1list = [[0,0,4.000],[2.50530,0.00000,9.98000],[-2.09470,0.00000,7.78000]]
-        daughter1x1list = [[1.18830,0.00000,6.99000],[4.90530,0.00000,11.28000],[-2.2947,0.000,10.580]]
-        daughter2x1list = [[-1.11170,0.00000,5.89000],[2.70530,0.00000,13.50000],[-4.3947,0.00, 8.580]]
+        daughter1x1list = [[1.25265,0.00000,6.99000],[4.90530,0.00000,11.28000],[-2.2947,0.000,10.580]]
+        daughter2x1list = [[-1.04735,0.00000,5.89000],[2.70530,0.00000,13.50000],[-4.3947,0.00, 8.580]]
 
         segmentlengthparentlist = [4, 3.24, 2.16]
         segmentlengthdaughter1list = [3.24, 2.7, 2.8]
@@ -186,9 +186,9 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
 
         if useJunctionElements:
             #SMOOTHING PARAMETERS FOR EVERY SEGMENT
-            xlensegmentparentlist = [0.7, 0.35, 0.45]
-            xlensegmentd1list = [0.7, 0.3, 0.3]
-            xlensegmentd2list = [0.7, 0.34, 0.34]
+            xlensegmentparentlist = [0.8, 0.4, 0.5]
+            xlensegmentd1list = [0.6, 0.5, 0.4]
+            xlensegmentd2list = [0.6, 0.4, 0.5]
 
         segmentCount = pow(2,numberofGenerations-1)
 
@@ -390,9 +390,9 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
 
                 contractedWallThicknessList = airwaysegmentTubeMeshInnerPoints.getContractedWallThicknessList()
 
+                # Form junction  points
+                ###############################
                 if useJunctionElements:
-                    # Form junction  points
-                    ###############################
                     xjunctionOuter, xjunctionInner, d1junctionOuter, d2junctionOuter, d3junctionOuter,\
                     d1junctionInner, d2junctionInner, d3junctionInner\
                         = tubebifurcationmesh.createjunctionAirwaySegmentPoints(
@@ -506,21 +506,22 @@ class AirwaySegmentTubeMeshInnerPoints:
 
     def getAirwaySegmentTubeMeshInnerPoints(self, nSegment):
 
+        nSegmenttemporary = 0
         # Unpack radius and rate of change of inner radius
-        startRadiusParent = self._innerRadiusParentSegmentList[nSegment]
-        startRadiusParentDerivative = self._dInnerRadiusParentSegmentList[nSegment]
-        endRadiusParent = self._innerRadiusParentSegmentList[nSegment+1]
-        endRadiusParentDerivative = self._dInnerRadiusParentSegmentList[nSegment+1]
+        startRadiusParent = self._innerRadiusParentSegmentList[nSegmenttemporary]
+        startRadiusParentDerivative = self._dInnerRadiusParentSegmentList[nSegmenttemporary]
+        endRadiusParent = self._innerRadiusParentSegmentList[nSegmenttemporary+1]
+        endRadiusParentDerivative = self._dInnerRadiusParentSegmentList[nSegmenttemporary+1]
 
-        startRadiusDaugh1 = self._innerRadiusDaugh1SegmentList[nSegment]
-        startRadiusDaugh1Derivative = self._dInnerRadiusDaugh1SegmentList[nSegment]
-        endRadiusDaugh1 = self._innerRadiusDaugh1SegmentList[nSegment+1]
-        endRadiusDaugh1Derivative = self._dInnerRadiusDaugh1SegmentList[nSegment+1]
+        startRadiusDaugh1 = self._innerRadiusDaugh1SegmentList[nSegmenttemporary]
+        startRadiusDaugh1Derivative = self._dInnerRadiusDaugh1SegmentList[nSegmenttemporary]
+        endRadiusDaugh1 = self._innerRadiusDaugh1SegmentList[nSegmenttemporary+1]
+        endRadiusDaugh1Derivative = self._dInnerRadiusDaugh1SegmentList[nSegmenttemporary+1]
 
-        startRadiusDaugh2 = self._innerRadiusDaugh2SegmentList[nSegment]
-        startRadiusDaugh2Derivative = self._dInnerRadiusDaugh2SegmentList[nSegment]
-        endRadiusDaugh2 = self._innerRadiusDaugh2SegmentList[nSegment+1]
-        endRadiusDaugh2Derivative = self._dInnerRadiusDaugh2SegmentList[nSegment+1]
+        startRadiusDaugh2 = self._innerRadiusDaugh2SegmentList[nSegmenttemporary]
+        startRadiusDaugh2Derivative = self._dInnerRadiusDaugh2SegmentList[nSegmenttemporary]
+        endRadiusDaugh2 = self._innerRadiusDaugh2SegmentList[nSegmenttemporary+1]
+        endRadiusDaugh2Derivative = self._dInnerRadiusDaugh2SegmentList[nSegmenttemporary+1]
 
         xParentInner, xDaugh1Inner, xDaugh2Inner, \
         d1ParentInner, d1Daugh1Inner, d1Daugh2Inner, \
@@ -537,7 +538,7 @@ class AirwaySegmentTubeMeshInnerPoints:
                                           startRadiusDaugh2Derivative,
                                           endRadiusParent, endRadiusDaugh1, endRadiusDaugh2,
                                           endRadiusParentDerivative,endRadiusDaugh1Derivative,
-                                          endRadiusDaugh2Derivative,
+                                          endRadiusDaugh2Derivative, nSegment,
                                           self._startPhase)
 
         # startIdx = 0 if nSegment == 0 else 1
@@ -565,7 +566,7 @@ def getAirwaySegmentInnerPoints(region, elementsCountAround, elementsCountAlongS
                                 startRadiusParentDerivative, startRadiusDaugh1Derivative, startRadiusDaugh2Derivative,
                                 endRadiusParent, endRadiusDaugh1, endRadiusDaugh2,
                                 endRadiusParentDerivative, endRadiusDaugh1Derivative, endRadiusDaugh2Derivative,
-                                     startPhase):
+                                nSegment, startPhase):
     """
     Generates a 3-D cylindrical segment mesh with variable numbers of elements
     around, along the central path, and through wall.
@@ -611,9 +612,9 @@ def getAirwaySegmentInnerPoints(region, elementsCountAround, elementsCountAlongS
         # if n2 == elementsCountAlongSegment:
         #     z = parentsegmentLength / elementsCountAlongSegment * (1.0*n2-0.25) + startPhase / 360.0 * parentsegmentLength
 
+        xLoop, d1Loop = createCirclePoints([0.0, 0.0, z], [0.0, radius, 0.0], [-radius, 0.0, 0.0],
+                                               elementsCountAround, startRadians=0.0)
 
-        xLoop, d1Loop = createCirclePoints([0.0, 0.0, z], [radius, 0.0, 0.0], [0.0, radius, 0.0],
-                                           elementsCountAround, startRadians=0.0)
         xParentFinal = xParentFinal + xLoop
         d1ParentFinal = d1ParentFinal + d1Loop
 
@@ -663,10 +664,10 @@ def getAirwaySegmentInnerPoints(region, elementsCountAround, elementsCountAlongS
         # if n2 == elementsCountAlongSegment:
         #     z = daugh1segmentLength / elementsCountAlongSegment * (1.0*n2-0.25) + startPhase / 360.0 * daugh1segmentLength
 
-        #xLoop, d1Loop = createCirclePoints([0.0, 0.0, z], [radius, 0.0, 0.0], [0.0, radius, 0.0],
-        #                                   elementsCountAround, startRadians=0.0)
+
         xLoop, d1Loop = createCirclePoints([z, 0.0, 0.0], [0.0, radius, 0.0], [0.0, 0.0, radius],
                                           elementsCountAround, startRadians=0.0)
+
         xDaugh1Final = xDaugh1Final + xLoop
         d1Daugh1Final = d1Daugh1Final + d1Loop
 
@@ -723,9 +724,9 @@ def getAirwaySegmentInnerPoints(region, elementsCountAround, elementsCountAlongS
         # if (n2 == elementsCountAlongSegment):
         #     z = daugh2segmentLength / elementsCountAlongSegment * (1.0*n2 - 0.25) + startPhase / 360.0 * daugh2segmentLength
 
-        # xLoop, d1Loop = createCirclePoints([0.0, 0.0, z], [radius, 0.0, 0.0], [0.0, radius, 0.0],
+        # xLoop, d1Loop = createCirclePoints([-z, 0.0, 0.0], [0.0, -radius, 0.0], [0.0, 0.0, radius],
         #                                    elementsCountAround, startRadians=0.0)
-        xLoop, d1Loop = createCirclePoints([-z, 0.0, 0.0], [0.0, -radius, 0.0], [0.0, 0.0, radius],
+        xLoop, d1Loop = createCirclePoints([-z, 0.0, 0.0], [0.0, radius, 0.0], [0.0, 0.0, -radius],
                                            elementsCountAround, startRadians=0.0)
 
         xDaugh2Final = xDaugh2Final + xLoop
