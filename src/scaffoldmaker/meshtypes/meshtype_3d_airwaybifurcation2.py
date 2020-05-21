@@ -40,6 +40,7 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
             'Number of elements around' : 4,
             'Number of elements through wall': 1,
             'Use junction elements': False,
+            'Number of generations downstream': 1,
             'Use cross derivatives' : False,
             'Use linear through wall': True,
             'Refine': False,
@@ -55,6 +56,7 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
             'Number of elements around',
             'Number of elements through wall',
             'Use junction elements',
+            'Number of generations downstream',
             'Use cross derivatives',
             'Use linear through wall',
             'Refine',
@@ -73,6 +75,10 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
                 options['Number of elements around'] = 4
         elif (options['Number of elements around'] % 2) == 1:
             options['Number of elements around'] += 1
+        if (options['Number of generations downstream'] < 1):
+            options['Number of generations downstream'] = 1
+        if (options['Number of generations downstream'] > 2):
+            options['Number of generations downstream'] = 2
 
     @staticmethod
     def generateBaseMesh(region, options):
@@ -86,6 +92,8 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
         elementsCountAlong = options['Number of elements along']
         elementsCountAround = options['Number of elements around']
         elementsCountThroughWall = options['Number of elements through wall']
+        numberofGenerations = options['Number of generations downstream']
+
         useCrossDerivatives = options['Use cross derivatives']
         useJunctionElements = options['Use junction elements']
         useCubicHermiteThroughWall = not(options['Use linear through wall'])
@@ -150,25 +158,29 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
         dirvecdaughter2list = [[-0.485,0.0000,0.875],[0.05673,0.00000,0.99839],[-0.9445,0.00000,0.32852]]
 
         # radiusvecparentlist =  [[0.0, 1.0, 0.0],[-0.91,0.00000,0.3],[0.93,0.0000,0.51055]]
-        radiusvecparentlist =  [[0.0, 1.0, 0.0],[0,1.00000,0.],[0.93,0.0000,0.51055]]
+        radiusvecparentlist =  [[0.0, 1.0, 0.0],[0.0, 1.0, 0.0],[0.0,1.0000,0.0]]
 
-        radiusvecdaughter1list = [[-0.91,0.00000,0.3],[-0.47628,0.00000,0.87929]]
-        radiusvecdaughter2list = [[0.93,0.0000,0.51055],[0.99839,0.00000,-0.05673]]
+        # radiusvecdaughter1list = [[-0.91,0.00000,0.3],[-0.47628,0.00000,0.87929]]
+        # radiusvecdaughter2list = [[0.93,0.0000,0.51055],[0.99839,0.00000,-0.05673]]
 
-        parentx0list = [[0,0,0],[0,0,4.000],[-0.108,-0.0330,2.380]]
+        radiusvecdaughter1list = [[0.0,1.00,0.0],[0.0,1.00,0.0],[0.0,1.00,0.0]]
+        radiusvecdaughter2list = [[0.0,1.00,0.0],[0.0,1.00,0.0],[0.0,1.00,0.0]]
+
+        parentx0list = [[0,0,0],[0,0,4.000],[0,0,4.000]]
         daughter1x0list = [[0,0,4.000],[2.50530,0.00000,9.98000],[-2.09470,0.00000,7.78000]]
         daughter2x0list = [[0,0,4.000],[2.50530,0.00000,9.98000],[-2.09470,0.00000,7.78000]]
 
-        daughter1x1list = [[1.18830,0.00000,6.99000],[4.90530,0.00000,11.28000],[-0.570,-1.100,8.300]]
-        daughter2x1list = [[-1.11170,0.00000,5.89000],[2.70530,0.00000,13.50000],[1.90000,-0.48000,9.75000]]
+        parentx1list = [[0,0,4.000],[2.50530,0.00000,9.98000],[-2.09470,0.00000,7.78000]]
+        daughter1x1list = [[1.18830,0.00000,6.99000],[4.90530,0.00000,11.28000],[-2.2947,0.000,10.580]]
+        daughter2x1list = [[-1.11170,0.00000,5.89000],[2.70530,0.00000,13.50000],[-4.3947,0.00, 8.580]]
 
-        segmentlengthparentlist = [4, 3.23, 2.14]
-        segmentlengthdaughter1list = [3.23, 2.7, 1.275]
-        segmentlengthdaughter2list = [2.14, 3.5, 1.24]
+        segmentlengthparentlist = [4, 3.24, 2.16]
+        segmentlengthdaughter1list = [3.24, 2.7, 2.8]
+        segmentlengthdaughter2list = [2.16, 3.5, 2.43]
         #####################################################################
 
         # SMOOTHING PARAMETERS FOR EVERY SEGMENT
-        xlensegmentparentlist = [1.0, 0., 0.]
+        xlensegmentparentlist = [1.0, 1., 1.]
         xlensegmentd1list = [0.0, 0.0, 0.0]
         xlensegmentd2list = [0.0, 0.0, 0.0]
 
@@ -178,7 +190,7 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
             xlensegmentd1list = [0.7, 0.3, 0.3]
             xlensegmentd2list = [0.7, 0.34, 0.34]
 
-        segmentCount = 1
+        segmentCount = pow(2,numberofGenerations-1)
 
         ####################################################################################
         # Central path
@@ -188,228 +200,233 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
         parentsegmentLengthminus = 0
 
         for nSegment in range(segmentCount):
+            childcount = pow(2,nSegment)
+            for nChild in range(childcount):
 
-            if nSegment > 0:
-                nodeIdentifier = nextnodeIdentifier
-                elementIdentifier = nextelementIdentifier
+                if nSegment > 0:
+                    nodeIdentifier = nextnodeIdentifier
+                    elementIdentifier = nextelementIdentifier
 
-            startRadiusparent = startRadiusparentlist[nSegment]
-            endRadiusparent = startRadiusparent
-            startRadiusDaugh1 = startRadiusDaugh1list[nSegment]
-            endRadiusDaugh1 = startRadiusDaugh1
-            startRadiusDaugh2 = startRadiusDaugh2list[nSegment]
-            endRadiusDaugh2 = startRadiusDaugh2list[nSegment]
+                nChild_number = nSegment + nChild
+                startRadiusparent = startRadiusparentlist[nChild_number]
+                endRadiusparent = startRadiusparent
+                startRadiusDaugh1 = startRadiusDaugh1list[nChild_number]
+                endRadiusDaugh1 = startRadiusDaugh1
+                startRadiusDaugh2 = startRadiusDaugh2list[nChild_number]
+                endRadiusDaugh2 = startRadiusDaugh2list[nChild_number]
 
-            cx_p1 = parentx0list[nSegment]
-            cx0_d1 = daughter1x0list[nSegment]
-            cx0_d2 = daughter2x0list[nSegment]
-            cx1_d1 = daughter1x1list[nSegment]
-            cx1_d2 = daughter2x1list[nSegment]
+                cx0_p1 = parentx0list[nChild_number]
+                cx1_p1 = parentx1list[nChild_number]
 
-            cdv_p1 = dirvecparentlist[nSegment]
-            cdv_d1 = dirvecdaughter1list[nSegment]
-            cdv_d2 = dirvecdaughter2list[nSegment]
+                cx0_d1 = daughter1x0list[nChild_number]
+                cx0_d2 = daughter2x0list[nChild_number]
+                cx1_d1 = daughter1x1list[nChild_number]
+                cx1_d2 = daughter2x1list[nChild_number]
 
-            if nSegment > 0:
-                cxminus_d1 = daughter1x0list[nSegment-1]
-                cdvminus_d1 = dirvecdaughter1list[nSegment-1]
+                cdv_p1 = dirvecparentlist[nChild_number]
+                cdv_d1 = dirvecdaughter1list[nChild_number]
+                cdv_d2 = dirvecdaughter2list[nChild_number]
 
-            cradv_p = radiusvecparentlist[nSegment]
-            cradv_d1 = radiusvecdaughter1list[nSegment]
-            cradv_d2 = radiusvecdaughter2list[nSegment]
+                if nSegment > 0:
+                    cxminus_d1 = daughter1x0list[nSegment-1]
+                    cdvminus_d1 = dirvecdaughter1list[nSegment-1]
 
-            parentsegmentLength = segmentlengthparentlist[nSegment]
-            daughter1segmentLength = segmentlengthdaughter1list[nSegment]
-            daughter2segmentLength = segmentlengthdaughter2list[nSegment]
+                cradv_p = radiusvecparentlist[nChild_number]
+                cradv_d1 = radiusvecdaughter1list[nChild_number]
+                cradv_d2 = radiusvecdaughter2list[nChild_number]
 
-            xlensegmentparent = xlensegmentparentlist[nSegment]
-            xlensegmentd1 = xlensegmentd1list[nSegment]
-            xlensegmentd2 = xlensegmentd2list[nSegment]
-            if nSegment > 0:
-                xlensegmentparentminus = xlensegmentd1list[nSegment-1]
-                parentsegmentLengthminus = segmentlengthdaughter1list[nSegment-1]
+                parentsegmentLength = segmentlengthparentlist[nChild_number]
+                daughter1segmentLength = segmentlengthdaughter1list[nChild_number]
+                daughter2segmentLength = segmentlengthdaughter2list[nChild_number]
+
+                xlensegmentparent = xlensegmentparentlist[nChild_number]
+                xlensegmentd1 = xlensegmentd1list[nChild_number]
+                xlensegmentd2 = xlensegmentd2list[nChild_number]
+
+                if nSegment > 0:
+                    xlensegmentparentminus = xlensegmentd1list[nSegment-1]
+                    parentsegmentLengthminus = segmentlengthdaughter1list[nSegment-1]
 
 
-            if nSegment == 0:
-                cxparent = [[cx_p1[0],cx_p1[1],cx_p1[2]],
-                            [cx_p1[0]+cdv_p1[0]*xlensegmentparent*parentsegmentLength,
-                             cx_p1[1]+cdv_p1[1]*xlensegmentparent*parentsegmentLength,
-                             cx_p1[2]+cdv_p1[2]*xlensegmentparent*parentsegmentLength]]
-            else:
-                cxparent = [[cxminus_d1[0] + cdvminus_d1[0] * xlensegmentparentminus * parentsegmentLengthminus,
-                            cxminus_d1[1] + cdvminus_d1[1] * xlensegmentparentminus * parentsegmentLengthminus,
-                            cxminus_d1[2] + cdvminus_d1[2] * xlensegmentparentminus * parentsegmentLengthminus],
-                            [cxminus_d1[0] + cdvminus_d1[0]  * 2 * parentsegmentLengthminus,
-                            cxminus_d1[1] + cdvminus_d1[1] * 2 * parentsegmentLengthminus,
-                            cxminus_d1[2] + cdvminus_d1[2] * 2 * parentsegmentLengthminus]]
-            print('parent xcoord =',cxparent)
-            cd1parent = [[cdv_p1[0],cdv_p1[1],cdv_p1[2]],[cdv_p1[0],cdv_p1[1],cdv_p1[2]]]
-            cd2parent = [[cradv_p[0],cradv_p[1],cradv_p[2]],[cradv_p[0],cradv_p[1],cradv_p[2]]]
-            cd12parent = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
+                if nSegment == 0:
+                    cxparent = [[cx0_p1[0],cx0_p1[1],cx0_p1[2]],
+                            [cx0_p1[0]+cdv_p1[0]*xlensegmentparent*parentsegmentLength,
+                             cx0_p1[1]+cdv_p1[1]*xlensegmentparent*parentsegmentLength,
+                             cx0_p1[2]+cdv_p1[2]*xlensegmentparent*parentsegmentLength]]
+                else:
+                    cxparent = [[cx1_p1[0] - cdv_p1[0] * parentsegmentLength,
+                                 cx1_p1[1] - cdv_p1[1]  * parentsegmentLength,
+                                 cx1_p1[2] - cdv_p1[2]  * parentsegmentLength],
+                                [cx1_p1[0],cx1_p1[1],cx1_p1[2]]]
+                print('parent xcoord =',cxparent)
+                cd1parent = [[cdv_p1[0],cdv_p1[1],cdv_p1[2]],[cdv_p1[0],cdv_p1[1],cdv_p1[2]]]
+                cd2parent = [[cradv_p[0],cradv_p[1],cradv_p[2]],[cradv_p[0],cradv_p[1],cradv_p[2]]]
+                cd12parent = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
 
-            #Daughter 1
-            cxdaughter1 = [[cx0_d1[0] + cdv_d1[0] * xlensegmentd1 * daughter1segmentLength,
+                #Daughter 1
+                cxdaughter1 = [[cx0_d1[0] + cdv_d1[0] * xlensegmentd1 * daughter1segmentLength,
                             cx0_d1[1] + cdv_d1[1] * xlensegmentd1 * daughter1segmentLength,
                             cx0_d1[2] + cdv_d1[2] * xlensegmentd1 * daughter1segmentLength],
                            [cx1_d1[0],cx1_d1[1],cx1_d1[2]]]
-            cd1daughter1 = [[cdv_d1[0],cdv_d1[1],cdv_d1[2]],[cdv_d1[0],cdv_d1[1],cdv_d1[2]]]
-            cd2daughter1 = [[cradv_d1[0],cradv_d1[1],cradv_d1[2]], [cradv_d1[0],cradv_d1[1],cradv_d1[2]]]
-            cd12daughter1 = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
+                cd1daughter1 = [[cdv_d1[0],cdv_d1[1],cdv_d1[2]],[cdv_d1[0],cdv_d1[1],cdv_d1[2]]]
+                cd2daughter1 = [[cradv_d1[0],cradv_d1[1],cradv_d1[2]], [cradv_d1[0],cradv_d1[1],cradv_d1[2]]]
+                cd12daughter1 = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
 
-            # Daughter 2
-            cxdaughter2 = [[cx0_d2[0] + cdv_d2[0] * xlensegmentd2 * daughter2segmentLength,
+                # Daughter 2
+                cxdaughter2 = [[cx0_d2[0] + cdv_d2[0] * xlensegmentd2 * daughter2segmentLength,
                             cx0_d2[1] + cdv_d2[1] * xlensegmentd2 * daughter2segmentLength,
                             cx0_d2[2] + cdv_d2[2] * xlensegmentd2 * daughter2segmentLength],
                            [cx0_d2[0] + cdv_d2[0] * daughter2segmentLength,
                             cx0_d2[1] + cdv_d2[1] * daughter2segmentLength,
                             cx0_d2[2] + cdv_d2[2] * daughter2segmentLength]]
                            # [cx1_d2[0],cx1_d2[1],cx1_d2[2]]]
-            cd1daughter2 = [[cdv_d2[0],cdv_d2[1],cdv_d2[2]],[cdv_d2[0],cdv_d2[1],cdv_d2[2]]]
-            cd2daughter2 = [[cradv_d2[0],cradv_d2[1],cradv_d2[2]], [cradv_d2[0],cradv_d2[1],cradv_d2[2]]]
+                cd1daughter2 = [[cdv_d2[0],cdv_d2[1],cdv_d2[2]],[cdv_d2[0],cdv_d2[1],cdv_d2[2]]]
+                cd2daughter2 = [[cradv_d2[0],cradv_d2[1],cradv_d2[2]], [cradv_d2[0],cradv_d2[1],cradv_d2[2]]]
 
-            cd12daughter2 = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
+                cd12daughter2 = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
 
-            # daughter1angle = daughter1anglelist[nSegment]
-            # daughter2angle = daughter2anglelist[nSegment]
+                # daughter1angle = daughter1anglelist[nSegment]
+                # daughter2angle = daughter2anglelist[nSegment]
         #######################################################################
 
-            # Sample central path - PARENT
-            # sxparent, sd1parent, separent, sxiparent, ssfparent = \
-            #     interp.sampleCubicHermiteCurves(cxparent, cd1parent, elementsCountAlongSegment*segmentCount)
-            sxparent, sd1parent, separent, sxiparent, ssfparent = \
-                interp.sampleCubicHermiteCurves(cxparent, cd1parent, elementsCountAlongSegment)
-            sd2parent = interp.interpolateSampleCubicHermite(cd2parent, cd12parent, separent, sxiparent, ssfparent)[0]
-            print('after sampling hermite sd1parent=',sd1parent)
+                # Sample central path - PARENT
+                # sxparent, sd1parent, separent, sxiparent, ssfparent = \
+                #     interp.sampleCubicHermiteCurves(cxparent, cd1parent, elementsCountAlongSegment*segmentCount)
+                sxparent, sd1parent, separent, sxiparent, ssfparent = \
+                    interp.sampleCubicHermiteCurves(cxparent, cd1parent, elementsCountAlongSegment)
+                sd2parent = interp.interpolateSampleCubicHermite(cd2parent, cd12parent, separent, sxiparent, ssfparent)[0]
+                print('after sampling hermite sd1parent=',sd1parent)
+                print('after sampling hermite sd2parent=',sd2parent)
 
-            # Sample central path - DAUGHTER1
-            # sxDaugh1, sd1Daugh1, seDaugh1, sxiDaugh1, ssfDaugh1 = \
-            #     interp.sampleCubicHermiteCurves(cxdaughter1, cd1daughter1, elementsCountAlongSegment*segmentCount)
-            sxDaugh1, sd1Daugh1, seDaugh1, sxiDaugh1, ssfDaugh1 = \
-                interp.sampleCubicHermiteCurves(cxdaughter1, cd1daughter1, elementsCountAlongSegment)
-            sd2Daugh1 = interp.interpolateSampleCubicHermite(cd2daughter1, cd12daughter1, seDaugh1, sxiDaugh1, ssfDaugh1)[0]
+                # Sample central path - DAUGHTER1
+                # sxDaugh1, sd1Daugh1, seDaugh1, sxiDaugh1, ssfDaugh1 = \
+                #     interp.sampleCubicHermiteCurves(cxdaughter1, cd1daughter1, elementsCountAlongSegment*segmentCount)
+                sxDaugh1, sd1Daugh1, seDaugh1, sxiDaugh1, ssfDaugh1 = \
+                    interp.sampleCubicHermiteCurves(cxdaughter1, cd1daughter1, elementsCountAlongSegment)
+                sd2Daugh1 = interp.interpolateSampleCubicHermite(cd2daughter1, cd12daughter1, seDaugh1, sxiDaugh1, ssfDaugh1)[0]
 
-            # Sample central path - DAUGHTER2
-            # sxDaugh2, sd1Daugh2, seDaugh2, sxiDaugh2, ssfDaugh2 = \
-            #     interp.sampleCubicHermiteCurves(cxdaughter2, cd1daughter2, elementsCountAlongSegment*segmentCount)
-            sxDaugh2, sd1Daugh2, seDaugh2, sxiDaugh2, ssfDaugh2 = \
-                interp.sampleCubicHermiteCurves(cxdaughter2, cd1daughter2, elementsCountAlongSegment)
-            sd2Daugh2 = interp.interpolateSampleCubicHermite(cd2daughter2, cd12daughter2, seDaugh2, sxiDaugh2, ssfDaugh2)[0]
+                # Sample central path - DAUGHTER2
+                # sxDaugh2, sd1Daugh2, seDaugh2, sxiDaugh2, ssfDaugh2 = \
+                #     interp.sampleCubicHermiteCurves(cxdaughter2, cd1daughter2, elementsCountAlongSegment*segmentCount)
+                sxDaugh2, sd1Daugh2, seDaugh2, sxiDaugh2, ssfDaugh2 = \
+                    interp.sampleCubicHermiteCurves(cxdaughter2, cd1daughter2, elementsCountAlongSegment)
+                sd2Daugh2 = interp.interpolateSampleCubicHermite(cd2daughter2, cd12daughter2, seDaugh2, sxiDaugh2, ssfDaugh2)[0]
 
-            # Find parameter variation along elementsCountAlongSegment
-            radiusparentAlongSegment = []
-            dRadiusparentAlongSegment = []
+                # Find parameter variation along elementsCountAlongSegment
+                radiusparentAlongSegment = []
+                dRadiusparentAlongSegment = []
 
-            radiusDaugh1AlongSegment = []
-            dRadiusDaugh1AlongSegment = []
+                radiusDaugh1AlongSegment = []
+                dRadiusDaugh1AlongSegment = []
 
-            radiusDaugh2AlongSegment = []
-            dRadiusDaugh2AlongSegment = []
+                radiusDaugh2AlongSegment = []
+                dRadiusDaugh2AlongSegment = []
 
-            for n2 in range(elementsCountAlongSegment + 1):
-                xi = 1/elementsCountAlongSegment * n2
-                radius = interp.interpolateCubicHermite([startRadiusparent], [startRadiusparentDerivative],
-                                                        [endRadiusparent], [endRadiusparentDerivative], xi)[0]
-                radiusparentAlongSegment.append(radius)
+                for n2 in range(elementsCountAlongSegment + 1):
+                    xi = 1/elementsCountAlongSegment * n2
+                    radius = interp.interpolateCubicHermite([startRadiusparent], [startRadiusparentDerivative],
+                                                            [endRadiusparent], [endRadiusparentDerivative], xi)[0]
+                    radiusparentAlongSegment.append(radius)
 
-                dRadius = interp.interpolateCubicHermiteDerivative([startRadiusparent], [startRadiusparentDerivative],
+                    dRadius = interp.interpolateCubicHermiteDerivative([startRadiusparent], [startRadiusparentDerivative],
                                                                [endRadiusparent], [endRadiusparentDerivative], xi)[0]
-                dRadiusparentAlongSegment.append(dRadius)
+                    dRadiusparentAlongSegment.append(dRadius)
 
-                radius = interp.interpolateCubicHermite([startRadiusDaugh1], [startRadiusDaugh1Derivative],
-                                                    [endRadiusDaugh1], [endRadiusDaugh1Derivative], xi)[0]
-                radiusDaugh1AlongSegment.append(radius)
+                    radius = interp.interpolateCubicHermite([startRadiusDaugh1], [startRadiusDaugh1Derivative],
+                                                        [endRadiusDaugh1], [endRadiusDaugh1Derivative], xi)[0]
+                    radiusDaugh1AlongSegment.append(radius)
 
-                dRadius = interp.interpolateCubicHermiteDerivative([startRadiusparent], [startRadiusparentDerivative],
-                                                               [endRadiusparent], [endRadiusparentDerivative], xi)[0]
-                dRadiusDaugh1AlongSegment.append(dRadius)
+                    dRadius = interp.interpolateCubicHermiteDerivative([startRadiusparent], [startRadiusparentDerivative],
+                                                                   [endRadiusparent], [endRadiusparentDerivative], xi)[0]
+                    dRadiusDaugh1AlongSegment.append(dRadius)
 
-                radius = interp.interpolateCubicHermite([startRadiusDaugh2], [startRadiusDaugh2Derivative],
-                                                    [endRadiusDaugh2], [endRadiusDaugh2Derivative], xi)[0]
-                radiusDaugh2AlongSegment.append(radius)
+                    radius = interp.interpolateCubicHermite([startRadiusDaugh2], [startRadiusDaugh2Derivative],
+                                                        [endRadiusDaugh2], [endRadiusDaugh2Derivative], xi)[0]
+                    radiusDaugh2AlongSegment.append(radius)
 
-                dRadius = interp.interpolateCubicHermiteDerivative([startRadiusparent], [startRadiusparentDerivative],
-                                                               [endRadiusparent], [endRadiusparentDerivative], xi)[0]
-                dRadiusDaugh2AlongSegment.append(dRadius)
+                    dRadius = interp.interpolateCubicHermiteDerivative([startRadiusparent], [startRadiusparentDerivative],
+                                                                   [endRadiusparent], [endRadiusparentDerivative], xi)[0]
+                    dRadiusDaugh2AlongSegment.append(dRadius)
 
-            airwaysegmentTubeMeshInnerPoints = AirwaySegmentTubeMeshInnerPoints(
-                region, elementsCountAround, elementsCountAlongSegment,
-                xlensegmentparent*parentsegmentLength,
-                (1-xlensegmentd1)*daughter1segmentLength,
-                (1-xlensegmentd2)*daughter2segmentLength,
-                wallThickness, radiusparentAlongSegment, radiusDaugh1AlongSegment,
-                radiusDaugh2AlongSegment, dRadiusparentAlongSegment,
-                dRadiusDaugh1AlongSegment, dRadiusDaugh2AlongSegment, startPhase)
+                airwaysegmentTubeMeshInnerPoints = AirwaySegmentTubeMeshInnerPoints(
+                    region, elementsCountAround, elementsCountAlongSegment,
+                    xlensegmentparent*parentsegmentLength,
+                    (1-xlensegmentd1)*daughter1segmentLength,
+                    (1-xlensegmentd2)*daughter2segmentLength,
+                    wallThickness, radiusparentAlongSegment, radiusDaugh1AlongSegment,
+                    radiusDaugh2AlongSegment, dRadiusparentAlongSegment,
+                    dRadiusDaugh1AlongSegment, dRadiusDaugh2AlongSegment, startPhase)
 
-            #Create inner points
-            # nSegment = 0
+                #Create inner points
+                # nSegment = 0
 
-            xParentInner, xDaugh1Inner, xDaugh2Inner, \
-            d1ParentInner, d1Daugh1Inner, d1Daugh2Inner, \
-            d2ParentInner, d2Daugh1Inner, d2Daugh2Inner, \
-            transitElementList, segmentAxisParent, segmentAxisDaughter1, segmentAxisDaughter2,\
-            ParentfaceMidPointsZ, Daughter1faceMidPointsZ, Daughter2faceMidPointsZ = \
-            airwaysegmentTubeMeshInnerPoints.getAirwaySegmentTubeMeshInnerPoints(nSegment)
+                xParentInner, xDaugh1Inner, xDaugh2Inner, \
+                d1ParentInner, d1Daugh1Inner, d1Daugh2Inner, \
+                d2ParentInner, d2Daugh1Inner, d2Daugh2Inner, \
+                transitElementList, segmentAxisParent, segmentAxisDaughter1, segmentAxisDaughter2,\
+                ParentfaceMidPointsZ, Daughter1faceMidPointsZ, Daughter2faceMidPointsZ = \
+                airwaysegmentTubeMeshInnerPoints.getAirwaySegmentTubeMeshInnerPoints(nSegment)
 
-            # Warp segment points
-            #####################
-            xParentWarpedList, xDaugh1WarpedList, xDaugh2WarpedList, \
-            d1ParentWarpedList, d1Daugh1WarpedList, d1Daugh2WarpedList,\
-            d2ParentWarpedList, d2Daugh1WarpedList, d2Daugh2WarpedList,\
-            d3ParentWarpedUnitList, d3Daugh1WarpedUnitList, d3Daugh2WarpedUnitList \
-                = tubebifurcationmesh.warpAirwaySegmentPoints(
-                xParentInner, xDaugh1Inner, xDaugh2Inner,
-                d1ParentInner, d1Daugh1Inner, d1Daugh2Inner,
-                d2ParentInner, d2Daugh1Inner, d2Daugh2Inner,
-                segmentAxisParent, segmentAxisDaughter1, segmentAxisDaughter2,
-                xlensegmentparent*parentsegmentLength,
-                (1-xlensegmentd1)*daughter1segmentLength,
-                (1-xlensegmentd2)*daughter2segmentLength,
-                sxparent, sxDaugh1, sxDaugh2,
-                sd1parent, sd1Daugh1, sd1Daugh2,
-                sd2parent, sd2Daugh1, sd2Daugh2,
-                elementsCountAround, elementsCountAlongSegment, nSegment,
-                ParentfaceMidPointsZ, Daughter1faceMidPointsZ, Daughter2faceMidPointsZ)
+                # Warp segment points
+                #####################
+                xParentWarpedList, xDaugh1WarpedList, xDaugh2WarpedList, \
+                d1ParentWarpedList, d1Daugh1WarpedList, d1Daugh2WarpedList,\
+                d2ParentWarpedList, d2Daugh1WarpedList, d2Daugh2WarpedList,\
+                d3ParentWarpedUnitList, d3Daugh1WarpedUnitList, d3Daugh2WarpedUnitList \
+                    = tubebifurcationmesh.warpAirwaySegmentPoints(
+                    xParentInner, xDaugh1Inner, xDaugh2Inner,
+                    d1ParentInner, d1Daugh1Inner, d1Daugh2Inner,
+                    d2ParentInner, d2Daugh1Inner, d2Daugh2Inner,
+                    segmentAxisParent, segmentAxisDaughter1, segmentAxisDaughter2,
+                    xlensegmentparent*parentsegmentLength,
+                    (1-xlensegmentd1)*daughter1segmentLength,
+                    (1-xlensegmentd2)*daughter2segmentLength,
+                    sxparent, sxDaugh1, sxDaugh2,
+                    sd1parent, sd1Daugh1, sd1Daugh2,
+                    sd2parent, sd2Daugh1, sd2Daugh2,
+                    elementsCountAround, elementsCountAlongSegment, nSegment,
+                    ParentfaceMidPointsZ, Daughter1faceMidPointsZ, Daughter2faceMidPointsZ)
 
-            contractedWallThicknessList = airwaysegmentTubeMeshInnerPoints.getContractedWallThicknessList()
+                contractedWallThicknessList = airwaysegmentTubeMeshInnerPoints.getContractedWallThicknessList()
 
-            if useJunctionElements:
-                # Form junction  points
-                ###############################
-                xjunctionOuter, xjunctionInner, d1junctionOuter, d2junctionOuter, d3junctionOuter,\
-                d1junctionInner, d2junctionInner, d3junctionInner\
-                    = tubebifurcationmesh.createjunctionAirwaySegmentPoints(
-                xParentWarpedList, xDaugh1WarpedList, xDaugh2WarpedList,
-                d1ParentWarpedList, d1Daugh1WarpedList, d1Daugh2WarpedList,
-                d2ParentWarpedList, d2Daugh1WarpedList, d2Daugh2WarpedList,
-                segmentAxisParent, segmentAxisDaughter1, segmentAxisDaughter2,
-                sxparent, sxDaugh1, sxDaugh2, sd1parent, sd1Daugh1, sd1Daugh2, sd2parent, sd2Daugh1, sd2Daugh2,
-                elementsCountAround, elementsCountAlongSegment, nSegment)
+                if useJunctionElements:
+                    # Form junction  points
+                    ###############################
+                    xjunctionOuter, xjunctionInner, d1junctionOuter, d2junctionOuter, d3junctionOuter,\
+                    d1junctionInner, d2junctionInner, d3junctionInner\
+                        = tubebifurcationmesh.createjunctionAirwaySegmentPoints(
+                        xParentWarpedList, xDaugh1WarpedList, xDaugh2WarpedList,
+                        d1ParentWarpedList, d1Daugh1WarpedList, d1Daugh2WarpedList,
+                        d2ParentWarpedList, d2Daugh1WarpedList, d2Daugh2WarpedList,
+                        segmentAxisParent, segmentAxisDaughter1, segmentAxisDaughter2,
+                        sxparent, sxDaugh1, sxDaugh2, sd1parent, sd1Daugh1, sd1Daugh2, sd2parent, sd2Daugh1, sd2Daugh2,
+                        elementsCountAround, elementsCountAlongSegment, nSegment)
 
-            # Create coordinates and derivatives - PARENT AND DAUGHERS1,2
-            xParentList, d1ParentList, d2ParentList, d3ParentList, \
-            xDaughter1List, d1Daughter1List, d2Daughter1List, d3Daughter1List, \
-            xDaughter2List, d1Daughter2List, d2Daughter2List, d3Daughter2List, \
-            curvatureList = \
-                tubebifurcationmesh.getAirwaySegmentCoordinatesFromInner(
-                    xParentWarpedList, xDaugh1WarpedList, xDaugh2WarpedList,
-                    d1ParentWarpedList, d1Daugh1WarpedList, d1Daugh2WarpedList,
-                    d2ParentWarpedList, d2Daugh1WarpedList, d2Daugh2WarpedList,
-                    d3ParentWarpedUnitList, d3Daugh1WarpedUnitList, d3Daugh2WarpedUnitList,
-                    contractedWallThicknessList,
-                    elementsCountAround, elementsCountAlongSegment,
-                    elementsCountThroughWall, transitElementList)
-
-            if useJunctionElements:
-                # Create coordinates and derivatives - JUNCTION
-                xJunctionOuterList, d1JunctionOuterList, d2JunctionOuterList, d3JunctionOuterList, \
-                xJunctionInnerList, d1JunctionInnerList, d2JunctionInnerList, d3JunctionInnerList, \
+                # Create coordinates and derivatives - PARENT AND DAUGHERS1,2
+                xParentList, d1ParentList, d2ParentList, d3ParentList, \
+                xDaughter1List, d1Daughter1List, d2Daughter1List, d3Daughter1List, \
+                xDaughter2List, d1Daughter2List, d2Daughter2List, d3Daughter2List, \
                 curvatureList = \
-                    tubebifurcationmesh.getAirwayJunctionCoordinatesFromInner(
-                    xjunctionOuter,d1junctionOuter,d2junctionOuter,d3junctionOuter,
-                    xjunctionInner,d1junctionInner,d2junctionInner,d3junctionInner,
-                    contractedWallThicknessList,
-                    elementsCountAround, elementsCountAlongSegment,
-                    elementsCountThroughWall, transitElementList)
+                    tubebifurcationmesh.getAirwaySegmentCoordinatesFromInner(
+                        xParentWarpedList, xDaugh1WarpedList, xDaugh2WarpedList,
+                        d1ParentWarpedList, d1Daugh1WarpedList, d1Daugh2WarpedList,
+                        d2ParentWarpedList, d2Daugh1WarpedList, d2Daugh2WarpedList,
+                        d3ParentWarpedUnitList, d3Daugh1WarpedUnitList, d3Daugh2WarpedUnitList,
+                        contractedWallThicknessList,
+                        elementsCountAround, elementsCountAlongSegment,
+                        elementsCountThroughWall, transitElementList)
+
+                if useJunctionElements:
+                    # Create coordinates and derivatives - JUNCTION
+                    xJunctionOuterList, d1JunctionOuterList, d2JunctionOuterList, d3JunctionOuterList, \
+                    xJunctionInnerList, d1JunctionInnerList, d2JunctionInnerList, d3JunctionInnerList, \
+                    curvatureList = \
+                        tubebifurcationmesh.getAirwayJunctionCoordinatesFromInner(
+                        xjunctionOuter,d1junctionOuter,d2junctionOuter,d3junctionOuter,
+                        xjunctionInner,d1junctionInner,d2junctionInner,d3junctionInner,
+                        contractedWallThicknessList,
+                        elementsCountAround, elementsCountAlongSegment,
+                        elementsCountThroughWall, transitElementList)
 
             ##Create nodes and elements
             ##############################
@@ -417,20 +434,21 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
             #     nodeIdentifier = 3*elementsCountAround*(1+elementsCountAlongSegment)*(elementsCountThroughWall+1)+10
             #     elementIdentifier = 3*elementsCountAround*(elementsCountAlongSegment)*elementsCountThroughWall+10
 
-            print('checking node identified BEFORE create node and elems =', nodeIdentifier, elementIdentifier)
-            nextnodeIdentifier, nextelementIdentifier = \
-                tubebifurcationmesh.createAirwaySegmentNodesAndElements\
-                    (region,
-                    xParentList, d1ParentList, d2ParentList, d3ParentList,
-                    xDaughter1List, d1Daughter1List, d2Daughter1List, d3Daughter1List,
-                    xDaughter2List, d1Daughter2List, d2Daughter2List, d3Daughter2List,
-                    xJunctionOuterList, xJunctionInnerList, d1JunctionOuterList, d1JunctionInnerList,
-                    d2JunctionOuterList, d2JunctionInnerList,
-                    d3JunctionOuterList, d3JunctionInnerList,
-                    elementsCountAround, elementsCountAlongSegment, elementsCountThroughWall,
-                    nodeIdentifier, elementIdentifier, useCubicHermiteThroughWall, useCrossDerivatives)
+                print('checking node identified BEFORE create node and elems =', nodeIdentifier, elementIdentifier)
+                nextnodeIdentifier, nextelementIdentifier = \
+                    tubebifurcationmesh.createAirwaySegmentNodesAndElements(
+                        region,
+                        xParentList, d1ParentList, d2ParentList, d3ParentList,
+                        xDaughter1List, d1Daughter1List, d2Daughter1List, d3Daughter1List,
+                        xDaughter2List, d1Daughter2List, d2Daughter2List, d3Daughter2List,
+                        xJunctionOuterList, xJunctionInnerList, d1JunctionOuterList, d1JunctionInnerList,
+                        d2JunctionOuterList, d2JunctionInnerList,
+                        d3JunctionOuterList, d3JunctionInnerList,
+                        elementsCountAround, elementsCountAlongSegment, elementsCountThroughWall,
+                        nodeIdentifier, elementIdentifier, useCubicHermiteThroughWall, useCrossDerivatives)
 
-            print('checking node identifie after create node and elems =', nodeIdentifier, elementIdentifier)
+                print('checking node identifie after create =', nodeIdentifier, elementIdentifier)
+
         # fm.endChange()
        # return annotationGroups
 
