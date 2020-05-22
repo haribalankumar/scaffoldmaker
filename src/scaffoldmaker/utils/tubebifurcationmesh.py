@@ -1295,6 +1295,7 @@ def createAirwaySegmentNodesAndElements\
                  d3junctionOuter, d3junctionInner,
                  elementsCountAround, elementsCountAlong, elementsCountThroughWall,
                  firstNodeIdentifier, firstElementIdentifier,
+                 useJunctionElements,
                  useCubicHermiteThroughWall,
                  useCrossDerivatives):
 
@@ -1424,35 +1425,37 @@ def createAirwaySegmentNodesAndElements\
             coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D3_DS1DS2DS3, 1, zero)
         nodeIdentifier = nodeIdentifier + 1
 
-    # Coordinates field
-    for n in range(len(xjunctionOuter)):
-        node = nodes.createNode(nodeIdentifier, nodetemplate)
-        cache.setNode(node)
-        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, xjunctionOuter[n])
-        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS1, 1, d1junctionOuter[n])
-        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS2, 1, d2junctionOuter[n])
-        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS3, 1, d3junctionOuter[n])
-        if useCrossDerivatives:
-            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS2, 1, zero)
-            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS3, 1, zero)
-            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS2DS3, 1, zero)
-            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D3_DS1DS2DS3, 1, zero)
-        nodeIdentifier = nodeIdentifier + 1
+    if useJunctionElements:
+        # Coordinates field
+        for n in range(len(xjunctionOuter)):
+            node = nodes.createNode(nodeIdentifier, nodetemplate)
+            cache.setNode(node)
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, xjunctionOuter[n])
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS1, 1, d1junctionOuter[n])
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS2, 1, d2junctionOuter[n])
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS3, 1, d3junctionOuter[n])
+            if useCrossDerivatives:
+                coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS2, 1, zero)
+                coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS3, 1, zero)
+                coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS2DS3, 1, zero)
+                coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D3_DS1DS2DS3, 1, zero)
+            nodeIdentifier = nodeIdentifier + 1
 
-    # Coordinates field
-    for n in range(len(xjunctionInner)):
-        node = nodes.createNode(nodeIdentifier, nodetemplate)
-        cache.setNode(node)
-        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, xjunctionInner[n])
-        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS1, 1, d1junctionInner[n])
-        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS2, 1, d2junctionInner[n])
-        coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS3, 1, d3junctionInner[n])
-        if useCrossDerivatives:
-            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS2, 1, zero)
-            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS3, 1, zero)
-            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS2DS3, 1, zero)
-            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D3_DS1DS2DS3, 1, zero)
-        nodeIdentifier = nodeIdentifier + 1
+    if useJunctionElements:
+        # Coordinates field
+        for n in range(len(xjunctionInner)):
+            node = nodes.createNode(nodeIdentifier, nodetemplate)
+            cache.setNode(node)
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, xjunctionInner[n])
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS1, 1, d1junctionInner[n])
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS2, 1, d2junctionInner[n])
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS3, 1, d3junctionInner[n])
+            if useCrossDerivatives:
+                coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS2, 1, zero)
+                coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS3, 1, zero)
+                coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS2DS3, 1, zero)
+                coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D3_DS1DS2DS3, 1, zero)
+            nodeIdentifier = nodeIdentifier + 1
 
     #######################
     # create elements
@@ -1484,7 +1487,6 @@ def createAirwaySegmentNodesAndElements\
                 element = mesh.createElement(elementIdentifier, elementtemplate)
                 result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
                 elementIdentifier = elementIdentifier + 1
-
 
     now = elementsCountAround * (elementsCountThroughWall + 1)
     offset = (firstNodeIdentifier-1)+(elementsCountAlong+1) * elementsCountAround * (elementsCountThroughWall + 1)
@@ -1520,191 +1522,254 @@ def createAirwaySegmentNodesAndElements\
 
     ### FORM JUNCTION ELEMS
     ################################
+    if useJunctionElements:
+        elementtemplate = elementtemplateStandard
+        eft1 = eftStandard
+        ring = elementsCountAround*(elementsCountThroughWall+1)
 
+        bni11 = firstNodeIdentifier + elementsCountAround*(elementsCountAlong)*(elementsCountThroughWall+1)
+        bni12 = firstNodeIdentifier + elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)-1
+        bni21 = firstNodeIdentifier + 3*elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)
+        bni22 = bni21 + (elementsCountAround*elementsCountAlong)
+        print('checking bni', bni11, bni11+1, bni21+ring-2, bni21, bni12-1,bni12, bni22, bni22-5)
+        # nodeIdentifiers = [19, 20, 79, 73, 23, 24, 81, 76]
+        nodeIdentifiers = [bni11+2, bni11+3, bni21+ring-2, bni21, bni12-1, bni12, bni22, bni22-5]
+        element = mesh.createElement(elementIdentifier, elementtemplate)
+        result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
+        elementIdentifier = elementIdentifier + 1
 
-    elementtemplate = elementtemplateStandard
-    eft1 = eftStandard
-    ring = elementsCountAround*elementsCountAlong
-    bni11 = firstNodeIdentifier + elementsCountAround*(elementsCountAlong)*(elementsCountThroughWall+1)+2
-    bni21 = firstNodeIdentifier + 3*elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)
-    bni31 = firstNodeIdentifier + elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)-1
-    bni41 = firstNodeIdentifier + 3*elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)\
-            +(elementsCountAround*elementsCountAlong)
-    print('checking bni', bni11,bni11+1,bni21+6, bni21,bni31-1,bni31, bni41,bni41-5)
-    # nodeIdentifiers = [19, 20, 79, 73, 23, 24, 81, 76]
-    nodeIdentifiers = [bni11,bni11+1,bni21+6, bni21,bni31-1,bni31, bni41, bni41-5]
-    element = mesh.createElement(elementIdentifier, elementtemplate)
-    result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
-    elementIdentifier = elementIdentifier + 1
-
-    # nodeIdentifiers = [79, 73, 27, 28, 81, 76, 31, 32]
-    nodeIdentifiers = [bni21+6, bni21, bni31+3, bni31+4, bni41, bni41-5, bni31+ring-1, bni31+ring]
-    eft1 = eftfactory.createEftNoCrossDerivatives()
-    setEftScaleFactorIds(eft1, [1], [])
-    if mapDerivatives:
-        d2Map = (1,1,0)
-        lns = [1,5]
-        for n3 in range(2):
-            ln = [lns[n3]]
-            remapEftNodeValueLabel(eft1, ln, Node.VALUE_LABEL_D_DS2, \
-                               derivativeSignsToExpressionTerms(
-                                   (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3), d2Map))
-    elementtemplateX.defineField(coordinates, -1, eft1)
-    elementtemplate = elementtemplateX
-    element = mesh.createElement(elementIdentifier, elementtemplate)
-    result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
-    result3 = element.setScaleFactors(eft1, [-1.0])
-    elementIdentifier = elementIdentifier + 1
-
-
-    elementtemplate = elementtemplateStandard
-    eft1 = eftStandard
-    # nodeIdentifiers = [20, 17, 73, 80, 24, 21, 76, 82]
-    nodeIdentifiers = [bni11+1, bni11-2, bni21, bni41-1, bni31, bni31-3, bni41-5, bni41+1]
-    element = mesh.createElement(elementIdentifier, elementtemplate)
-    result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
-    elementIdentifier = elementIdentifier + 1
-
-
-    nodeIdentifiers = [73, 80, 28, 25, 76, 82, 32, 29]
-    eft1 = eftfactory.createEftNoCrossDerivatives()
-    setEftScaleFactorIds(eft1, [1], [])
-    if mapDerivatives:
-        d2Map = (1,1,0)
-        lns = [2,6]
-        for n3 in range(2):
-            ln = [lns[n3]]
-            remapEftNodeValueLabel(eft1, ln, Node.VALUE_LABEL_D_DS2, \
-                               derivativeSignsToExpressionTerms(
-                                   (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3), d2Map))
+        bni11 = firstNodeIdentifier + 3*elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)
+        bni12 = bni11 + (elementsCountAround*elementsCountAlong)
+        bni21 = firstNodeIdentifier + elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)-1
+        bni22 = bni21 + (elementsCountAround)
+        bni31 = bni11 + (elementsCountAround*elementsCountAlong)
+        # nodeIdentifiers = [79, 73, 27, 28, 81, 76, 31, 32]
+        nodeIdentifiers = [bni12-2, bni11, bni22-1, bni22, bni31, bni31-5, bni21+ring-1, bni21+ring]
+        eft1 = eftfactory.createEftNoCrossDerivatives()
+        setEftScaleFactorIds(eft1, [1], [])
+        if mapDerivatives:
+            d2Map = (1,1,0)
+            lns = [1,5]
+            for n3 in range(2):
+                ln = [lns[n3]]
+                remapEftNodeValueLabel(eft1, ln, Node.VALUE_LABEL_D_DS2, \
+                                   derivativeSignsToExpressionTerms(
+                                       (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3), d2Map))
         elementtemplateX.defineField(coordinates, -1, eft1)
         elementtemplate = elementtemplateX
-    element = mesh.createElement(elementIdentifier, elementtemplate)
-    result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
-    result3 = element.setScaleFactors(eft1, [-1.0])
-    elementIdentifier = elementIdentifier + 1
+        element = mesh.createElement(elementIdentifier, elementtemplate)
+        result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
+        result3 = element.setScaleFactors(eft1, [-1.0])
+        elementIdentifier = elementIdentifier + 1
 
-    elementtemplate = elementtemplateStandard
-    eft1 = eftStandard
-    nodeIdentifiers = [18, 19, 74, 79, 22, 23, 77, 81]
-    element = mesh.createElement(elementIdentifier, elementtemplate)
-    result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
-    elementIdentifier = elementIdentifier + 1
 
-    nodeIdentifiers = [74, 79, 50, 51, 77, 81, 54, 55]
-    eft1 = eftfactory.createEftNoCrossDerivatives()
-    setEftScaleFactorIds(eft1, [1], [])
-    if mapDerivatives:
-        d2Map = (-1,0,0)
-        lns = [2,6]
-        for n3 in range(2):
-            ln = [lns[n3]]
-            remapEftNodeValueLabel(eft1, ln, Node.VALUE_LABEL_D_DS2, \
-                               derivativeSignsToExpressionTerms(
-                                   (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3), d2Map))
+        bni11 = firstNodeIdentifier + elementsCountAround*(elementsCountAlong)*(elementsCountThroughWall+1)-1 #16
+        bni12 = firstNodeIdentifier + elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)-1 #24
+        bni21 = firstNodeIdentifier + 3*elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)-1 #72
+        bni22 = bni21 + (elementsCountAround*elementsCountAlong) #80
+        onecircle = elementsCountAround
+        onecirclem1 = elementsCountAround -1
+        elementtemplate = elementtemplateStandard
+        eft1 = eftStandard
+        # nodeIdentifiers = [20, 17, 73, 80, 24, 21, 76, 82]
+        nodeIdentifiers = [bni11+onecircle, bni11+1, bni21+1, bni22, bni12, bni12-onecirclem1, bni21+onecircle, bni22+2]
+        element = mesh.createElement(elementIdentifier, elementtemplate)
+        result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
+        elementIdentifier = elementIdentifier + 1
+
+        bni11 = firstNodeIdentifier + 3*elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)-1 #72
+        bni12 = bni11 + (elementsCountAround*elementsCountAlong) #80
+        bni21 = firstNodeIdentifier + elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)-1  #24
+        bni22 = bni21 + (elementsCountAround*elementsCountAlong) #32
+        onecircle = elementsCountAround
+        onecirclem1 = elementsCountAround -1
+        # nodeIdentifiers = [73, 80, 28, 25, 76, 82, 32, 29]
+        nodeIdentifiers = [bni11+1, bni12, bni21+onecircle, bni21+1, bni11+onecircle, bni12+2, bni22, bni22-onecirclem1]
+        eft1 = eftfactory.createEftNoCrossDerivatives()
+        setEftScaleFactorIds(eft1, [1], [])
+        if mapDerivatives:
+            d2Map = (1,1,0)
+            lns = [2,6]
+            for n3 in range(2):
+                ln = [lns[n3]]
+                remapEftNodeValueLabel(eft1, ln, Node.VALUE_LABEL_D_DS2, \
+                                   derivativeSignsToExpressionTerms(
+                                       (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3), d2Map))
+            elementtemplateX.defineField(coordinates, -1, eft1)
+            elementtemplate = elementtemplateX
+        element = mesh.createElement(elementIdentifier, elementtemplate)
+        result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
+        result3 = element.setScaleFactors(eft1, [-1.0])
+        elementIdentifier = elementIdentifier + 1
+
+        bni11 = firstNodeIdentifier + elementsCountAround*(elementsCountAlong)*(elementsCountThroughWall+1)-1 #16
+        bni12 = firstNodeIdentifier + elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)-1 #24
+        bni21 = firstNodeIdentifier + 3*elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)-1 #72
+        bni22 = bni21 + (elementsCountAround*elementsCountAlong) #80
+        onecircle = elementsCountAround
+        onecirclem1 = elementsCountAround -1
+        elementtemplate = elementtemplateStandard
+        eft1 = eftStandard
+        # nodeIdentifiers = [18, 19, 74, 79, 22, 23, 77, 81]
+        nodeIdentifiers = [bni11+2, bni11+onecirclem1, bni21+2, bni22-1, bni12-2, bni12-1, bni22-onecirclem1, bni22+1]
+        element = mesh.createElement(elementIdentifier, elementtemplate)
+        result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
+        elementIdentifier = elementIdentifier + 1
+
+        bni11 = firstNodeIdentifier + 3*elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)-1 #72
+        bni12 = bni11 + (elementsCountAround*elementsCountAlong) #80
+        bni21 = firstNodeIdentifier + 2*elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)-1  #48
+        bni22 = bni21 + (elementsCountAround*elementsCountAlong) #56
+        onecircle = elementsCountAround
+        onecirclem1 = elementsCountAround -1
+        onecirclep1 = elementsCountAround +1
+        # nodeIdentifiers = [74, 79, 50, 51, 77, 81, 54, 55]
+        nodeIdentifiers = [bni11+2, bni12-1, bni21+2, bni21+onecirclem1, bni11+onecirclep1, bni12+1, bni22-2, bni22-1]
+        eft1 = eftfactory.createEftNoCrossDerivatives()
+        setEftScaleFactorIds(eft1, [1], [])
+        if mapDerivatives:
+            d2Map = (-1,0,0)
+            lns = [2,6]
+            for n3 in range(2):
+                ln = [lns[n3]]
+                remapEftNodeValueLabel(eft1, ln, Node.VALUE_LABEL_D_DS2, \
+                                   derivativeSignsToExpressionTerms(
+                                       (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3), d2Map))
+            elementtemplateX.defineField(coordinates, -1, eft1)
+            elementtemplate = elementtemplateX
+        element = mesh.createElement(elementIdentifier, elementtemplate)
+        result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
+        result3 = element.setScaleFactors(eft1, [-1.0])
+        elementIdentifier = elementIdentifier + 1
+
+        bni11 = firstNodeIdentifier + elementsCountAround*(elementsCountAlong)*(elementsCountThroughWall+1)-1 #16
+        bni12 = firstNodeIdentifier + elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)-1 #24
+        bni21 = firstNodeIdentifier + 3*elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)-1 #72
+        bni22 = bni21 + (elementsCountAround*elementsCountAlong) #80
+        onecircle = elementsCountAround
+        onecirclem1 = elementsCountAround -1
+        elementtemplate = elementtemplateStandard
+        eft1 = eftStandard
+        # nodeIdentifiers = [17, 18, 80, 74, 21, 22, 82, 77]
+        nodeIdentifiers = [bni11+1, bni11+2, bni22, bni21+2, bni12-onecirclem1, bni12-2, bni22+2, bni22-onecirclem1]
+        element = mesh.createElement(elementIdentifier, elementtemplate)
+        result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
+        elementIdentifier = elementIdentifier + 1
+
+
+        bni11 = firstNodeIdentifier + 3*elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)-1 #72
+        bni12 = bni11 + (elementsCountAround*elementsCountAlong) #80
+        bni21 = firstNodeIdentifier + 2*elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)-1  #48
+        bni22 = bni21 + (elementsCountAround*elementsCountAlong) #56
+        # nodeIdentifiers = [80, 74, 49, 50, 82, 77, 53, 54]
+        nodeIdentifiers = [bni12, bni11+2, bni21+1, bni21+2, bni12+2, bni12-onecirclem1, bni22-onecirclem1, bni22-2]
+        eft1 = eftfactory.createEftNoCrossDerivatives()
+        setEftScaleFactorIds(eft1, [1], [])
+        if mapDerivatives:
+            d2Map = (1,0,0)
+            lns = [1,5]
+            for n3 in range(2):
+                ln = [lns[n3]]
+                remapEftNodeValueLabel(eft1, ln, Node.VALUE_LABEL_D_DS2, \
+                                   derivativeSignsToExpressionTerms(
+                                       (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3), d2Map))
+            elementtemplateX.defineField(coordinates, -1, eft1)
+            elementtemplate = elementtemplateX
+        element = mesh.createElement(elementIdentifier, elementtemplate)
+        result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
+        result3 = element.setScaleFactors(eft1, [-1.0])
+        elementIdentifier = elementIdentifier + 1
+
+        bni11 = firstNodeIdentifier + elementsCountAround*(elementsCountAlong)*(elementsCountThroughWall+1)-1 #16
+        bni12 = firstNodeIdentifier + elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)-1 #24
+        bni21 = firstNodeIdentifier + 3*elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)-1 #72
+        bni22 = bni21 + (elementsCountAround*elementsCountAlong) #80
+        # nodeIdentifiers = [75, 79, 26, 27, 78, 81, 30, 31]
+        nodeIdentifiers = [bni21+onecirclem1, bni22-1, bni12+2, bni12+3, bni22-2, bni22+1, bni12+ring-2, bni12+ring-1]
+        eft1 = eftfactory.createEftNoCrossDerivatives()
+        setEftScaleFactorIds(eft1, [1], [])
+        if mapDerivatives:
+            d1Map = (0,-1,0)
+            lns = [2,6]
+            for n3 in range(2):
+                ln = [lns[n3]]
+                remapEftNodeValueLabel(eft1, ln, Node.VALUE_LABEL_D_DS1, \
+                                   derivativeSignsToExpressionTerms(
+                                       (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3), d1Map))
+            d2Map = (1,1,0)
+            lns = [2,6]
+            for n3 in range(2):
+                ln = [lns[n3]]
+                remapEftNodeValueLabel(eft1, ln, Node.VALUE_LABEL_D_DS2, \
+                                   derivativeSignsToExpressionTerms(
+                                       (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3), d2Map))
         elementtemplateX.defineField(coordinates, -1, eft1)
         elementtemplate = elementtemplateX
-    element = mesh.createElement(elementIdentifier, elementtemplate)
-    result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
-    result3 = element.setScaleFactors(eft1, [-1.0])
-    elementIdentifier = elementIdentifier + 1
+        element = mesh.createElement(elementIdentifier, elementtemplate)
+        result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
+        result3 = element.setScaleFactors(eft1, [-1.0])
+        elementIdentifier = elementIdentifier + 1
 
-
-    elementtemplate = elementtemplateStandard
-    eft1 = eftStandard
-    nodeIdentifiers = [17, 18, 80, 74, 21, 22, 82, 77]
-    element = mesh.createElement(elementIdentifier, elementtemplate)
-    result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
-    elementIdentifier = elementIdentifier + 1
-
-
-    nodeIdentifiers = [80, 74, 49, 50, 82, 77, 53, 54]
-    eft1 = eftfactory.createEftNoCrossDerivatives()
-    setEftScaleFactorIds(eft1, [1], [])
-    if mapDerivatives:
-        d2Map = (1,0,0)
-        lns = [1,5]
-        for n3 in range(2):
-            ln = [lns[n3]]
-            remapEftNodeValueLabel(eft1, ln, Node.VALUE_LABEL_D_DS2, \
-                               derivativeSignsToExpressionTerms(
-                                   (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3), d2Map))
+        bni11 = firstNodeIdentifier + 3*elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)-1 #72
+        bni12 = bni11 + (elementsCountAround*elementsCountAlong) #80
+        bni21 = firstNodeIdentifier + 2*elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)-1  #48
+        bni22 = bni21 + (elementsCountAround*elementsCountAlong) #56
+        # nodeIdentifiers = [79, 75, 51, 52, 81, 78, 55, 56]
+        nodeIdentifiers = [bni12-1, bni11+onecirclem1, bni21+onecirclem1, bni21+onecircle, bni12+1, bni12-2, bni22-1, bni22]
+        eft1 = eftfactory.createEftNoCrossDerivatives()
+        setEftScaleFactorIds(eft1, [1], [])
+        if mapDerivatives:
+            d1Map = (0,-1,0)
+            lns = [2,6]
+            for n3 in range(2):
+                ln = [lns[n3]]
+                remapEftNodeValueLabel(eft1, ln, Node.VALUE_LABEL_D_DS1, \
+                                   derivativeSignsToExpressionTerms(
+                                       (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3), d1Map))
+            d2Map = (-1,0,0)
+            lns = [2,6]
+            for n3 in range(2):
+                ln = [lns[n3]]
+                remapEftNodeValueLabel(eft1, ln, Node.VALUE_LABEL_D_DS2, \
+                                   derivativeSignsToExpressionTerms(
+                                       (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3), d2Map))
+            d2Map = (0,-1,0)
+            lns = [1,5]
+            for n3 in range(2):
+                ln = [lns[n3]]
+                remapEftNodeValueLabel(eft1, ln, Node.VALUE_LABEL_D_DS2, \
+                                   derivativeSignsToExpressionTerms(
+                                       (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3), d2Map))
         elementtemplateX.defineField(coordinates, -1, eft1)
         elementtemplate = elementtemplateX
-    element = mesh.createElement(elementIdentifier, elementtemplate)
-    result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
-    result3 = element.setScaleFactors(eft1, [-1.0])
-    elementIdentifier = elementIdentifier + 1
-
-    nodeIdentifiers = [75, 79, 26, 27, 78, 81, 30, 31]
-    eft1 = eftfactory.createEftNoCrossDerivatives()
-    setEftScaleFactorIds(eft1, [1], [])
-    if mapDerivatives:
-        d1Map = (0,-1,0)
-        lns = [2,6]
-        for n3 in range(2):
-            ln = [lns[n3]]
-            remapEftNodeValueLabel(eft1, ln, Node.VALUE_LABEL_D_DS1, \
-                               derivativeSignsToExpressionTerms(
-                                   (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3), d1Map))
-        d2Map = (1,1,0)
-        lns = [2,6]
-        for n3 in range(2):
-            ln = [lns[n3]]
-            remapEftNodeValueLabel(eft1, ln, Node.VALUE_LABEL_D_DS2, \
-                               derivativeSignsToExpressionTerms(
-                                   (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3), d2Map))
-    elementtemplateX.defineField(coordinates, -1, eft1)
-    elementtemplate = elementtemplateX
-    element = mesh.createElement(elementIdentifier, elementtemplate)
-    result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
-    result3 = element.setScaleFactors(eft1, [-1.0])
-    elementIdentifier = elementIdentifier + 1
-
-    nodeIdentifiers = [79, 75, 51, 52, 81, 78, 55, 56]
-    eft1 = eftfactory.createEftNoCrossDerivatives()
-    setEftScaleFactorIds(eft1, [1], [])
-    if mapDerivatives:
-        d1Map = (0,-1,0)
-        lns = [2,6]
-        for n3 in range(2):
-            ln = [lns[n3]]
-            remapEftNodeValueLabel(eft1, ln, Node.VALUE_LABEL_D_DS1, \
-                               derivativeSignsToExpressionTerms(
-                                   (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3), d1Map))
-        d2Map = (-1,0,0)
-        lns = [2,6]
-        for n3 in range(2):
-            ln = [lns[n3]]
-            remapEftNodeValueLabel(eft1, ln, Node.VALUE_LABEL_D_DS2, \
-                               derivativeSignsToExpressionTerms(
-                                   (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3), d2Map))
-        d2Map = (0,-1,0)
-        lns = [1,5]
-        for n3 in range(2):
-            ln = [lns[n3]]
-            remapEftNodeValueLabel(eft1, ln, Node.VALUE_LABEL_D_DS2, \
-                               derivativeSignsToExpressionTerms(
-                                   (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3), d2Map))
-    elementtemplateX.defineField(coordinates, -1, eft1)
-    elementtemplate = elementtemplateX
-    element = mesh.createElement(elementIdentifier, elementtemplate)
-    result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
-    result3 = element.setScaleFactors(eft1, [-1.0])
-    elementIdentifier = elementIdentifier + 1
+        element = mesh.createElement(elementIdentifier, elementtemplate)
+        result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
+        result3 = element.setScaleFactors(eft1, [-1.0])
+        elementIdentifier = elementIdentifier + 1
 
 
-    elementtemplate = elementtemplateStandard
-    eft1 = eftStandard
-    nodeIdentifiers = [80, 75, 25, 26, 82, 78, 29, 30]
-    element = mesh.createElement(elementIdentifier, elementtemplate)
-    result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
-    elementIdentifier = elementIdentifier + 1
+        bni11 = firstNodeIdentifier + elementsCountAround*(elementsCountAlong)*(elementsCountThroughWall+1)-1 #16
+        bni12 = firstNodeIdentifier + elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)-1 #24
+        bni21 = firstNodeIdentifier + 3*elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)-1 #72
+        bni22 = bni21 + (elementsCountAround*elementsCountAlong) #80
+        elementtemplate = elementtemplateStandard
+        eft1 = eftStandard
+        # nodeIdentifiers = [80, 75, 25, 26, 82, 78, 29, 30]
+        nodeIdentifiers = [bni22, bni21+onecirclem1, bni12+1, bni12+2, bni22+2, bni22-2, bni12+ring-3, bni12+ring-2]
+        element = mesh.createElement(elementIdentifier, elementtemplate)
+        result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
+        elementIdentifier = elementIdentifier + 1
 
-    nodeIdentifiers = [75, 80, 52, 49, 78, 82, 56, 53]
-    element = mesh.createElement(elementIdentifier, elementtemplate)
-    result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
-    elementIdentifier = elementIdentifier + 1
+
+        bni11 = firstNodeIdentifier + 3*elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)-1 #72
+        bni12 = bni11 + (elementsCountAround*elementsCountAlong) #80
+        bni21 = firstNodeIdentifier + 2*elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)-1  #48
+        bni22 = bni21 + (elementsCountAround*elementsCountAlong) #56
+        # nodeIdentifiers = [75, 80, 52, 49, 78, 82, 56, 53]
+        nodeIdentifiers = [bni11+onecirclem1, bni12, bni21+onecircle, bni21+1, bni12-2, bni12+2, bni22, bni22-onecirclem1]
+        element = mesh.createElement(elementIdentifier, elementtemplate)
+        result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
+        elementIdentifier = elementIdentifier + 1
 
     fm.endChange()
 

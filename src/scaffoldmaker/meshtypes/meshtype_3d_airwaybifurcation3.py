@@ -24,14 +24,14 @@ from scaffoldmaker.utils import vector
 from scaffoldmaker.utils.meshrefinement import MeshRefinement
 
 
-class MeshType_3d_airwaybifurcation2(Scaffold_base):
+class MeshType_3d_airwaybifurcation3(Scaffold_base):
     '''
     3-D Airway Bifurcation scaffold.
     '''
 
     @staticmethod
     def getName():
-        return '3D Bifurcation template 2'
+        return '3D Bifurcation with lung'
 
     @staticmethod
     def getDefaultOptions(parameterSetName='Default'):
@@ -40,6 +40,7 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
             'Number of elements around' : 4,
             'Number of elements through wall': 1,
             'Use junction elements': False,
+            'Include left lung': False,
             'Number of generations downstream': 1,
             'Use cross derivatives' : False,
             'Use linear through wall': True,
@@ -56,6 +57,7 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
             'Number of elements around',
             'Number of elements through wall',
             'Use junction elements',
+            'Include left lung',
             'Number of generations downstream',
             'Use cross derivatives',
             'Use linear through wall',
@@ -99,6 +101,7 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
 
         useCrossDerivatives = options['Use cross derivatives']
         useJunctionElements = options['Use junction elements']
+        includeLeftLung = options['Include left lung']
         useCubicHermiteThroughWall = not(options['Use linear through wall'])
 
         nodeIdentifier = 1

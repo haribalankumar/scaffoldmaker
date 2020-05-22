@@ -29,6 +29,7 @@ from scaffoldmaker.meshtypes.meshtype_2d_airwaybifurcation1 import MeshType_2d_a
 from scaffoldmaker.meshtypes.meshtype_2d_airwaybifurcation2 import MeshType_2d_airwaybifurcation2
 
 from scaffoldmaker.meshtypes.meshtype_3d_airwaybifurcation2 import MeshType_3d_airwaybifurcation2
+from scaffoldmaker.meshtypes.meshtype_3d_airwaybifurcation3 import MeshType_3d_airwaybifurcation3
 
 from scaffoldmaker.meshtypes.meshtype_3d_ostium1 import MeshType_3d_ostium1
 from scaffoldmaker.meshtypes.meshtype_3d_smallintestine1 import MeshType_3d_smallintestine1
@@ -69,6 +70,7 @@ class Scaffolds(object):
             MeshType_2d_airwaybifurcation2,
             MeshType_3d_airwaybifurcation1,
             MeshType_3d_airwaybifurcation2,
+            MeshType_3d_airwaybifurcation3,
             MeshType_3d_ostium1,
             MeshType_3d_smallintestine1,
             MeshType_3d_solidsphere1,
