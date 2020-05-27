@@ -649,22 +649,17 @@ def warpAirwaySegmentPoints(x1ListParent, x1ListDaugh1, x1ListDaugh2,
         d1ElementAlongSegment = d1ListParent[elementsCountAround*nAlongSegment: elementsCountAround*(nAlongSegment+1)]
         d2ElementAlongSegment = d2ListParent[elementsCountAround*nAlongSegment: elementsCountAround*(nAlongSegment+1)]
         xMid = [0.0, 0.0, ParentfaceMidPointZ[nAlongSegment]]
-        print('PARENT: xmid=', xMid)
-        if nAlongSegment == elementsCountAlongSegment:
-            print('parent,checking x input', xElementAlongSegment)
 
         # Rotate to align segment axis with tangent of central line
         unitTangent = vector.normalise(sd1Parent[n2])
         cp = vector.crossproduct3(segmentAxisParent, unitTangent)
         dp = vector.dotproduct(segmentAxisParent, unitTangent)
         if vector.magnitude(cp)> 0.0: # path tangent not parallel to segment axis
-            print('PARENT: path tangent NOT parallel to axis')
             axisRot = vector.normalise(cp)
             thetaRot = math.acos(vector.dotproduct(segmentAxisParent, unitTangent))
             rotFrame = matrix.getRotationMatrixFromAxisAngle(axisRot, thetaRot)
             midRot = [rotFrame[j][0]*xMid[0] + rotFrame[j][1]*xMid[1] + rotFrame[j][2]*xMid[2] for j in range(3)]
         else: # path tangent parallel to segment axis (z-axis)
-            print('PARENT: path tangent parallel to axis')
             if dp == -1.0: # path tangent opposite direction to segment axis
                 thetaRot = math.pi
                 axisRot = [1.0, 0, 0]
@@ -744,13 +739,11 @@ def warpAirwaySegmentPoints(x1ListParent, x1ListDaugh1, x1ListDaugh2,
         cp = vector.crossproduct3(segmentAxisDaughter1, unitTangent)
         dp = vector.dotproduct(segmentAxisDaughter1, unitTangent)
         if vector.magnitude(cp)> 0.0: # path tangent not parallel to segment axis
-            print('DAUGHTER1: Path tangetn not parallel to segment axis')
             axisRot = vector.normalise(cp)
             thetaRot = math.acos(vector.dotproduct(segmentAxisDaughter1, unitTangent))
             rotFrame = matrix.getRotationMatrixFromAxisAngle(axisRot, thetaRot)
             midRot = [rotFrame[j][0]*xMid[0] + rotFrame[j][1]*xMid[1] + rotFrame[j][2]*xMid[2] for j in range(3)]
         else: # path tangent parallel to segment axis (z-axis)
-            print('DAUGHTER1: Path tangetn  parallel to segment axis')
             if dp == -1.0: # path tangent opposite direction to segment axis
                 thetaRot = math.pi
                 #axisRot = [1.0, 0, 0]
@@ -1375,9 +1368,7 @@ def createAirwaySegmentNodesAndElements\
 
     # Create nodes for Parent
     # Coordinates field
-    print('len of parent = ', len(xParent))
     for n in range(len(xParent)):
-        print ('node number of parent =',nodeIdentifier)
         node = nodes.createNode(nodeIdentifier, nodetemplate)
         cache.setNode(node)
         coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, xParent[n])
@@ -1393,9 +1384,7 @@ def createAirwaySegmentNodesAndElements\
 
     # Create nodes for Daughter1
     # Coordinates field
-    print('len of Daughter1 = ', len(xDaughter1))
     for n in range(len(xDaughter1)):
-        print ('node number of Daughter1 =',nodeIdentifier)
         node = nodes.createNode(nodeIdentifier, nodetemplate)
         cache.setNode(node)
         coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, xDaughter1[n])
@@ -1531,7 +1520,7 @@ def createAirwaySegmentNodesAndElements\
         bni12 = firstNodeIdentifier + elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)-1
         bni21 = firstNodeIdentifier + 3*elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)
         bni22 = bni21 + (elementsCountAround*elementsCountAlong)
-        print('checking bni', bni11, bni11+1, bni21+ring-2, bni21, bni12-1,bni12, bni22, bni22-5)
+
         # nodeIdentifiers = [19, 20, 79, 73, 23, 24, 81, 76]
         nodeIdentifiers = [bni11+2, bni11+3, bni21+ring-2, bni21, bni12-1, bni12, bni22, bni22-5]
         element = mesh.createElement(elementIdentifier, elementtemplate)

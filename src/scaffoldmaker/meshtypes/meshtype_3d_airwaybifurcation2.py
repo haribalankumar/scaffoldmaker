@@ -297,9 +297,6 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
                 sxparent, sd1parent, separent, sxiparent, ssfparent = \
                     interp.sampleCubicHermiteCurves(cxparent, cd1parent, elementsCountAlongSegment)
                 sd2parent = interp.interpolateSampleCubicHermite(cd2parent, cd12parent, separent, sxiparent, ssfparent)[0]
-                print('after sampling hermite sxparent=',sxparent)
-                print('after sampling hermite sd1parent=',sd1parent)
-                print('after sampling hermite sd2parent=',sd2parent)
 
                 # Sample central path - DAUGHTER1
                 # sxDaugh1, sd1Daugh1, seDaugh1, sxiDaugh1, ssfDaugh1 = \
@@ -437,7 +434,6 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
             #     nodeIdentifier = 3*elementsCountAround*(1+elementsCountAlongSegment)*(elementsCountThroughWall+1)+10
             #     elementIdentifier = 3*elementsCountAround*(elementsCountAlongSegment)*elementsCountThroughWall+10
 
-                print('checking node identified BEFORE create node and elems =', nodeIdentifier, elementIdentifier)
                 nextnodeIdentifier, nextelementIdentifier = \
                     tubebifurcationmesh.createAirwaySegmentNodesAndElements(
                         region,
@@ -451,7 +447,6 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
                         nodeIdentifier, elementIdentifier,
                         useJunctionElements, useCubicHermiteThroughWall, useCrossDerivatives)
 
-                print('checking node identifie after create =', nodeIdentifier, elementIdentifier)
 
         # fm.endChange()
        # return annotationGroups
