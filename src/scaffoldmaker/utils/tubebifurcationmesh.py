@@ -1279,7 +1279,7 @@ def getAirwaySegmentCoordinatesFromInner(
 
 
 def createAirwaySegmentNodesAndElements\
-                (region,
+                (region, nSegment,
                  xParent, d1Parent, d2Parent, d3Parent,
                  xDaughter1, d1Daughter1, d2Daughter1, d3Daughter1,
                  xDaughter2, d1Daughter2, d2Daughter2, d3Daughter2,
@@ -1290,7 +1290,7 @@ def createAirwaySegmentNodesAndElements\
                  firstNodeIdentifier, firstElementIdentifier,
                  useJunctionElements,
                  useCubicHermiteThroughWall,
-                 useCrossDerivatives):
+                 useCrossDerivatives, meshGroups1=[], meshGroups2=[], meshGroups3=[]):
 
     #    annotationGroups, annotationArray,
     """
@@ -1476,6 +1476,10 @@ def createAirwaySegmentNodesAndElements\
                 element = mesh.createElement(elementIdentifier, elementtemplate)
                 result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
                 elementIdentifier = elementIdentifier + 1
+                if nSegment == 0:
+                    for meshGroup in meshGroups1:
+                        meshGroup.addElement(element)
+
 
     now = elementsCountAround * (elementsCountThroughWall + 1)
     offset = (firstNodeIdentifier-1)+(elementsCountAlong+1) * elementsCountAround * (elementsCountThroughWall + 1)
@@ -1490,6 +1494,9 @@ def createAirwaySegmentNodesAndElements\
                 element = mesh.createElement(elementIdentifier, elementtemplate)
                 result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
                 elementIdentifier = elementIdentifier + 1
+                if nSegment == 0:
+                    for meshGroup in meshGroups2:
+                        meshGroup.addElement(element)
 
     # result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
     # if mapDerivatives:
@@ -1508,6 +1515,9 @@ def createAirwaySegmentNodesAndElements\
                 element = mesh.createElement(elementIdentifier, elementtemplate)
                 result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
                 elementIdentifier = elementIdentifier + 1
+                if nSegment == 0:
+                    for meshGroup in meshGroups3:
+                        meshGroup.addElement(element)
 
     ### FORM JUNCTION ELEMS
     ################################
@@ -1520,12 +1530,15 @@ def createAirwaySegmentNodesAndElements\
         bni12 = firstNodeIdentifier + elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)-1
         bni21 = firstNodeIdentifier + 3*elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)
         bni22 = bni21 + (elementsCountAround*elementsCountAlong)
-
         # nodeIdentifiers = [19, 20, 79, 73, 23, 24, 81, 76]
         nodeIdentifiers = [bni11+2, bni11+3, bni21+ring-2, bni21, bni12-1, bni12, bni22, bni22-5]
         element = mesh.createElement(elementIdentifier, elementtemplate)
         result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
         elementIdentifier = elementIdentifier + 1
+        if nSegment == 0:
+            for meshGroup in meshGroups1:
+                meshGroup.addElement(element)
+
 
         bni11 = firstNodeIdentifier + 3*elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)
         bni12 = bni11 + (elementsCountAround*elementsCountAlong)
@@ -1565,6 +1578,10 @@ def createAirwaySegmentNodesAndElements\
         element = mesh.createElement(elementIdentifier, elementtemplate)
         result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
         elementIdentifier = elementIdentifier + 1
+        if nSegment == 0:
+            for meshGroup in meshGroups1:
+                meshGroup.addElement(element)
+
 
         bni11 = firstNodeIdentifier + 3*elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)-1 #72
         bni12 = bni11 + (elementsCountAround*elementsCountAlong) #80
@@ -1591,6 +1608,7 @@ def createAirwaySegmentNodesAndElements\
         result3 = element.setScaleFactors(eft1, [-1.0])
         elementIdentifier = elementIdentifier + 1
 
+
         bni11 = firstNodeIdentifier + elementsCountAround*(elementsCountAlong)*(elementsCountThroughWall+1)-1 #16
         bni12 = firstNodeIdentifier + elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)-1 #24
         bni21 = firstNodeIdentifier + 3*elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)-1 #72
@@ -1604,6 +1622,11 @@ def createAirwaySegmentNodesAndElements\
         element = mesh.createElement(elementIdentifier, elementtemplate)
         result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
         elementIdentifier = elementIdentifier + 1
+        if nSegment == 0:
+            for meshGroup in meshGroups1:
+                meshGroup.addElement(element)
+
+
 
         bni11 = firstNodeIdentifier + 3*elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)-1 #72
         bni12 = bni11 + (elementsCountAround*elementsCountAlong) #80
@@ -1631,6 +1654,7 @@ def createAirwaySegmentNodesAndElements\
         result3 = element.setScaleFactors(eft1, [-1.0])
         elementIdentifier = elementIdentifier + 1
 
+
         bni11 = firstNodeIdentifier + elementsCountAround*(elementsCountAlong)*(elementsCountThroughWall+1)-1 #16
         bni12 = firstNodeIdentifier + elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)-1 #24
         bni21 = firstNodeIdentifier + 3*elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)-1 #72
@@ -1644,6 +1668,9 @@ def createAirwaySegmentNodesAndElements\
         element = mesh.createElement(elementIdentifier, elementtemplate)
         result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
         elementIdentifier = elementIdentifier + 1
+        if nSegment == 0:
+            for meshGroup in meshGroups1:
+                meshGroup.addElement(element)
 
 
         bni11 = firstNodeIdentifier + 3*elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)-1 #72
@@ -1668,6 +1695,7 @@ def createAirwaySegmentNodesAndElements\
         result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
         result3 = element.setScaleFactors(eft1, [-1.0])
         elementIdentifier = elementIdentifier + 1
+
 
         bni11 = firstNodeIdentifier + elementsCountAround*(elementsCountAlong)*(elementsCountThroughWall+1)-1 #16
         bni12 = firstNodeIdentifier + elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)-1 #24
@@ -1698,6 +1726,7 @@ def createAirwaySegmentNodesAndElements\
         result2 = element.setNodesByIdentifier(eft1, nodeIdentifiers)
         result3 = element.setScaleFactors(eft1, [-1.0])
         elementIdentifier = elementIdentifier + 1
+
 
         bni11 = firstNodeIdentifier + 3*elementsCountAround*(elementsCountAlong+1)*(elementsCountThroughWall+1)-1 #72
         bni12 = bni11 + (elementsCountAround*elementsCountAlong) #80

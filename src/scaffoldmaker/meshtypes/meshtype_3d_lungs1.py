@@ -30,12 +30,12 @@ class MeshType_3d_lungs1(Scaffold_base):
         return {
             'Number of lung elements up': 4,
             'Number of lung elements laterally': 4,
-            'Height': 20,
-            'Width': 16,
+            'Height': 24,
+            'Width': 18,
             'Upcurve coefficient1': 1.0,
             'Upcurve coefficient2': 1.0,
-            'Medialsurface coefficient': 0.2,
-            'Lateralsurface coefficient': 0.2,
+            'Medialsurface coefficient': 0.8,
+            'Lateralsurface coefficient': 0.8,
             'Tracheal Rotation angle': 0,
             'Use cross derivatives': False,
             'Refine': False,
@@ -130,10 +130,11 @@ class MeshType_3d_lungs1(Scaffold_base):
         return meshrefinement.getAnnotationGroups()
 
 
-def generateLobeMesh(region, options, lobeid, startNodeIdentifier, startElementIdentifier):
+def generateLobeMesh(region, options, lobeid, startNodeIdentifier, startElementIdentifier, meshGroups = []):
     '''
     :param vesselMeshGroups: List (over number of vessels) of list of mesh groups to add vessel elements to.
     :return: nextNodeIdentifier, nextElementIdentifier
+    :param meshGroups:  Optional list of Zinc MeshGroup for adding new elements to.
     '''
 
     elementsCountlateral = options['Number of lung elements laterally']
@@ -159,20 +160,23 @@ def generateLobeMesh(region, options, lobeid, startNodeIdentifier, startElementI
     TrachealRotationAngleRadians = -math.pi / 180 * TrachealRotationAngle
     thetaup = math.pi / 3.0
     thetalateral = math.pi / 6.0
-    posteriorcurveradius = lungheight / (2 * math.sin(thetaup))
-    anteriorcurveradius = posteriorcurveradius
 
-    LMBcentre = 2.0
+    thetaupPosterior = [-math.pi/4, 0, math.pi/3]
+    thetaupAnterior = [-math.pi/6, 0, math.pi/8]
+
+    posteriorcurveradius = lungheight / (2 * math.sin(thetaup))
+    anteriorcurveradius = lungheight / (2 * math.sin(thetaup))
+
+    LMBcentre = 1
     RMBcentre = LMBcentre + lungwidth * 0.1
 
-    zlateralcentre = 8.0
+    zlateralcentre = 12.0
     halflungwidth = lungwidth * 0.5
-    lungdepth = lungwidth * 0.6
+    lungdepth = lungwidth * 0.75
 
     ycentreleftlateral =  halflungwidth
 
     lateralsurfradius = lateralsurfcoeff * lungwidth
-    internalsurfradius = lateralsurfradius * 2.25
 
     # -------------end of hardcoded values-----------------
 
@@ -232,11 +236,11 @@ def generateLobeMesh(region, options, lobeid, startNodeIdentifier, startElementI
     ## POSTERIOR edges
 
     for n2 in range(3):
-        radiansUp = lRadiansUp[n2]
+        radiansUp = thetaupPosterior[n2]
         cosRadiansUp = math.cos(radiansUp)
         sinRadiansUp = math.sin(radiansUp)
         x1 = [LMBcentre, ycentreleftlateral + posteriorcurveradius * (cosRadiansUp - 1.0),
-              zlateralcentre + posteriorcurveradius * sinRadiansUp]
+              1.2*zlateralcentre + posteriorcurveradius * sinRadiansUp]
         # d1 = [0, -posteriorcurveradius * sinRadiansUp, posteriorcurveradius * cosRadiansUp]
         # d1 = [0, - sinRadiansUp,  cosRadiansUp]
         d1 = unitvectorz
@@ -257,11 +261,11 @@ def generateLobeMesh(region, options, lobeid, startNodeIdentifier, startElementI
     nd1 = []
     nd2 = []
     for n2 in range(3):
-        radiansUp = lRadiansUp[n2]
+        radiansUp = thetaupPosterior[n2]
         cosRadiansUp = math.cos(radiansUp)
         sinRadiansUp = math.sin(radiansUp)
-        x1 = [LMBcentre + 1, ycentreleftlateral + posteriorcurveradius * (cosRadiansUp - 1.0),
-              zlateralcentre + posteriorcurveradius * sinRadiansUp]
+        x1 = [LMBcentre + 1.5, ycentreleftlateral + posteriorcurveradius * (cosRadiansUp - 1.0),
+              1.2*zlateralcentre + posteriorcurveradius * sinRadiansUp]
         # d1 = [0, -posteriorcurveradius * sinRadiansUp, posteriorcurveradius * cosRadiansUp]
         # d1 = [0, - sinRadiansUp, cosRadiansUp]
         d1 = unitvectorz
@@ -284,7 +288,7 @@ def generateLobeMesh(region, options, lobeid, startNodeIdentifier, startElementI
     nd1 = []
     nd2 = []
     for n2 in range(3):
-        radiansUp = lRadiansUp[n2]
+        radiansUp = thetaupAnterior[n2]
         cosRadiansUp = math.cos(radiansUp)
         sinRadiansUp = math.sin(radiansUp)
         x1 = [LMBcentre, -ycentreleftlateral - anteriorcurveradius * (cosRadiansUp - 1.0),
@@ -312,7 +316,7 @@ def generateLobeMesh(region, options, lobeid, startNodeIdentifier, startElementI
     nd1 = []
     nd2 = []
     for n2 in range(3):
-        radiansUp = lRadiansUp[n2]
+        radiansUp = thetaupAnterior[n2]
         cosRadiansUp = math.cos(radiansUp)
         sinRadiansUp = math.sin(radiansUp)
         x1 = [LMBcentre + 0.5, -ycentreleftlateral - anteriorcurveradius * (cosRadiansUp - 1.0),
@@ -457,7 +461,9 @@ def generateLobeMesh(region, options, lobeid, startNodeIdentifier, startElementI
     # # Create nodes on MEDIAL and LATERAL side
     # --------------------------------------------
 
-    xtop = sPosteriorx[0]
+    xtop = sAnteriorx[0]
+    sMedialcoord = []
+    sLateralcoord = []
 
     for n2 in range(0, elementsCountUp):
 
@@ -468,10 +474,13 @@ def generateLobeMesh(region, options, lobeid, startNodeIdentifier, startElementI
         nd2 = []
         x1 = sPosteriorx[n2]
         x3 = sAnteriorx[n2]
-        halflung = 0.5 * (x1[1] + x3[1])
+        mediolateral_50 = 0.5*(x1[1] + x3[1])
+        mediolateral_40 = 0.6*x1[1] + 0.4*x3[1]
         zlung = 0.5 * (x1[2] + x3[2])
-        zratio = (0.4 - 0.55 * abs((zlung-xtop[2])/lungheight - 0.5)) ** 0.5
-        # zratio = 0.5
+        zratio = -0.1 + 0.8*(abs(zlung-xtop[2])/lungheight)**0.5
+        print('xtop,zlung=',xtop[2],zlung)
+        print('what is zratio for n2=', n2, zratio)
+        # zratio = 0.58
 
         radiansLateral = lRadiansLateral[0]
         cosRadiansLateral = math.cos(radiansLateral)
@@ -487,9 +496,9 @@ def generateLobeMesh(region, options, lobeid, startNodeIdentifier, startElementI
         radiansLateral = lRadiansLateral[1]
         cosRadiansLateral = math.cos(radiansLateral)
         sinRadiansLateral = math.sin(radiansLateral)
-        x2 = [x1[0] + 0.05 * lungdepth + 0.5 * lungdepth * medialsurfcoeff * (cosRadiansLateral - 1.0),
-              halflung,
-              x1[2]]
+        x2 = [x1[0] + 0.05 * lungdepth,
+              mediolateral_50,
+              0.7*zlung]
 
         # d22 = [0.5 * lungdepth * medialsurfcoeff * sinRadiansLateral,
         #        -0.5 * lungdepth * medialsurfcoeff * cosRadiansLateral, 0]
@@ -519,7 +528,7 @@ def generateLobeMesh(region, options, lobeid, startNodeIdentifier, startElementI
         nd2.append(d23)
         sMedialx, sMedialderiv2, _, _, _ = \
             interp.sampleCubicHermiteCurves(nx, nd2, elementsCountOut=elementsCountlateral)
-
+        sMedialcoord.append(sMedialx)
 
         #LATERAL SIDE
         #---------------
@@ -529,7 +538,9 @@ def generateLobeMesh(region, options, lobeid, startNodeIdentifier, startElementI
 
         x1 = sPosteriorOffsetx[n2]
         x3 = sAnteriorOffsetx[n2]
-        halflung = 0.5 * (x1[1] + x3[1])
+        mediolateral_50 = 0.5 * (x1[1] + x3[1])
+        mediolateral_40 = 0.6*x1[1] + 0.4*x3[1]
+        mediolateral_30 = 0.7*x1[1] + 0.3*x3[1]
         radiansLateral = lRadiansLateral[0]
         cosRadiansLateral = math.cos(radiansLateral)
         sinRadiansLateral = math.sin(radiansLateral)
@@ -544,9 +555,9 @@ def generateLobeMesh(region, options, lobeid, startNodeIdentifier, startElementI
         radiansLateral = lRadiansLateral[1]
         cosRadiansLateral = math.cos(radiansLateral)
         sinRadiansLateral = math.sin(radiansLateral)
-        x2 = [x1[0] + zratio * lungdepth + 0.5 * lungdepth * lateralsurfcoeff * (cosRadiansLateral - 1.0),
-              halflung,
-              x1[2]]
+        x2 = [x1[0] + (zratio+0.05)*lungdepth,
+              mediolateral_30,
+              zlung]
         # d22 = [0.5 * lungdepth * lateralsurfcoeff * sinRadiansLateral,
         #        -0.5 * lungwidth * lateralsurfcoeff * cosRadiansLateral,
         #        0]
@@ -576,6 +587,7 @@ def generateLobeMesh(region, options, lobeid, startNodeIdentifier, startElementI
         nd2.append(d23)
         sLateralx, sLateralderiv2, _, _, _ = \
             interp.sampleCubicHermiteCurves(nx, nd2, elementsCountOut=elementsCountlateral)
+        sLateralcoord.append(sLateralx)
 
 
         # Apply tracheal rotation angle
@@ -598,6 +610,16 @@ def generateLobeMesh(region, options, lobeid, startNodeIdentifier, startElementI
             sLateralx[n3][0] = newx + xcen
             sLateralx[n3][1] = newy + ycen
 
+    #
+    # # vertical deriv
+    # unitvectorz = [0,0,1]
+    # for n2 in range(0, elementsCountlateral):
+    #     nx = []
+    #     nd = []
+    #     for n3 in range(1, elementsCountUp):
+    #         nx.append(sLateralcoord[n3][n2])
+
+    # for n2 in range(1, elementsCountUp):
         for n3 in range(1, elementsCountlateral):
             layerNodeId = []
             node = nodes.createNode(nodeIdentifier, nodetemplate)
@@ -634,7 +656,7 @@ def generateLobeMesh(region, options, lobeid, startNodeIdentifier, startElementI
 
     print('before lung is added nodes count=', startNodeIdentifier-1)
     print('left nodes', (nodeIdentifier-startNodeIdentifier-1))
-    e0 = startNodeIdentifier-1
+    e0 = startNodeIdentifier
 
     ###################
     # Create elements
@@ -670,17 +692,21 @@ def generateLobeMesh(region, options, lobeid, startNodeIdentifier, startElementI
         #                    e2 + delM + 1,
         #                    1 + delB + (delX) * (e2 - 1)
         #                    ]
-        nodeIdentifiers = [e0+e2,
+        nodeIdentifiers = [e0 + e2 -1,
                            e0 + delQ + (delX) * (e2 - 1),
                            e0 + e2,
                            e0 + delQ + (delX) * (e2 - 1) + delX,
-                           e0 + e2 + delM,
+                           e0 + e2-1 + delM,
                            e0 + delA + (delX) * (e2 - 1),
                            e0 + e2 + delM,
                            e0 + delB + (delX) * (e2 - 1)
                            ]
         result = element.setNodesByIdentifier(eft, nodeIdentifiers)
         elementIdentifier = elementIdentifier + 1
+        for meshGroup in meshGroups:
+            meshGroup.addElement(element)
+
+
 
     for e3 in range(1, elementsCountlateral - 1):
         for e2 in range(1, elementsCountUp):
@@ -697,6 +723,10 @@ def generateLobeMesh(region, options, lobeid, startNodeIdentifier, startElementI
                                ]
             result = element.setNodesByIdentifier(eft, nodeIdentifiers)
             elementIdentifier = elementIdentifier + 1
+            for meshGroup in meshGroups:
+                meshGroup.addElement(element)
+
+
 
     # for e3 in range(1, elementsCountlateral - 1):
     #     for e2 in range(1, elementsCountUp):
@@ -715,19 +745,22 @@ def generateLobeMesh(region, options, lobeid, startNodeIdentifier, startElementI
     #         elementIdentifier = elementIdentifier + 1
 
 
+
     for e2 in range(1, elementsCountUp):
         element = mesh.createElement(elementIdentifier, elementtemplate)
         nodeIdentifiers = [e0 + delP + (delX) * (e2 - 1),
-                           e0 + (e2) + elementsCountUp,
+                           e0 + (e2-1) + elementsCountUp,
                            e0 + delP + (delX) * (e2),
                            e0 + (e2) + elementsCountUp,
                            e0 + delP + (delX) * (e2 - 1) + (elementsCountlateral - 1),
-                           e0 + e2 + (3 * elementsCountUp),
+                           e0 + e2-1 + (3 * elementsCountUp),
                            e0 + delP + (delX) * (e2) + (elementsCountlateral - 1),
                            e0 + e2 + (3 * elementsCountUp)
                            ]
         result = element.setNodesByIdentifier(eft, nodeIdentifiers)
         elementIdentifier = elementIdentifier + 1
+        for meshGroup in meshGroups:
+            meshGroup.addElement(element)
 
 
     # for e2 in range(1, elementsCountUp):
@@ -744,6 +777,7 @@ def generateLobeMesh(region, options, lobeid, startNodeIdentifier, startElementI
     #                        ]
     #     result = element.setNodesByIdentifier(eft, nodeIdentifiers)
     #     elementIdentifier = elementIdentifier + 1
+
 
 
     fm.endChange()

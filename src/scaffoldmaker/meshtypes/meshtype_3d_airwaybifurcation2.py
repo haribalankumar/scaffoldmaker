@@ -436,7 +436,7 @@ class MeshType_3d_airwaybifurcation2(Scaffold_base):
 
                 nextnodeIdentifier, nextelementIdentifier = \
                     tubebifurcationmesh.createAirwaySegmentNodesAndElements(
-                        region,
+                        region,nSegment,
                         xParentList, d1ParentList, d2ParentList, d3ParentList,
                         xDaughter1List, d1Daughter1List, d2Daughter1List, d3Daughter1List,
                         xDaughter2List, d1Daughter2List, d2Daughter2List, d3Daughter2List,

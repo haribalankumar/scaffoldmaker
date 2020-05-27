@@ -25,7 +25,7 @@ from scaffoldmaker.utils import vector
 from scaffoldmaker.utils.meshrefinement import MeshRefinement
 
 
-class MeshType_3d_airwaybifurcation3(Scaffold_base):
+class MeshType_3d_airwaybifurcation4(Scaffold_base):
     '''
     3-D Airway Bifurcation scaffold.
     '''
@@ -69,7 +69,7 @@ class MeshType_3d_airwaybifurcation3(Scaffold_base):
 
     @staticmethod
     def getName():
-        return '3D Bifurcation with lung'
+        return '3D Bifurcation with 4gen'
 
     @staticmethod
     def getParameterSetNames():
@@ -170,8 +170,8 @@ class MeshType_3d_airwaybifurcation3(Scaffold_base):
 
         if (options['Number of generations downstream'] < 1):
             options['Number of generations downstream'] = 1
-        if (options['Number of generations downstream'] > 2):
-            options['Number of generations downstream'] = 2
+        if (options['Number of generations downstream'] > 3):
+            options['Number of generations downstream'] = 3
 
         #LUNG PARAMS
         # if options['Lung Width'] < 2:
@@ -256,19 +256,6 @@ class MeshType_3d_airwaybifurcation3(Scaffold_base):
 
         cache = fm.createFieldcache()
 
-        tracheaGroup = AnnotationGroup(region, 'Trachea', FMANumber='unknown', lyphID='unknown')
-        rmbGroup = AnnotationGroup(region, 'RMB', FMANumber='unknown', lyphID='unknown')
-        lmbGroup = AnnotationGroup(region, 'LMB', FMANumber='unknown', lyphID='unknown')
-        lungGroup = AnnotationGroup(region, 'Left lung', FMANumber='unknown', lyphID='unknown')
-
-        annotationGroups = [tracheaGroup, rmbGroup, lmbGroup, lungGroup]
-
-        tracheaMeshGroup = tracheaGroup.getMeshGroup(mesh)
-        rmbMeshGroup = rmbGroup.getMeshGroup(mesh)
-        lmbMeshGroup = lmbGroup.getMeshGroup(mesh)
-        lungMeshGroup = lungGroup.getMeshGroup(mesh)
-
-
         nodeIdentifier = 1
         elementIdentifier = 1
         radiansPerElementAround = 2.0*math.pi/elementsCountAround
@@ -296,11 +283,11 @@ class MeshType_3d_airwaybifurcation3(Scaffold_base):
         ## typically comes from a centerline definition. currently hardcoding it
 
 
-        startRadiusparentlist = [0.7, 0.6, 0.72]
+        startRadiusparentlist = [0.7, 0.6, 0.76, 0.38, 0.6, 0.36, 0.68]
         endRadiusparentlist = startRadiusparentlist
-        startRadiusDaugh1list = [0.6, 0.35, 0.6]
+        startRadiusDaugh1list = [0.6, 0.38, 0.36, 0.4, 0.62, 0.6, 0.35]
         endRadiusDaugh1list = startRadiusDaugh1list
-        startRadiusDaugh2list = [0.72, 0.64, 0.35]
+        startRadiusDaugh2list = [0.76, 0.6, 0.68, 0.26, 0.46, 0.32, 0.24]
         endRadiusDaugh2list = startRadiusDaugh2list
 
         tracheaoriginx = 0
@@ -322,39 +309,38 @@ class MeshType_3d_airwaybifurcation3(Scaffold_base):
         startPhase = 0.0
 
         ##DAUGHETER 1 - SAMPLE SEGMENT
-        daughter1anglelist = [17, 4, 46]
-        daughter2anglelist = [12, 39, 10]
-        dirvecparentlist = [[0,0,1],[0.3864,0.0000,0.922],[-0.485,0.0000,0.875]]
-        dirvecdaughter1list = [[0.3864,0.0000,0.922],[0.87929,0.00000,0.47628],[-0.07125,0.00000,0.99746]]
-        dirvecdaughter2list = [[-0.485,0.0000,0.875],[0.05673,0.00000,0.99839],[-0.9445,0.00000,0.32852]]
 
-        radiusvecparentlist =  [[0.0, 1.0, 0.0],[0.0, 1.0, 0.0],[0.0,1.0000,0.0]]
-        radiusvecdaughter1list = [[0.0,1.00,0.0],[0.0,1.00,0.0],[0.0,1.00,0.0]]
-        radiusvecdaughter2list = [[0.0,1.00,0.0],[0.0,1.00,0.0],[0.0,1.00,0.0]]
+        dirvecparentlist = [[0,0,1],[0.293,0.036,0.955],[-0.351,0.000,0.936],[0.854,0.00,0.521],[0.213,0.507,0.836],[-0.198,0.0,0.98],[-0.751,0.000, 0.660]]
+        dirvecdaughter1list = [[0.293,0.036,0.955],[0.854,0.0,0.521],[-0.198,0.0,0.980],[0.849,-0.273,0.453],[0.319,0.904,0.284],[0.051,0.000,0.999],[-0.614,0.000,0.790]]
+        dirvecdaughter2list = [[-0.351,0.0,0.936],[0.213,0.507,0.836],[-0.751,0.00,0.660],[0.495,0.773,0.398],[0.292,0.274,0.916],[-0.918,0.000,0.396],[-0.764,-0.645,-0.017]]
 
-        parentx0list = [[0,0,0],[0,0,4.000],[0,0,4.000]]
-        daughter1x0list = [[0,0,4.000],[2.50530,0.00000,9.98000],[-2.09470,0.00000,7.78000]]
-        daughter2x0list = [[0,0,4.000],[2.50530,0.00000,9.98000],[-2.09470,0.00000,7.78000]]
+        radiusvecparentlist =  [[0.0, 1.0, 0.0],[0.0, 1.0, 0.0],[0.0,1.0000,0.0],[0.0, 1.0, 0.0],[0.0, 1.0, 0.0],[0.0, 1.0, 0.0],[0.0, 1.0, 0.0]]
+        radiusvecdaughter1list = [[0.0,1.00,0.0],[0.0,1.00,0.0],[0.0,1.00,0.0],[0.0, 1.0, 0.0],[0.0, 1.0, 0.0],[0.0, 1.0, 0.0],[0.0, 1.0, 0.0]]
+        radiusvecdaughter2list = [[0.0,1.00,0.0],[0.0,1.00,0.0],[0.0,1.00,0.0],[0.0, 1.0, 0.0],[0.0, 1.0, 0.0],[0.0, 1.0, 0.0],[0.0, 1.0, 0.0]]
 
-        parentx1list = [[0,0,4.000],[2.50530,0.00000,9.98000],[-2.09470,0.00000,7.78000]]
-        daughter1x1list = [[1.25265,0.00000,6.99000],[4.90530,0.00000,11.28000],[-2.2947,0.000,10.580]]
-        daughter2x1list = [[-1.04735,0.00000,5.89000],[2.70530,0.00000,13.50000],[-4.3947,0.00, 8.580]]
+        parentx0list = [[0.052,0.0,-2.133],[-0.075,0.00,0.380],[-0.075,0.00,0.380],[0.674,0.091,2.818],[0.674,0.091,2.818],[-0.681,0.0,1.996],[-0.681,0.0,1.996]]
+        daughter1x0list = [[-0.075,0.0,0.380],[0.674,0.091,2.818],[-0.681,0.0,1.996],[1.980,0.0,5.596],[1.578,0.367,5.863],[-1.541,0.00,4.871],[-1.815,0.0,4.076]]
+        daughter2x0list = [[-0.075,0.0,0.380],[0.674,0.091,2.818],[-0.681,0.0,1.996],[1.980,0.0,5.596],[1.578,0.367,5.863],[-1.541,0.00,4.871],[-1.815,0.0,4.076]]
 
-        segmentlengthparentlist = [4, 3.24, 2.16]
-        segmentlengthdaughter1list = [3.24, 2.7, 2.8]
-        segmentlengthdaughter2list = [2.16, 3.5, 2.43]
+        parentx1list = [[-0.075,0.00,0.380],[0.674,0.091,2.818],[-0.681,0.0,1.996],[1.980,0.0,5.596],[1.578,0.367,5.863],[-1.541,0.00,4.871],[-1.815,0.0,4.076]]
+        daughter1x1list = [[0.674,0.091,2.818],[1.980,0.0,5.596],[-1.541,0.00,4.871],[3.147,0.032,6.262],[2.012,1.527,6.717],[-1.709,0.0,7.819],[-2.843,0.0,5.183]]
+        daughter2x1list = [[-0.681,0.0,1.996],[1.578,0.367,5.863],[-1.815,0.0,4.076],[2.930,0.843,6.252],[1.966,0.954,7.204],[-2.540,0.000,6.451],[-2.910,-0.478,4.528]]
+
+        segmentlengthparentlist = [2.5, 2.55, 1.73, 0.65, 0.725, 1.28, 0.7]
+        segmentlengthdaughter1list = [2.55, 0.65, 1.28, 0.72, 0.877, 1.7, 0.813 ]
+        segmentlengthdaughter2list = [1.73, 0.725, 0.7, 0.796, 0.8, 0.81, 0.74]
         #####################################################################
 
         # SMOOTHING PARAMETERS FOR EVERY SEGMENT
-        xlensegmentparentlist = [1.0, 1., 1.]
-        xlensegmentd1list = [0.0, 0.0, 0.0]
-        xlensegmentd2list = [0.0, 0.0, 0.0]
+        xlensegmentparentlist = [1.0, 1., 1., 1., 1., 1., 1.]
+        xlensegmentd1list = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        xlensegmentd2list = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
         if useJunctionElements:
             #SMOOTHING PARAMETERS FOR EVERY SEGMENT
-            xlensegmentparentlist = [0.8, 0.6, 0.6]
-            xlensegmentd1list = [0.6, 0.5, 0.4]
-            xlensegmentd2list = [0.7, 0.4, 0.5]
+            xlensegmentparentlist = [0.8, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6]
+            xlensegmentd1list = [0.6, 0.5, 0.4, 0.5, 0.5, 0.5, 0.5, 0.5]
+            xlensegmentd2list = [0.7, 0.4, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
 
         segmentCount = pow(2,numberofGenerations-1)
 
@@ -608,19 +594,16 @@ class MeshType_3d_airwaybifurcation3(Scaffold_base):
                         d3JunctionOuterList, d3JunctionInnerList,
                         elementsCountAround, elementsCountAlongSegment, elementsCountThroughWall,
                         nodeIdentifier, elementIdentifier,
-                        useJunctionElements, useCubicHermiteThroughWall, useCrossDerivatives,
-                        meshGroups1=[tracheaMeshGroup], meshGroups2=[rmbMeshGroup], meshGroups3=[lmbMeshGroup])
+                        useJunctionElements, useCubicHermiteThroughWall, useCrossDerivatives)
+
 
         lobeid = 1
         if includeLeftLung:
             nodeIdentifier, elementIdentifier = \
-                generateLobeMesh(region, lungsDefaultOptions, lobeid,
-                                 nextnodeIdentifier, nextelementIdentifier, meshGroups=[lungMeshGroup])
+                generateLobeMesh(region, lungsDefaultOptions, lobeid, nextnodeIdentifier, nextelementIdentifier)
 
         fm.endChange()
-        return annotationGroups
-
-
+    # return annotationGroups
 
     @classmethod
     def generateMesh(cls, region, options):
