@@ -356,10 +356,21 @@ class MeshType_3d_airwaybifurcation3(Scaffold_base):
             xlensegmentd1list = [0.6, 0.5, 0.4]
             xlensegmentd2list = [0.7, 0.4, 0.5]
 
-        segmentCount = pow(2,numberofGenerations-1)
+        ####################################################################################
+
+        lobeid = 1
+        if includeLeftLung:
+            nextnodeIdentifier, nextelementIdentifier = \
+                generateLobeMesh(region, lungsDefaultOptions, lobeid,
+                                 nodeIdentifier, elementIdentifier, meshGroups=[lungMeshGroup])
 
         ####################################################################################
-        # Central path
+
+        nodeIdentifier = nextnodeIdentifier
+        elementIdentifier = nextelementIdentifier
+
+        segmentCount = pow(2,numberofGenerations-1)
+
         cxminus_d1 = []
         cdvminus_d1 = []
         xlensegmentparentminus = 0
@@ -610,12 +621,6 @@ class MeshType_3d_airwaybifurcation3(Scaffold_base):
                         nodeIdentifier, elementIdentifier,
                         useJunctionElements, useCubicHermiteThroughWall, useCrossDerivatives,
                         meshGroups1=[tracheaMeshGroup], meshGroups2=[rmbMeshGroup], meshGroups3=[lmbMeshGroup])
-
-        lobeid = 1
-        if includeLeftLung:
-            nodeIdentifier, elementIdentifier = \
-                generateLobeMesh(region, lungsDefaultOptions, lobeid,
-                                 nextnodeIdentifier, nextelementIdentifier, meshGroups=[lungMeshGroup])
 
         fm.endChange()
         return annotationGroups
