@@ -634,7 +634,7 @@ def generateLobeMesh(region, options, lobeid, startNodeIdentifier, startElementI
 
     print('before lung is added nodes count=', startNodeIdentifier-1)
     print('left nodes', (nodeIdentifier-startNodeIdentifier-1))
-    e0 = startNodeIdentifier
+    e0 = startNodeIdentifier-1
 
     ###################
     # Create elements
