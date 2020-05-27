@@ -779,7 +779,6 @@ def generateLobeMesh(region, options, lobeid, startNodeIdentifier, startElementI
     #     elementIdentifier = elementIdentifier + 1
 
 
-
     fm.endChange()
     return nodeIdentifier, elementIdentifier
 
