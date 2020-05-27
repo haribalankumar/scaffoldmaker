@@ -10,7 +10,8 @@ from opencmiss.zinc.element import Element, Elementbasis
 from opencmiss.zinc.field import Field
 from opencmiss.zinc.node import Node
 
-from scaffoldmaker.annotation.annotationgroup import AnnotationGroup
+from scaffoldmaker.annotation.annotationgroup import AnnotationGroup, findOrCreateAnnotationGroupForTerm, getAnnotationGroupForTerm
+from scaffoldmaker.annotation.lung_terms import get_lungs_term
 from scaffoldmaker.meshtypes.scaffold_base import Scaffold_base
 from scaffoldmaker.scaffoldpackage import ScaffoldPackage
 from scaffoldmaker.utils import tubebifurcationmesh
@@ -256,10 +257,16 @@ class MeshType_3d_airwaybifurcation3(Scaffold_base):
 
         cache = fm.createFieldcache()
 
-        tracheaGroup = AnnotationGroup(region, 'Trachea', FMANumber='unknown', lyphID='unknown')
-        rmbGroup = AnnotationGroup(region, 'RMB', FMANumber='unknown', lyphID='unknown')
-        lmbGroup = AnnotationGroup(region, 'LMB', FMANumber='unknown', lyphID='unknown')
-        lungGroup = AnnotationGroup(region, 'Left lung', FMANumber='unknown', lyphID='unknown')
+        # neckGroup = AnnotationGroup(region, get_bladder_term("neck of urinary bladder"))
+        # bodyGroup = AnnotationGroup(region, get_bladder_term("Dome of the Bladder"))
+        # urinaryBladderGroup = AnnotationGroup(region, get_bladder_term("urinary bladder"))
+        # annotationGroups = [neckGroup, bodyGroup, urinaryBladderGroup]
+
+
+        tracheaGroup = AnnotationGroup(region, get_lungs_term("Trachea"))
+        rmbGroup = AnnotationGroup(region, get_lungs_term("RMB"))
+        lmbGroup = AnnotationGroup(region, get_lungs_term("LMB"))
+        lungGroup = AnnotationGroup(region, get_lungs_term("Left lung"))
 
         annotationGroups = [tracheaGroup, rmbGroup, lmbGroup, lungGroup]
 

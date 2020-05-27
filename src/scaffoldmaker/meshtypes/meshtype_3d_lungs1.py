@@ -778,6 +778,7 @@ def generateLobeMesh(region, options, lobeid, startNodeIdentifier, startElementI
     #     result = element.setNodesByIdentifier(eft, nodeIdentifiers)
     #     elementIdentifier = elementIdentifier + 1
 
+    coordinates.smooth(fm.createFieldsmoothing())
 
     fm.endChange()
     return nodeIdentifier, elementIdentifier
