@@ -161,13 +161,13 @@ def generateLobeMesh(region, options, lobeid, startNodeIdentifier, startElementI
     thetaup = math.pi / 3.0
     thetalateral = math.pi / 6.0
 
-    thetaupPosterior = [-math.pi/4, 0, math.pi/3]
-    thetaupAnterior = [-math.pi/6, 0, math.pi/8]
+    thetaupPosterior = [-math.pi/4, 0, math.pi/5]
+    thetaupAnterior = [-math.pi/3, 0, math.pi/8]
 
     posteriorcurveradius = lungheight / (2 * math.sin(thetaup))
-    anteriorcurveradius = lungheight / (2 * math.sin(thetaup))
+    anteriorcurveradius = 0.6*lungheight / (2 * math.sin(thetaup))
 
-    LMBcentre = 1
+    LMBcentre = 0.7
     RMBcentre = LMBcentre + lungwidth * 0.1
 
     zlateralcentre = 12.0
@@ -498,7 +498,7 @@ def generateLobeMesh(region, options, lobeid, startNodeIdentifier, startElementI
         sinRadiansLateral = math.sin(radiansLateral)
         x2 = [x1[0] + 0.05 * lungdepth,
               mediolateral_50,
-              0.7*zlung]
+              0.9*zlung]
 
         # d22 = [0.5 * lungdepth * medialsurfcoeff * sinRadiansLateral,
         #        -0.5 * lungdepth * medialsurfcoeff * cosRadiansLateral, 0]
