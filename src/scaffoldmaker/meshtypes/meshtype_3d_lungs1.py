@@ -30,8 +30,8 @@ class MeshType_3d_lungs1(Scaffold_base):
         return {
             'Number of lung elements up': 4,
             'Number of lung elements laterally': 4,
-            'Height': 24,
-            'Width': 18,
+            'Height': 34,
+            'Width': 12,
             'Upcurve coefficient1': 1.0,
             'Upcurve coefficient2': 1.0,
             'Medialsurface coefficient': 0.8,
@@ -69,10 +69,6 @@ class MeshType_3d_lungs1(Scaffold_base):
         if options['Number of lung elements laterally'] < 3:
             options['Number of lung elements laterally'] = 3
 
-        if options['Width'] < 2:
-            options['Width'] = 2
-        if options['Height'] < 2:
-            options['Height'] = 2
 
         if options['Upcurve coefficient1'] > 4:
             options['Upcurve coefficient1'] = 4
@@ -161,7 +157,7 @@ def generateLobeMesh(region, options, lobeid, startNodeIdentifier, startElementI
     thetaup = math.pi / 3.0
     thetalateral = math.pi / 6.0
 
-    thetaupPosterior = [-math.pi/4, 0, math.pi/5]
+    thetaupPosterior = [-math.pi/6, 0, math.pi/5]
     thetaupAnterior = [-math.pi/3, 0, math.pi/8]
 
     posteriorcurveradius = lungheight / (2 * math.sin(thetaup))
@@ -172,7 +168,8 @@ def generateLobeMesh(region, options, lobeid, startNodeIdentifier, startElementI
 
     zlateralcentre = 12.0
     halflungwidth = lungwidth * 0.5
-    lungdepth = lungwidth * 0.75
+    lungdepth = lungwidth*1.35
+
 
     ycentreleftlateral =  halflungwidth
 
@@ -556,7 +553,7 @@ def generateLobeMesh(region, options, lobeid, startNodeIdentifier, startElementI
         cosRadiansLateral = math.cos(radiansLateral)
         sinRadiansLateral = math.sin(radiansLateral)
         x2 = [x1[0] + (zratio+0.05)*lungdepth,
-              mediolateral_30,
+              mediolateral_40,
               zlung]
         # d22 = [0.5 * lungdepth * lateralsurfcoeff * sinRadiansLateral,
         #        -0.5 * lungwidth * lateralsurfcoeff * cosRadiansLateral,

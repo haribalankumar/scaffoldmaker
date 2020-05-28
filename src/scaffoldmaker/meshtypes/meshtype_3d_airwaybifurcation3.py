@@ -34,10 +34,10 @@ class MeshType_3d_airwaybifurcation3(Scaffold_base):
     ostiumDefaultScaffoldPackages = {
         'Ostium Mouse 1': ScaffoldPackage(MeshType_3d_lungs1, {
             'scaffoldSettings': {
-                'Number of lung elements up': 8,
-                'Number of lung elements laterally': 8,
-                'Height': 26,
-                'Width': 18,
+                'Number of lung elements up': 6,
+                'Number of lung elements laterally': 6,
+                'Height': 34,
+                'Width': 12,
                 'Upcurve coefficient1': 1.0,
                 'Upcurve coefficient2': 1.0,
                 'Medialsurface coefficient': 0.8,
@@ -51,10 +51,10 @@ class MeshType_3d_airwaybifurcation3(Scaffold_base):
             }),
         'Ostium Rat 1': ScaffoldPackage(MeshType_3d_lungs1, {
             'scaffoldSettings': {
-                'Number of lung elements up': 8,
-                'Number of lung elements laterally': 8,
-                'Height': 26,
-                'Width': 18,
+                'Number of lung elements up': 6,
+                'Number of lung elements laterally': 6,
+                'Height': 34,
+                'Width': 12,
                 'Upcurve coefficient1': 1.0,
                 'Upcurve coefficient2': 1.0,
                 'Medialsurface coefficient': 0.8,
@@ -375,8 +375,12 @@ class MeshType_3d_airwaybifurcation3(Scaffold_base):
 
         ####################################################################################
 
-        nodeIdentifier = nextnodeIdentifier
-        elementIdentifier = nextelementIdentifier
+        if includeLeftLung:
+            nodeIdentifier = nextnodeIdentifier
+            elementIdentifier = nextelementIdentifier
+        else:
+            nodeIdentifier = 1
+            elementIdentifier = 1
 
         segmentCount = pow(2,numberofGenerations-1)
 
