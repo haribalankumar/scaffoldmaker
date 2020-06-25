@@ -261,8 +261,6 @@ def generateLobeMesh(region, options, lobeid, startNodeIdentifier, startElementI
         sinRadiansUp = math.sin(radiansUp)
         x1 = [LMBcentre + 1.5, ycentreleftlateral + posteriorcurveradius * (cosRadiansUp - 1.0),
               1.2*zlateralcentre + posteriorcurveradius * sinRadiansUp]
-        # d1 = [0, -posteriorcurveradius * sinRadiansUp, posteriorcurveradius * cosRadiansUp]
-        # d1 = [0, - sinRadiansUp, cosRadiansUp]
         d1 = unitvectorz
         nx.append(x1)
         nd1.append(d1)
@@ -277,7 +275,7 @@ def generateLobeMesh(region, options, lobeid, startNodeIdentifier, startElementI
     sPosteriorOffsetx, sPosteriorOffsetderiv2, _, _, _ = \
         interp.sampleCubicHermiteCurves(nx, nd2, elementsCountOut=elementsCountUp)
 
-    # -----------------------------------------
+    # -----------------
     ## Anterior edge
     nx = []
     nd1 = []
@@ -302,9 +300,9 @@ def generateLobeMesh(region, options, lobeid, startNodeIdentifier, startElementI
     sAnteriorx, sAnteriorderiv2, _, _, _ = \
         interp.sampleCubicHermiteCurves(nx, nd2, elementsCountOut=elementsCountUp)
 
-    # -----------------------------------------
+    # -------------------------
     ## Anterior edge offset
-    ## ---------------------------------------
+    ## ------------------------
     nx = []
     nd1 = []
     nd2 = []
@@ -327,48 +325,6 @@ def generateLobeMesh(region, options, lobeid, startNodeIdentifier, startElementI
     nd2.append(d23)
     sAnteriorOffsetx, sAnteriorderivOffset2, _, _, _ = \
         interp.sampleCubicHermiteCurves(nx, nd2, elementsCountOut=elementsCountUp)
-
-    # Apply tracheal rotation angle
-    # ---------------------------------
-    xcen = sPosteriorx[0][0]
-    ycen = sPosteriorx[0][1]
-    zcen = sPosteriorx[0][2]
-    for n2 in range(0, elementsCountUp):
-        newx = (sPosteriorx[n2][0] - xcen) * math.cos(TrachealRotationAngleRadians) - \
-               (sPosteriorx[n2][1] - ycen) * math.sin(TrachealRotationAngleRadians)
-
-        newy = (sPosteriorx[n2][0] - xcen) * math.sin(TrachealRotationAngleRadians) + \
-               (sPosteriorx[n2][1] - ycen) * math.cos(TrachealRotationAngleRadians)
-
-        sPosteriorx[n2][0] = newx + xcen
-        sPosteriorx[n2][1] = newy + ycen
-
-        newx = (sAnteriorx[n2][0] - xcen) * math.cos(TrachealRotationAngleRadians) - \
-               (sAnteriorx[n2][1] - ycen) * math.sin(TrachealRotationAngleRadians)
-
-        newy = (sAnteriorx[n2][0] - xcen) * math.sin(TrachealRotationAngleRadians) + \
-               (sAnteriorx[n2][1] - ycen) * math.cos(TrachealRotationAngleRadians)
-
-        sAnteriorx[n2][0] = newx + xcen
-        sAnteriorx[n2][1] = newy + ycen
-
-        newx = (sPosteriorOffsetx[n2][0] - xcen) * math.cos(TrachealRotationAngleRadians) - \
-               (sPosteriorOffsetx[n2][1] - ycen) * math.sin(TrachealRotationAngleRadians)
-
-        newy = (sPosteriorOffsetx[n2][0] - xcen) * math.sin(TrachealRotationAngleRadians) + \
-               (sPosteriorOffsetx[n2][1] - ycen) * math.cos(TrachealRotationAngleRadians)
-
-        sPosteriorOffsetx[n2][0] = newx + xcen
-        sPosteriorOffsetx[n2][1] = newy + ycen
-
-        newx = (sAnteriorOffsetx[n2][0] - xcen) * math.cos(TrachealRotationAngleRadians) - \
-               (sAnteriorOffsetx[n2][1] - ycen) * math.sin(TrachealRotationAngleRadians)
-
-        newy = (sAnteriorOffsetx[n2][0] - xcen) * math.sin(TrachealRotationAngleRadians) + \
-               (sAnteriorOffsetx[n2][1] - ycen) * math.cos(TrachealRotationAngleRadians)
-
-        sAnteriorOffsetx[n2][0] = newx + xcen
-        sAnteriorOffsetx[n2][1] = newy + ycen
 
     # # ADD nodes on posterior edge upwards
     # # ------------------------------------
@@ -410,7 +366,7 @@ def generateLobeMesh(region, options, lobeid, startNodeIdentifier, startElementI
         latUpNodeId.append(layerNodeId)
 
     # # ADD nodes on posterior edge OFFSET upwards
-    # # ------------------------------------
+    # # -------------------------------------------
     latUpNodeId = []
     for n2 in range(0, elementsCountUp):
         layerNodeId = []
@@ -664,8 +620,7 @@ def generateLobeMesh(region, options, lobeid, startNodeIdentifier, startElementI
         for meshGroup in meshGroups:
             meshGroup.addElement(element)
 
-
-    # coordinates.smooth(fm.createFieldsmoothing())
+    #coordinates.smooth(fm.createFieldsmoothing())
 
     fm.endChange()
     return nodeIdentifier, elementIdentifier

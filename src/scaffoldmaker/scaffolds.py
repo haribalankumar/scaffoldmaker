@@ -4,6 +4,8 @@ Class for listing and accessing all mesh type scripts supported by scaffoldmaker
 
 import json
 from scaffoldmaker.meshtypes.meshtype_1d_path1 import MeshType_1d_path1
+from scaffoldmaker.meshtypes.meshtype_1d_lungcontrolcurves import MeshType_1d_lungcontrolcurves
+from scaffoldmaker.meshtypes.meshtype_3d_lungmeshusingcurves import MeshType_3d_lungmesh
 from scaffoldmaker.meshtypes.meshtype_2d_plate1 import MeshType_2d_plate1
 from scaffoldmaker.meshtypes.meshtype_2d_platehole1 import MeshType_2d_platehole1
 from scaffoldmaker.meshtypes.meshtype_2d_sphere1 import MeshType_2d_sphere1
@@ -41,6 +43,8 @@ class Scaffolds(object):
     def __init__(self):
         self._allScaffoldTypes = [
             MeshType_1d_path1,
+            MeshType_1d_lungcontrolcurves,
+            MeshType_3d_lungmesh,
             MeshType_2d_plate1,
             MeshType_2d_platehole1,
             MeshType_2d_sphere1,
