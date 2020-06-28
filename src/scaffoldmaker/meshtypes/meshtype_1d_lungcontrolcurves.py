@@ -36,6 +36,20 @@ class MeshType_1d_lungcontrolcurves(Scaffold_base):
                 [ [ -13.5, -11.4, 15.2 ], [ -0.15, 0.8, 2.15 ], [  -5.0,   4.0,  29.0 ], [   0.0,  0.0, 0.0 ] ],
                 [ [ -13.4,  -9.21, 17.3 ], [ -0.067, 2.06, 0.37 ], [  -2.0,  10.0,  22.0 ], [ 0.0,  0.0, 0.0 ] ] ])
             } ),
+        'Pig 1': ScaffoldPackage(MeshType_1d_path1, {
+            'scaffoldSettings': {
+                'Coordinate dimensions': 3,
+                'Length': 1.0,
+                'Number of elements': 4
+            },
+            'meshEdits': exnodeStringFromNodeValues(
+                [Node.VALUE_LABEL_VALUE, Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D2_DS1DS2], [
+                    [[-96.0, -45.0, 282.21], [3.0, 15.0, -16.0], [-24.0, -6.0, -12.0], [0.0, 0.0, 0.0]],
+                    [[-99.5, -45.6, 180.1], [-7, -2.3, -44.45], [-22.0, -4.0, -8.0], [0.0, 0.0, 0.0]],
+                    [[-99.5, -63.6, 107.9], [-2.017, -10.15, -32.20], [-10.0, 20.0, 8.0], [0.0, 0.0, 0.0]],
+                    [[-106.0, -87.4, 52.2], [0.05, -18.0, -25.15], [-5.0, 4.0, 29.0], [0.0, 0.0, 0.0]],
+                    [[-100.4, -133.21, 27.0], [7.32, -36.06, -3.85], [-2.0, 10.0, 22.0], [0.0, 0.0, 0.0]]])
+        }),
         'Human 1' : ScaffoldPackage(MeshType_1d_path1, {
             'scaffoldSettings' : {
                 'Coordinate dimensions' : 3,
@@ -64,6 +78,20 @@ class MeshType_1d_lungcontrolcurves(Scaffold_base):
                 [[-13.6, -6.2, 17.2], [0.03, -1.37, 0.85], [-22.0, -4.0, -8.0], [0.0, 0.0, 0.0]],
                 [[-13.4,  -9.21, 17.3], [0.394, -1.71, -0.64 ], [ -24.0, -6.0, -12.0 ], [ 0.0,  0.0, 0.0 ]] ])
             } ),
+        'Pig 1': ScaffoldPackage(MeshType_1d_path1, {
+            'scaffoldSettings': {
+                'Coordinate dimensions': 3,
+                'Length': 1.0,
+                'Number of elements': 4
+            },
+            'meshEdits': exnodeStringFromNodeValues(
+                [Node.VALUE_LABEL_VALUE, Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D2_DS1DS2], [
+                    [[-110.1, -175.7, 138.1], [0.45, 6, 11.12], [-2.0, 10.0, 22.0], [0.0, 0.0, 0.0]],
+                    [[-98.8, -169.44, 114.9], [7.452, 13.61, -13.12], [-5.0, 4.0, 29.0], [0.0, 0.0, 0.0]],
+                    [[-83.3, -153.1, 101.9], [-2.4, 11.14, -18.2], [-10.0, 20.0, 8.0], [0.0, 0.0, 0.0]],
+                    [[-87.6, -154.2, 57.2], [1.13, 4.37, -21.0], [-22.0, -4.0, -8.0], [0.0, 0.0, 0.0]],
+                    [[-99.4, -137.21, 27.3], [-6.1, 28.71, -8.64], [-24.0, -6.0, -12.0], [0.0, 0.0, 0.0]]])
+        }),
         'Human 1' : ScaffoldPackage(MeshType_1d_path1, {
             'scaffoldSettings' : {
                 'Coordinate dimensions' : 3,
@@ -92,6 +120,20 @@ class MeshType_1d_lungcontrolcurves(Scaffold_base):
                     [[-13.6, -6.0, 14.5], [-0.68, 1.15, 0.613], [-5.0, 4.0, 29.0], [0.0, 0.0, 0.0]],
                     [[-13.9, -4.7, 15.9], [-0.3, 0.82, 1.1], [-2.0, 10.0, 22.0], [0.0, 0.0, 0.0]]])
         }),
+        'Pig 1': ScaffoldPackage(MeshType_1d_path1, {
+            'scaffoldSettings': {
+                'Coordinate dimensions': 3,
+                'Length': 1.0,
+                'Number of elements': 4
+            },
+            'meshEdits': exnodeStringFromNodeValues(
+                [Node.VALUE_LABEL_VALUE, Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D2_DS1DS2], [
+                    [[-101.0, -63.2, 105.4], [-13.6, 1.2, -1.14], [-24.0, -6.0, -12.0], [0.0, 0.0, 0.0]],
+                    [[-114.4, -85.1, 109.4], [3.81, -13.16, 3.15], [-22.0, -4.0, -8.0], [0.0, 0.0, 0.0]],
+                    [[-109.5, -103.25, 112.6], [4.46, -20.86, 3.5], [-10.0, 20.0, 8.0], [0.0, 0.0, 0.0]],
+                    [[-96.6, -129.0, 111.5], [6.1, -11.15, -6.13], [-5.0, 4.0, 29.0], [0.0, 0.0, 0.0]],
+                    [[-83.1, -152.7, 100.2], [4.1, -6.22, -9.1], [-2.0, 10.0, 22.0], [0.0, 0.0, 0.0]]])
+        }),
         'Human 1': ScaffoldPackage(MeshType_1d_path1, {
             'scaffoldSettings': {
                 'Coordinate dimensions': 3,
@@ -114,9 +156,23 @@ class MeshType_1d_lungcontrolcurves(Scaffold_base):
             },
             'meshEdits': exnodeStringFromNodeValues(
                 [Node.VALUE_LABEL_VALUE, Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D2_DS1DS2], [
-                    [[-13.0, -12.3, 11.4 ], [ -1.28, -3.75, 0.1], [-24.0, -6.0, -12.0], [0.0, 0.0, 0.0]],
-                    [[-15.9, -12., 12.2], [-2.3, 1.5, 1.07], [-22.0, -4.0, -8.0], [0.0, 0.0, 0.0]],
-                    [[-17.0, -9.0, 13.7], [0.6, 2.6, 1.3], [-10.0, 20.0, 8.0], [0.0, 0.0, 0.0]],
+                    [[-99.0, -61.8, 103.4 ], [14, 7.7, -5], [-24.0, -6.0, -12.0], [0.0, 0.0, 0.0]],
+                    [[-78.9, -66.7, 99.2], [21.2, -8.1, 0.3], [-22.0, -4.0, -8.0], [0.0, 0.0, 0.0]],
+                    [[-61.0, -90.0, 100.7], [11, -30, -3], [-10.0, 20.0, 8.0], [0.0, 0.0, 0.0]],
+                    [[-62.0, -127.5, 99.6], [ -5.92, -27.75, 0.66], [-5.0, 4.0, 29.0], [0.0, 0.0, 0.0]],
+                    [[-81.1, -152.7, 101.9], [-8.3, -8.84, -1.0], [-2.0, 10.0, 22.0], [0.0, 0.0, 0.0]]])
+        }),
+        'Pig 1': ScaffoldPackage(MeshType_1d_path1, {
+            'scaffoldSettings': {
+                'Coordinate dimensions': 3,
+                'Length': 1.0,
+                'Number of elements': 4
+            },
+            'meshEdits': exnodeStringFromNodeValues(
+                [Node.VALUE_LABEL_VALUE, Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D2_DS1DS2], [
+                    [[-98.0, -46.3, 284.4], [-17.9, -16.2, 1.8], [-24.0, -6.0, -12.0], [0.0, 0.0, 0.0]],
+                    [[-130.9, -89., 234.2], [-2.3, 1.5, 1.07], [-22.0, -4.0, -8.0], [0.0, 0.0, 0.0]],
+                    [[-111.0, -115.0, 181.7], [14.6, -6.6, 19.3], [-10.0, 20.0, 8.0], [0.0, 0.0, 0.0]],
                     [[-16.0, -6.5, 14.6], [0.73, 0.85, 0.61], [-5.0, 4.0, 29.0], [0.0, 0.0, 0.0]],
                     [[-13.9, -4.7, 15.9], [0.94, 1.04, -0.16], [-2.0, 10.0, 22.0], [0.0, 0.0, 0.0]]])
         }),
@@ -149,6 +205,20 @@ class MeshType_1d_lungcontrolcurves(Scaffold_base):
                     [[-14, -5.81, 11.9], [-0.34, 1.26, 1.3], [-5.0, 4.0, 29.0], [0.0, 0.0, 0.0]],
                     [[-15.1, -2.7, 12.1], [-0.76, 1.64, 0.13], [-2.0, 10.0, 22.0], [0.0, 0.0, 0.0]]])
         }),
+        'Pig 1': ScaffoldPackage(MeshType_1d_path1, {
+            'scaffoldSettings': {
+                'Coordinate dimensions': 3,
+                'Length': 1.0,
+                'Number of elements': 4
+            },
+            'meshEdits': exnodeStringFromNodeValues(
+                [Node.VALUE_LABEL_VALUE, Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D2_DS1DS2], [
+                    [[-98.7, -46.4, 284.31], [-18.0, -16.2, 1.8], [-24.0, -6.0, -12.0], [0.0, 0.0, 0.0]],
+                    [[-130.0, -89.7, 234.2], [7.71, -30.22, -38.05], [-22.0, -4.0, -8.0], [0.0, 0.0, 0.0]],
+                    [[-111.2, -115.8, 181], [14.67, -6.5, -19.63], [0.0, -10.0, 0.0], [0.0, 0.0, 0.0]],
+                    [[-99, -142.81, 142.5], [-5.94, -17.26, -11.3], [-5.0, 4.0, 29.0], [0.0, 0.0, 0.0]],
+                    [[-113.1, -172.7, 138.1], [7.6, -16.4, 1.3], [-2.0, 10.0, 22.0], [0.0, 0.0, 0.0]]])
+        }),
         'Human 1': ScaffoldPackage(MeshType_1d_path1, {
             'scaffoldSettings': {
                 'Coordinate dimensions': 3,
@@ -177,6 +247,20 @@ class MeshType_1d_lungcontrolcurves(Scaffold_base):
                     [[-17.4, -3.9, 8.6], [1.1, 0.93, 1.35], [-5.0, 4.0, 29.0], [0.0, 1.0, 0.0]],
                     [[-15.1, -2.7, 12.1], [1.61, 0.74, 1.0], [-2.0, 10.0, 22.0], [5.0, 0.0, 0.0]]])
         }),
+        'Pig 1': ScaffoldPackage(MeshType_1d_path1, {
+            'scaffoldSettings': {
+                'Coordinate dimensions': 3,
+                'Length': 1.0,
+                'Number of elements': 4
+            },
+            'meshEdits': exnodeStringFromNodeValues(
+                [Node.VALUE_LABEL_VALUE, Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D2_DS1DS2], [
+                    [[-89.7, -45.4, 283.1], [39.0, -5.24, -0.533], [-24.0, -6.0, -12.0], [0.0, -1.0, 0.0]],
+                    [[-47.4, -55.2, 263.0], [32.73, -25.51, -16.38], [-22.0, -4.0, -8.0], [0.0, 0.0, 0.0]],
+                    [[-35.2, -109.4, 211.5], [-4.5, -2.55, -16.5], [-10.0, 20.0, 8.0], [0.0, 0.0, 0.0]],
+                    [[-58.7, -149.0, 156.3], [-32.0, -32.3, -32.5], [-5.0, 4.0, 29.0], [0.0, 1.0, 0.0]],
+                    [[-111.1, -175.7, 139.1], [-16.1, -7.4, -10.0], [-2.0, 10.0, 22.0], [5.0, 0.0, 0.0]]])
+        }),
         'Human 1': ScaffoldPackage(MeshType_1d_path1, {
             'scaffoldSettings': {
                 'Coordinate dimensions': 3,
@@ -193,13 +277,14 @@ class MeshType_1d_lungcontrolcurves(Scaffold_base):
 
     @staticmethod
     def getName():
-        return '3D Lung from control curve'
+        return '1D Lung control curve'
 
     @staticmethod
     def getParameterSetNames():
         return [
             'Default',
             'Human 1',
+            'Pig 1',
             'Mouse 1']
 
     @classmethod

@@ -194,7 +194,7 @@ class MeshType_3d_lungmesh(Scaffold_base):
 
     @staticmethod
     def getName():
-        return '3D Lung from control curve'
+        return '3D Lung mesh'
 
     @staticmethod
     def getParameterSetNames():
@@ -427,6 +427,19 @@ class MeshType_3d_lungmesh(Scaffold_base):
         cxBaselateral, cd1Baselateral, cd2, cd12 = extractPathParametersFromRegion(tmpRegion)
         del tmpRegion
 
+        for n in range(len(cxLateralside)):
+            print('cxBaselat=', cxBaselateral[n][0],cxBaselateral[n][1],cxBaselateral[n][2])
+            print('cxlatside=', cxLateralside[n][0],cxLateralside[n][1],cxLateralside[n][2])
+            print('cxAccesslobe=', cxAccesslobe[n][0],cxAccesslobe[n][1],cxAccesslobe[n][2])
+
+        cxmidmedial = []
+        cxmidlateral = []
+        for n in range(len(cxLateralside)):
+            for j in range(3):
+                print('first n,j loop=',n,j)
+                cxmidlateral[n][j] = 0.5 * (cxLateralside[n][j] + cxBaselateral[n][j])
+                cxmidmedial[n][j] = 0.5 * (cxAccesslobe[n][j] + cxBasemedial[n][j])
+
         fm = region.getFieldmodule()
         fm.beginChange()
         coordinates = findOrCreateFieldCoordinates(fm, components_count=3)
@@ -454,7 +467,7 @@ class MeshType_3d_lungmesh(Scaffold_base):
                 coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D3_DS1DS2DS3, 1, zero)
             nodeIdentifier = nodeIdentifier + 1
 
-        for n in range(len(cxBasemedial)):
+        for n in range(1, len(cxBasemedial)-2):
             node = nodes.createNode(nodeIdentifier, nodetemplate)
             cache.setNode(node)
             coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, cxBasemedial[n])
@@ -481,11 +494,11 @@ class MeshType_3d_lungmesh(Scaffold_base):
                 coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS2DS3, 1, zero)
                 coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D3_DS1DS2DS3, 1, zero)
             nodeIdentifier = nodeIdentifier + 1
-
-        for n in range(1, len(cxLateralside)-1):
+        for n in range(1, len(cxLateralside)-2):
+            print('n=',n)
             node = nodes.createNode(nodeIdentifier, nodetemplate)
             cache.setNode(node)
-            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, 0.5*(cxLateralside[n]+cxBaselateral[n]))
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, cxmidlateral[n])
             coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS1, 1, cd1Lateralside[n])
             coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS2, 1, zero)
             coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS3, 1, zero)
@@ -495,7 +508,7 @@ class MeshType_3d_lungmesh(Scaffold_base):
                 coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS2DS3, 1, zero)
                 coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D3_DS1DS2DS3, 1, zero)
             nodeIdentifier = nodeIdentifier + 1
-        for n in range(elementsCountAlong,elementsCountAlong):
+        for n in range(len(cxLateralside)-1, len(cxLateralside)-1):
             node = nodes.createNode(nodeIdentifier, nodetemplate)
             cache.setNode(node)
             coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, cxAnterior[n])
@@ -509,10 +522,10 @@ class MeshType_3d_lungmesh(Scaffold_base):
                 coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D3_DS1DS2DS3, 1, zero)
             nodeIdentifier = nodeIdentifier + 1
 
-        for n in range(len(cxAccesslobe)):
+        for n in range(1, len(cxAccesslobe)-1):
             node = nodes.createNode(nodeIdentifier, nodetemplate)
             cache.setNode(node)
-            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1,  0.5*(cxAccesslobe[n]+cxBasemedial[n]))
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, cxmidmedial[n])
             coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS1, 1, cd1Accesslobe[n])
             coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS2, 1, zero)
             coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS3, 1, zero)
@@ -538,7 +551,7 @@ class MeshType_3d_lungmesh(Scaffold_base):
                 coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D3_DS1DS2DS3, 1, zero)
             nodeIdentifier = nodeIdentifier + 1
 
-        for n in range(len(cxAccesslobe)):
+        for n in range(1, len(cxAccesslobe)-1):
             node = nodes.createNode(nodeIdentifier, nodetemplate)
             cache.setNode(node)
             coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, cxAccesslobe[n])
@@ -586,8 +599,29 @@ class MeshType_3d_lungmesh(Scaffold_base):
         ####################
         # Create elements
         ####################
+        elementIdentifier = firstElementIdentifier
         #for edge elements
+        element = mesh.createElement(elementIdentifier, elementtemplate)
+        nodeIdentifiers = [1, 2, 9, 1, 6, 9, 14]
+        result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+        elementIdentifier = elementIdentifier + 1
 
+        #form normal elements (mid lung)
+        for e2 in range(1, elementsCountAlong-2):
+            element = mesh.createElement(elementIdentifier, elementtemplate)
+            bn1 = 2
+            bn2 = bn1 + elementsCountAlong
+            bn3 = bn1 + 2*elementsCountAlong
+            bn4 = bn2 + 2*elementsCountAlong
+            nodeIdentifiers = [bn1, bn1+1, bn3, bn3+1, bn2, bn2+1, bn4, bn4+1]
+            result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+            elementIdentifier = elementIdentifier + 1
+
+        #for edge elements
+        element = mesh.createElement(elementIdentifier, elementtemplate)
+        nodeIdentifiers = [4, 5, 12, 13, 8, 5, 16, 13]
+        result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+        elementIdentifier = elementIdentifier + 1
 
 
         fm.endChange()
