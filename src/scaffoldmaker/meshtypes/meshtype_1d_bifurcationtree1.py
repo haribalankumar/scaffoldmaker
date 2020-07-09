@@ -98,6 +98,7 @@ class MeshType_1d_bifurcationtree1(Scaffold_base):
         """
         generationCount = options['Number of generations']
         bifurcationTree = cls.generateBifurcationTree(options)
+        print("before calling zinc model gen")
         bifurcationTree.generateZincModel(region)
         return []
 
@@ -143,7 +144,6 @@ class TreeNode:
         child = self._children[childIndex]
         return self._x, self._d1[child._parent_d1_index], self._r[child._parent_r_index], child._x, child._d1[0], child._r[0]
 
-
 class BifurcationTree:
     '''
     Class for generating tree of 1-D bifurcating curves and converting to Zinc model.
@@ -164,6 +164,7 @@ class BifurcationTree:
         self._sinBranchArc = sin(branchArcRadians)
         self._branchLengthRatio = branchLengthRatio
         self._branchRadiusRatio = branchRadiusRatio
+        print('before calling add child recurring')
         self._rootNode.addChild(self._createNodeTree(1, rootDirection, rootDirection, rootRadius*branchRadiusRatio, [ 0.0, 1.0, 0.0 ]))
 
     def _createNodeTree(self, generation, x1, d1, r, forkNormal):
@@ -220,7 +221,7 @@ class BifurcationTree:
         self._elementtemplates = {}  # indexed by start (d1Version, rVersion)
         with ChangeManager(self._fieldmodule):
             self._coordinates = findOrCreateFieldCoordinates(self._fieldmodule)
-            self._radius = findOrCreateFieldFiniteElement(self._fieldmodule, "radius", components_count=1, managed=True)
+            # self._radius = findOrCreateFieldFiniteElement(self._fieldmodule, "radius", components_count=1, managed=True)
             self._fieldcache = self._fieldmodule.createFieldcache()
             parentNode = None
             self._generateZincModelTree(self._rootNode, parentNode, nextNodeIdentifier, nextElementIdentifier)
