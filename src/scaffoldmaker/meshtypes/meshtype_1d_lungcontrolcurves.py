@@ -3,7 +3,7 @@ Generates a 1-D  mesh using control curves
 """
 
 import copy
-from scaffoldmaker.meshtypes.meshtype_1d_path1 import MeshType_1d_path1, extractPathParametersFromRegion
+from scaffoldmaker.meshtypes.meshtype_1d_path1 import MeshType_1d_path1, extractxyzPathParametersFromRegion
 from opencmiss.utils.zinc.field import findOrCreateFieldCoordinates
 from opencmiss.zinc.element import Element, Elementbasis
 from opencmiss.zinc.field import Field
@@ -32,28 +32,28 @@ class MeshType_1d_lungcontrolcurves(Scaffold_base):
                 'Number of elements' : 20
                 },
             'meshEdits' : exnodeStringFromNodeValues(
-                [ Node.VALUE_LABEL_VALUE, Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D2_DS1DS2], [
-                    [[-12.4, -11, 1.72], [-0.2, -0.45, 2.5], [-22.0, -4.0, -8.0], [0, 0, 0]],
-                    [[-13 , -12.7, 7], [0.017, -0.15, 2.20], [-10.0, 20.0, 8.0], [0, 0, 0]],
-                    [[ -13.9, -12.7, 11.4], [-0.15, 0.8, 2.15], [-5.0, 4.0, 29.0], [0, 0, 0]],
-                    [[ -13.8, -11.4, 14.9], [-0.067, 2.06, 0.37], [-2.0, 10.0, 22.0], [0, 0, 0]],
-                    [[ -14,  -8.7,  17.5], [0.03, -1.37, 0.85], [-22.0, -4.0, -8.0], [0, 0, 0]],
-                    [[ -13.3, -5.1, 16], [0.4, -1.04, 0.6], [-10.0, 20.0, 8.0], [0, 0, 0]],
-                    [[ -14.4 , -3.3, 13.1], [0.252, -0.61, 0.62], [-5.0, 4.0, 29.0], [0, 0, 0]],
-                    [[ -15.7, -2.7,  11.2], [0.45, -0.6, 1.12], [-2.0, 10.0, 22.0], [0, 0, 0]],
-                    [[ -16.2, -3.2,  9.82], [-0.13, 1.16, 0.55], [-22.0, -4.0, -8.0], [0, 0, 0]],
-                    [[ -11.6,  -10.2, 11.7], [-0.46, 0.86, 0.5], [-10.0, 20.0, 8.0], [0, 0, 0]],
-                    [[ -11.8, -8.4, 13], [-0.68, 1.15, 0.613], [-5.0, 4.0, 29.0], [0, 0, 0]],
-                    [[ -14,  -5.54,  13],  [-0.68, 1.15, 0.613], [-5.0, 4.0, 29.0], [0, 0, 0]],
-                    [[ -16.6, -10.3, 13.4], [21.2, -8.1, 0.3], [-22.0, -4.0, -8.0], [0, 0, 0]],
-                    [[  -16.5, -6.6, 13.3], [11, -30, -3], [-10.0, 20.0, 8.0], [0, 0, 0]],
-                    [[-15.4, -4.6,  13.2], [-5.92, -27.75, 0.66], [-5.0, 4.0, 29.0], [0, 0, 0]],
-                    [[-11, -9.2, 4.6], [-0.51, 1.22, 2.75], [-22.0, -4.0, -8.0], [0, 0, 0]],
-                    [[-13.8, -8.1, 6.9], [-0.6, 1.1, 1.63], [-10.0, 20.0, 8.0], [0, 0, 0]],
-                    [[ -15.6, -5.6, 9], [-0.34, 1.26, 1.3], [-5.0, 4.0, 29.0], [0, 0, 0]],
-                    [[-15.5, -10.3, 1.5], [-0.73, 1.1, 1.38], [-22.0, -4.0, -8.0], [0, 0, 0]],
-                    [[-17.65, -7.8, 3.8], [0.2, 1.05, 1.3], [-10.0, 20.0, 8.0], [0, 0, 0]],
-                    [[-18, -5.3, 6.8], [1.1, 0.93, 1.35], [-5.0, 4.0, 29.0],[0,0,0] ] ] )
+                [ Node.VALUE_LABEL_VALUE, Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3], [
+                    [[-2.4, -11, 1.72], [-0.2, -0.45, 2.5], [-22.0, -4.0, -8.0], [0, 0, 0]],
+                    [[-3 , -12.7, 7], [0.017, -0.15, 2.20], [-10.0, 20.0, 8.0], [0, 0, 0]],
+                    [[ -3.9, -12.7, 11.4], [-0.15, 0.8, 2.15], [-5.0, 4.0, 29.0], [0, 0, 0]],
+                    [[ -3.8 , -11.4, 14.9], [-0.067, 2.06, 0.37], [-2.0, 10.0, 22.0], [0, 0, 0]],
+                    [[ -4,  -8.7,  17.5], [0.03, -1.37, 0.85], [-22.0, -4.0, -8.0], [0, 0, 0]],
+                    [[ -3.3, -5.1, 16], [0.4, -1.04, 0.6], [-10.0, 20.0, 8.0], [0, 0, 0]],
+                    [[ -4.4 , -3.3, 13.1], [0.252, -0.61, 0.62], [-5.0, 4.0, 29.0], [0, 0, 0]],
+                    [[ -5.7, -2.7,  11.2], [0.45, -0.6, 1.12], [-2.0, 10.0, 22.0], [0, 0, 0]],
+                    [[ -6.2, -3.2,  9.82], [-0.13, 1.16, 0.55], [-22.0, -4.0, -8.0], [0, 0, 0]],
+                    [[ -1.6,  -10.2, 11.7], [-0.46, 0.86, 0.5], [-10.0, 20.0, 8.0], [0, 0, 0]],
+                    [[ -1.8, -8.4, 13], [-0.68, 1.15, 0.613], [-5.0, 4.0, 29.0], [0, 0, 0]],
+                    [[ -4,  -5.54,  13],  [-0.68, 1.15, 0.613], [-5.0, 4.0, 29.0], [0, 0, 0]],
+                    [[ -6.6, -10.3, 13.4], [21.2, -8.1, 0.3], [-22.0, -4.0, -8.0], [0, 0, 0]],
+                    [[  -6.5, -6.6, 13.3], [11, -30, -3], [-10.0, 20.0, 8.0], [0, 0, 0]],
+                    [[-5.4, -4.6,  13.2], [-5.92, -27.75, 0.66], [-5.0, 4.0, 29.0], [0, 0, 0]],
+                    [[-1, -9.2, 4.6], [-0.51, 1.22, 2.75], [-22.0, -4.0, -8.0], [0, 0, 0]],
+                    [[-3.8, -8.1, 6.9], [-0.6, 1.1, 1.63], [-10.0, 20.0, 8.0], [0, 0, 0]],
+                    [[ -5.6, -5.6, 9], [-0.34, 1.26, 1.3], [-5.0, 4.0, 29.0], [0, 0, 0]],
+                    [[-5.5, -10.3, 1.5], [-0.73, 1.1, 1.38], [-22.0, -4.0, -8.0], [0, 0, 0]],
+                    [[-7.65, -7.8, 3.8], [0.2, 1.05, 1.3], [-10.0, 20.0, 8.0], [0, 0, 0]],
+                    [[-8, -5.3, 6.8], [1.1, 0.93, 1.35], [-5.0, 4.0, 29.0],[0,0,0] ] ] )
             } ),
         'Pig 1': ScaffoldPackage(MeshType_1d_path1, {
             'scaffoldSettings': {
@@ -62,7 +62,7 @@ class MeshType_1d_lungcontrolcurves(Scaffold_base):
                 'Number of elements': 20
             },
             'meshEdits': exnodeStringFromNodeValues(
-                [Node.VALUE_LABEL_VALUE, Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D2_DS1DS2], [
+                [Node.VALUE_LABEL_VALUE, Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3], [
                     [[-12.7, -11.4, 1.31], [-0.3, -1.5, 1.6], [-24.0, -6.0, -12.0], [0, 0, 0]],
                     [[-13.0, -12.6, 7.0], [-0.2, -0.45, 2.5], [-22.0, -4.0, -8.0], [0, 0, 0]],
                     [[-13.0, -12.3, 11.4], [0.017, -0.15, 2.20], [-10.0, 20.0, 8.0], [0, 0, 0]],
@@ -185,7 +185,7 @@ class MeshType_1d_lungcontrolcurves(Scaffold_base):
         ## Posterior path
         tmpRegion = region.createRegion()
         curvePath.generate(tmpRegion)
-        cx, cd1, cd2, cd3 = extractPathParametersFromRegion(tmpRegion)
+        cx, cd1, cd2, cd3 = extractxyzPathParametersFromRegion(tmpRegion)
 
         # del tmpRegion
 
@@ -203,7 +203,7 @@ class MeshType_1d_lungcontrolcurves(Scaffold_base):
         nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_VALUE, 1)
         nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_D_DS1, 1)
         nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_D_DS2, 1)
-        nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_D2_DS1DS2, 1)
+        nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_D_DS3, 1)
 
         nodeIdentifier = 1
         dx_ds2 = [ 0.0, 1.0, 0.0 ]
@@ -215,7 +215,7 @@ class MeshType_1d_lungcontrolcurves(Scaffold_base):
             coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, cx[n])
             coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS1, 1, cd1[n])
             coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS2, 1, cd2[n])
-            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS2, 1, d2x_ds1ds2)
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS3, 1, d2x_ds1ds2)
             nodeIdentifier = nodeIdentifier + 1
 
         #################
