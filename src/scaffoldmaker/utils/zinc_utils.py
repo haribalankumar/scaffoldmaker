@@ -85,8 +85,7 @@ def computeNodeDerivativeHermiteLagrange(cache, coordinates, node1, derivative1,
     return d2
 
 
-def exnodeStringFromNodeValues(
-        nodeValueLabels = [ Node.VALUE_LABEL_VALUE, Node.VALUE_LABEL_D_DS1],
+def exnodeStringFromNodeValues(nodeValueLabels = [ Node.VALUE_LABEL_VALUE, Node.VALUE_LABEL_D_DS1],
         nodeValues = [
             [ [ 0.0, 0.0, 0.0 ], [ 1.0, 0.0, 0.0 ] ],
             [ [ 1.0, 0.0, 0.0 ], [ 1.0, 0.0, 0.0 ] ] ],

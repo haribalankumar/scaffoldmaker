@@ -390,8 +390,9 @@ class MeshType_3d_colon1(Scaffold_base):
         tmpRegion = region.createRegion()
         centralPath.generate(tmpRegion)
         cx, cd1, cd2, cd12 = extractPathParametersFromRegion(tmpRegion)
-        # for i in range(len(cx)):
-            # print(i, '[', cx[i], ',', cd1[i], ',', cd2[i], ',', cd12[i], '],')
+        print('extracted central path for colon')
+        for i in range(len(cx)):
+            print(i, '[', cx[i], ',', cd1[i], ',', cd2[i], ',', cd12[i], '],')
         del tmpRegion
 
         # find arclength of colon
@@ -439,7 +440,7 @@ class MeshType_3d_colon1(Scaffold_base):
 
         for nSegment in range(segmentCount):
             # Create inner points
-            xInner, d1Inner, d2Inner, transitElementList, segmentAxis, annotationGroups, annotationArray\
+            xInner, d1Inner, d2Inner, transitElementList, segmentAxis, annotationGroups, annotationArray \
                 = colonSegmentTubeMeshInnerPoints.getColonSegmentTubeMeshInnerPoints(nSegment)
 
             # Project reference point for warping onto central path
@@ -457,7 +458,7 @@ class MeshType_3d_colon1(Scaffold_base):
                 closedProximalEnd=False)
 
             # Store points along length
-            xExtrude +=  xWarpedList if nSegment == 0 else xWarpedList[elementsCountAround:]
+            xExtrude += xWarpedList if nSegment == 0 else xWarpedList[elementsCountAround:]
             d1Extrude += d1WarpedList if nSegment == 0 else d1WarpedList[elementsCountAround:]
             d2Extrude += d2WarpedList if nSegment == 0 else d2WarpedList[elementsCountAround:]
             d3UnitExtrude += d3WarpedUnitList if nSegment == 0 else d3WarpedUnitList[elementsCountAround:]
@@ -467,8 +468,12 @@ class MeshType_3d_colon1(Scaffold_base):
 
         # Create coordinates and derivatives
         xList, d1List, d2List, d3List, curvatureList = tubemesh.getCoordinatesFromInner(xExtrude, d1Extrude,
-            d2Extrude, d3UnitExtrude, contractedWallThicknessList,
-            elementsCountAround, elementsCountAlong, elementsCountThroughWall, transitElementList)
+                                                                                        d2Extrude, d3UnitExtrude,
+                                                                                        contractedWallThicknessList,
+                                                                                        elementsCountAround,
+                                                                                        elementsCountAlong,
+                                                                                        elementsCountThroughWall,
+                                                                                        transitElementList)
 
         relaxedLengthList, xiList = colonSegmentTubeMeshInnerPoints.getRelaxedLengthAndXiList()
 
