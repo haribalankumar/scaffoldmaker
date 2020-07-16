@@ -63,23 +63,23 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
                 },
             'meshEdits' : exnodeStringFromNodeValues(
                 [ Node.VALUE_LABEL_VALUE, Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3 ], [
-                    [[-2.4, -11, 1.72], [2.1, 2.7, 2.0], [-0.1, -0.16, 2.1], [10, 1, 0]],
-                    [[-3, -12.7, 7], [1.0, 1.7, 1.3], [-0.2, -0.2, 1.70], [0, 0, 0]],
-                    [[-3.9, -12.7, 11.4], [1.5, 1.2, 0.4], [-0.15, 0.8, 2.15], [-1, 0, 0]],
-                    [[-3.8, -11.4, 14.9], [1.1, 1.8, 0.1], [-0.2, 1.06, 2.5], [0, 0, 0]],
-                    [[-4, -8.7, 17.5], [-3.0, 2.0, 1.2], [-1.1, 3.0, 0.7], [0, 0, 0]],
-                    [[-3.3, -5.1, 16], [-1.0, 2.0, 1.0], [-0.6, 1.2, -1.6], [0, 0, 0]],
-                    [[-4.4, -3.3, 13.1], [-0.08, 1.1, 0.2], [-0.12, 0.61, -1.2], [0, 0, 0]],
-                    [[-5.7, -2.7, 11.2], [0.1, 1.6, 0.6], [-0.45, -0.01, -1.12], [0, 0, 0]],
-                    [[-6.2, -3.2, 9.82], [-0.7, 2, 0.2], [-0.3, 0.16, -1.3], [0, 0, 0]],
-                    [[-1.6, -10.2, 11.7], [0.43, 1.1, 1.0], [-0.4, 0.2, 3.0], [0, 0, 0]],
-                    [[-1.8, -8.4, 13], [-0.68, 1.15, 0.613], [-0.3, -0.5, 1.8], [0, 0, 0]],
-                    [[-4, -5.54, 13], [-1.0, 2.0, 0.5], [-0.2, -0.5, 2.0], [0, 0, 0]],
-                    [[-6.6, -10.3, 13.4], [-0.06, 2.1, 0.4], [1.1, 0.1, 1.4], [0, 0, 0]],
-                    [[-6.5, -6.6, 13.3], [0.7, 2.2, 0.3], [1.3, -0.3, 1.2], [0, 0, 0]],
-                    [[-5.4, -4.6, 13.2], [0.04, 1.6, 0.1], [0.9, -0.9, 1.8], [0, 0, 0]],
-                    [[-1, -9.2, 4.6], [-0.51, 1.22, 2.75], [-0.8, -0.8, 3.5], [0, 0, 0]],
-                    [[-3.8, -8.1, 6.9], [-0.6, 1.1, 1.63], [0.4, -0.7, 2.0], [0, 1, 0]],
+                    [[-2.4, -11, 1.72], [2.1, 2.7, 2.0], [-0.1, -0.16, 2.1], [1, 1, 0]],
+                    [[-3, -12.7, 7], [1.0, 1.7, 1.3], [-0.2, -0.2, 1.70], [1, 0, 0]],
+                    [[-3.9, -12.7, 11.4], [1.5, 1.2, 0.4], [-0.15, 0.8, 2.15], [1, 0, 0]],
+                    [[-3.8, -11.4, 14.9], [1.1, 1.8, 0.1], [-0.2, 1.06, 2.5], [1, 0, 0]],
+                    [[-4, -8.7, 17.5], [-3.0, 2.0, 1.2], [-1.1, 3.0, 0.7], [1, 0, 0]],
+                    [[-3.3, -5.1, 16], [-1.0, 2.0, 1.0], [-0.6, 1.2, -1.6], [1, 0, 0]],
+                    [[-4.4, -3.3, 13.1], [-0.08, 1.1, 0.2], [-0.12, 0.61, -1.2], [1, 0, 0]],
+                    [[-5.7, -2.7, 11.2], [0.1, 1.6, 0.6], [-0.45, -0.01, -1.12], [1, 0, 0]],
+                    [[-6.2, -3.2, 9.82], [-0.7, 2, 0.2], [-0.3, 0.16, -1.3], [1, 0, 0]],
+                    [[-1.6, -10.2, 11.7], [0.43, 1.1, 1.0], [-0.4, 0.2, 3.0], [1, 0, 0]],
+                    [[-1.8, -8.4, 13], [-0.68, 1.15, 0.613], [-0.3, -0.5, 1.8], [1, 0, 0]],
+                    [[-4, -5.54, 13], [-1.0, 2.0, 0.5], [-0.2, -0.5, 2.0], [1, 0, 0]],
+                    [[-6.6, -10.3, 13.4], [-0.06, 2.1, 0.4], [1.1, 0.1, 1.4], [1, 0, 0]],
+                    [[-6.5, -6.6, 13.3], [0.7, 2.2, 0.3], [1.3, -0.3, 1.2], [1, 0, 0]],
+                    [[-5.4, -4.6, 13.2], [0.04, 1.6, 0.1], [0.9, -0.9, 1.8], [1, 0, 0]],
+                    [[-1, -9.2, 4.6], [-0.51, 1.22, 2.75], [-0.8, -0.8, 3.5], [1, 0, 0]],
+                    [[-3.8, -8.1, 6.9], [-0.6, 1.1, 1.63], [0.4, -0.7, 2.0], [1, 1, 0]],
                     [[-5.6, -5.6, 9], [-0.34, 1.26, 1.3], [0.4, 0.2, 2.0], [0, 1, 0]],
                     [[-5.5, -10.3, 1.5], [-0.73, 1.1, 1.38], [-2.0, -4.0, -8.0], [0, 1, 0]],
                     [[-7.65, -7.8, 3.8], [0.2, 1.05, 1.3], [0.05, -1.2, 2.0], [0, 1, 0]],
@@ -228,9 +228,10 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
         centralPath.generate(tmpRegion)
         cx, cd1, cd2, cd3 = extractxyzPathParametersFromRegion(tmpRegion)
         # print('extracted central path for lungs')
+        del tmpRegion
+
         # for i in range(len(cx)):
         #     print(i, '[', cx[i], ',', cd1[i], ',', cd2[i], ',', cd3[i], '],')
-        del tmpRegion
 
         fm = region.getFieldmodule()
         fm.beginChange()
@@ -258,16 +259,275 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
         elementtemplate.setElementShapeType(Element.SHAPE_TYPE_CUBE)
         result = elementtemplate.defineField(coordinates, -1, eft)
 
+        #Assign nodes to groups
+        posterioredgecx = []
+        posterioredgecd1 = []
+        posterioredgecd2 = []
+        posterioredgecd3 = []
+
+        anterioredgecx = []
+        anterioredgecd1 = []
+        anterioredgecd2 = []
+        anterioredgecd3 = []
+
+        accessoryedgecx = []
+        accessoryedgecd1 = []
+        accessoryedgecd2 = []
+        accessoryedgecd3 = []
+
+        posteriorlateralcx = []
+        posteriorlateralcd1 = []
+        posteriorlateralcd2 = []
+        posteriorlateralcd3 = []
+
+        basemedialcx = []
+        basemedialcd1 = []
+        basemedialcd2 = []
+        basemedialcd3 = []
+
+        baselateralcx = []
+        baselateralcd1 = []
+        baselateralcd2 = []
+        baselateralcd3 = []
+
+        midmedialcx = []
+        midmedialcd1 = []
+        midmedialcd2 = []
+        midmedialcd3 = []
+
+        midlateralcx = []
+        midlateralcd1 = []
+        midlateralcd2 = []
+        midlateralcd3 = []
+
+        apicaledgecx = []
+        apicaledgecd1 = []
+        apicaledgecd2 = []
+
+        midmedialapicalcx = []
+        midmedialapicalcd1 = []
+        midmedialapicalcd2 = []
+        midmedialapicalcd3 = []
+
+        midlateralapicalcx = []
+        midlateralapicalcd1 = []
+        midlateralapicalcd2 = []
+        midlateralapicalcd3 = []
+
+        # for n in range(5):
+        #     posterioredgecx[n] = cx[n]
+        #     posterioredgecd1[n] = cd1[n]
+        #     posterioredgecd2[n] = cd2[n]
+        #     posterioredgecd3[n] = cd3[n]
+
+        # anterioredgecx[0] = cx[4]
+        # anterioredgecd1[0] = cd1[4]
+        # anterioredgecd2[0] = cd2[4]
+        # anterioredgecd3[0] = cd3[4]
+        # for n in range(1,4):
+        #     anterioredgecx[n] = cx[n+4]
+        #     anterioredgecd1[n] = cd1[n+4]
+        #     anterioredgecd2[n] = cd2[n+4]
+        #     anterioredgecd3[n] = cd3[n+4]
+
+        for i in range(len(cx)):
+            print(i, '[', cx[i], ',', cd1[i], ',', cd2[i], ',', cd3[i], '],')
+
+        accessoryedgecx.append(cx[2])
+        accessoryedgecd1.append(cd1[2])
+        accessoryedgecd2.append(cd2[2])
+        accessoryedgecd3.append(cd3[2])
+        for n in range(1, 3):
+            accessoryedgecx.append(cx[n+8])
+            accessoryedgecd1.append(cd1[n+8])
+            accessoryedgecd2.append(cd2[n+8])
+            accessoryedgecd3.append(cd3[n+8])
+
+        #accessory edge
+        # for c in range(3):
+        #     # print('checking cx=',cx[2][0],cx[2][1],cx[2][2])
+        #     accessoryedgecx[0][c] = cx[2][c]
+        #     accessoryedgecd1[0][c] = cd1[2][c]
+        #     accessoryedgecd2[0][c] = cd2[2][c]
+        #     accessoryedgecd3[0][c] = cd3[2][c]
+        #     for n in range(1, 3):
+        #         accessoryedgecx[n][c] = cx[n+8][c]
+        #         accessoryedgecd1[n][c] = cd1[n+8][c]
+        #         accessoryedgecd2[n][c] = cd2[n+8][c]
+        #         accessoryedgecd3[n][c] = cd3[n+8][c]
+        #     accessoryedgecx[4][c] = cx[6][c]
+        #     accessoryedgecd1[4][c] = cd1[6][c]
+        #     accessoryedgecd2[4][c] = cd2[6][c]
+        #     accessoryedgecd3[4][c] = cd3[6][c]
+
+        posteriorlateralcx.append(cx[2])
+        posteriorlateralcd1.append(cd1[2])
+        posteriorlateralcd2.append(cd2[2])
+        posteriorlateralcd3.append(cd3[2])
+        for n in range(1, 3):
+            posteriorlateralcx.append(cx[n+11])
+            posteriorlateralcd1.append(cd1[n+11])
+            posteriorlateralcd2.append(cd2[n+11])
+            posteriorlateralcd3.append(cd3[n+11])
+        posteriorlateralcx.append(cx[6])
+        posteriorlateralcd1.append(cd1[6])
+        posteriorlateralcd2.append(cd2[6])
+        posteriorlateralcd3.append(cd3[6])
+
+        basemedialcx.append(cx[0])
+        basemedialcd1.append(cd1[0])
+        basemedialcd2.append(cd2[0])
+        basemedialcd3.append(cd3[0])
+        for n in range(1, 3):
+            basemedialcx.append(cx[n+14])
+            basemedialcd1.append(cd1[n+14])
+            basemedialcd2.append(cd2[n+14])
+            basemedialcd3.append(cd3[n+14])
+        basemedialcx.append(cx[8])
+        basemedialcd1.append(cd1[8])
+        basemedialcd2.append(cd2[8])
+        basemedialcd3.append(cd3[8])
+
+        baselateralcx.append(cx[0])
+        baselateralcd1.append(cd1[0])
+        baselateralcd2.append(cd2[0])
+        baselateralcd3.append(cd3[0])
+        for n in range(1, 3):
+            baselateralcx.append(cx[n+17])
+            baselateralcd1.append(cd1[n+17])
+            baselateralcd2.append(cd2[n+17])
+            baselateralcd3.append(cd3[n + 17])
+        basemedialcx.append(cx[8])
+        basemedialcd1.append(cd1[8])
+        basemedialcd2.append(cd2[8])
+        basemedialcd3.append(cd3[8])
+
+        #create additional nodes
+        midmedialcx.append(cx[1])
+        midmedialcd1.append(cd1[1])
+        midmedialcd2.append(cd2[1])
+        midmedialcd3.append(cd3[1])
+        for n in range(1, 3):
+            midmedialcx.append([(accessoryedgecx[n][c]+basemedialcx[n][c])/2 for c in range(3)])
+            midmedialcd1.append(basemedialcd1[n])
+            midmedialcd2.append(basemedialcd2[n])
+            midmedialcd3.append(basemedialcd3[n])
+        midmedialcx.append(cx[7])
+        midmedialcd1.append(cd1[7])
+        midmedialcd2.append(cd2[7])
+        midmedialcd3.append(cd3[7])
+
+        midlateralcx.append(cx[1])
+        midlateralcd1.append(cd1[1])
+        midlateralcd2.append(cd2[1])
+        midlateralcd3.append(cd3[1])
+        for n in range(1, 3):
+            midlateralcx.append([(posteriorlateralcx[n][c]+baselateralcx[n][c])/2 for c in range(3)])
+            midlateralcd1.append(baselateralcd1[n])
+            midlateralcd2.append(baselateralcd2[n])
+            midlateralcd3.append(baselateralcd3[n])
+        midlateralcx.append(cx[7])
+        midlateralcd1.append(cd1[7])
+        midlateralcd2.append(cd2[7])
+        midlateralcd3.append(cd3[7])
+
+        for n in range(3):
+            apicaledgecx[n] = cx[n+3]
+            apicaledgecd1[n] = cd1[n+3]
+            apicaledgecd2[n] = cd2[n+3]
+
+        for n in range(3):
+            midmedialapicalcx[n] = [(accessoryedgecx[n+1][c]+apicaledgecx[n][c])/2 for c in range(3)]
+            midmedialapicalcd1[n] = accessoryedgecd1[n]
+            midmedialapicalcd2[n] = accessoryedgecd2[n]
+            midmedialapicalcd3[n] = accessoryedgecd3[n]
+            midlateralapicalcx[n] = [(posteriorlateralcx[n+1][c]+apicaledgecx[n][c])/2 for c in range(3)]
+            midlateralapicalcd1[n] = posteriorlateralcd1[n]
+            midlateralapicalcd2[n] = posteriorlateralcd2[n]
+            midlateralapicalcd3[n] = posteriorlateralcd3[n]
+
         # Create nodes
+        ##################
         # Coordinates field
         nodeIdentifier = 1
-        for n in range(len(cx)):
+        for n in range(len(basemedialcx)):
             node = nodes.createNode(nodeIdentifier, nodetemplate)
             cache.setNode(node)
-            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, cx[n])
-            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS1, 1, cd1[n])
-            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS2, 1, cd2[n])
-            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS3, 1, cd3[n])
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, basemedialcx[n])
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS1, 1, basemedialcd1[n])
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS2, 1, basemedialcd2[n])
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS3, 1, basemedialcd3[n])
+            if useCrossDerivatives:
+                coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS2, 1, zero)
+                coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS3, 1, zero)
+                coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS2DS3, 1, zero)
+                coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D3_DS1DS2DS3, 1, zero)
+            nodeIdentifier = nodeIdentifier + 1
+
+        for n in range(1, len(basemedialcx)-1):
+            node = nodes.createNode(nodeIdentifier, nodetemplate)
+            cache.setNode(node)
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, baselateralcx[n])
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS1, 1, baselateralcd1[n])
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS2, 1, baselateralcd2[n])
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS3, 1, baselateralcd3[n])
+            if useCrossDerivatives:
+                coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS2, 1, zero)
+                coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS3, 1, zero)
+                coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS2DS3, 1, zero)
+                coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D3_DS1DS2DS3, 1, zero)
+            nodeIdentifier = nodeIdentifier + 1
+
+        for n in range(len(midmedialcx)):
+            node = nodes.createNode(nodeIdentifier, nodetemplate)
+            cache.setNode(node)
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, midmedialcx[n])
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS1, 1, midmedialcd1[n])
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS2, 1, midmedialcd2[n])
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS3, 1, midmedialcd3[n])
+            if useCrossDerivatives:
+                coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS2, 1, zero)
+                coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS3, 1, zero)
+                coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS2DS3, 1, zero)
+                coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D3_DS1DS2DS3, 1, zero)
+            nodeIdentifier = nodeIdentifier + 1
+
+        for n in range(1, len(midlateralcx)-1):
+            node = nodes.createNode(nodeIdentifier, nodetemplate)
+            cache.setNode(node)
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, midlateralcx[n])
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS1, 1, midlateralcd1[n])
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS2, 1, midlateralcd2[n])
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS3, 1, midlateralcd3[n])
+            if useCrossDerivatives:
+                coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS2, 1, zero)
+                coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS3, 1, zero)
+                coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS2DS3, 1, zero)
+                coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D3_DS1DS2DS3, 1, zero)
+            nodeIdentifier = nodeIdentifier + 1
+
+
+        for n in range(len(accessoryedgecx)):
+            node = nodes.createNode(nodeIdentifier, nodetemplate)
+            cache.setNode(node)
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, accessoryedgecx[n])
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS1, 1, accessoryedgecd1[n])
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS2, 1, accessoryedgecd2[n])
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS3, 1, accessoryedgecd3[n])
+            if useCrossDerivatives:
+                coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS2, 1, zero)
+                coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS3, 1, zero)
+                coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS2DS3, 1, zero)
+                coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D3_DS1DS2DS3, 1, zero)
+            nodeIdentifier = nodeIdentifier + 1
+
+        for n in range(1, len(accessoryedgecx)-1):
+            node = nodes.createNode(nodeIdentifier, nodetemplate)
+            cache.setNode(node)
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, posteriorlateralcx[n])
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS1, 1, posteriorlateralcd1[n])
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS2, 1, posteriorlateralcd2[n])
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS3, 1, posteriorlateralcd3[n])
             if useCrossDerivatives:
                 coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS2, 1, zero)
                 coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS1DS3, 1, zero)
