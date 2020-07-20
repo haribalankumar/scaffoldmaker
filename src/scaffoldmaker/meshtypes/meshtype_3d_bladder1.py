@@ -239,7 +239,6 @@ class MeshType_3d_bladder1(Scaffold_base):
         coordinates = findOrCreateFieldCoordinates(fm)
         cache = fm.createFieldcache()
 
-        mesh = fm.findMeshByDimension(3)
 
         nodes = fm.findNodesetByFieldDomainType(Field.DOMAIN_TYPE_NODES)
         nodetemplateApex = nodes.createNodetemplate()
@@ -257,6 +256,7 @@ class MeshType_3d_bladder1(Scaffold_base):
         else:
             nodetemplate = nodetemplateApex
 
+        mesh = fm.findMeshByDimension(3)
         eftfactory = eftfactory_bicubichermitelinear(mesh, useCrossDerivatives)
         eft = eftfactory.createEftBasic()
 
