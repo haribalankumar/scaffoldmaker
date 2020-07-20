@@ -603,7 +603,6 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
         elementIdentifier = elementIdentifier + 1
 
         fm.endChange()
-
         return []
 
     @classmethod

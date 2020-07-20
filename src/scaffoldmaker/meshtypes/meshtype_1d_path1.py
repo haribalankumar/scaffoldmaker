@@ -59,9 +59,9 @@ class MeshType_1d_path1(Scaffold_base):
         coordinates = findOrCreateFieldCoordinates(fm, components_count=coordinateDimensions)
         cache = fm.createFieldcache()
 
-        #################
+        ######################
         # Create nodes
-        #################
+        ######################
 
         nodes = fm.findNodesetByFieldDomainType(Field.DOMAIN_TYPE_NODES)
         nodetemplate = nodes.createNodetemplate()
@@ -104,46 +104,6 @@ class MeshType_1d_path1(Scaffold_base):
             elementIdentifier = elementIdentifier + 1
 
         fm.endChange()
-
-
-def extractxyzPathParametersFromRegion(region):
-    '''
-    Returns parameters of all nodes in region in identifier order.
-    Assumes nodes in region have field coordinates (1 to 3 components).
-    Currently limited to nodes with exactly value, d_ds1, d_ds2, d2_ds3,
-    same as path 1 scaffold.
-    :return: cx, cd1, cd2, cd3 (all padded with zeroes to 3 components)
-    '''
-    fm = region.getFieldmodule()
-    coordinates = fm.findFieldByName('coordinates').castFiniteElement()
-    componentsCount = coordinates.getNumberOfComponents()
-    assert componentsCount in [1, 2, 3], 'extractxyzPathParametersFromRegion.  Invalid coordinates number of components'
-    cache = fm.createFieldcache()
-    cx = []
-    cd1 = []
-    cd2 = []
-    cd3 = []
-    nodes = fm.findNodesetByFieldDomainType(Field.DOMAIN_TYPE_NODES)
-    nodeIter = nodes.createNodeiterator()
-    node = nodeIter.next()
-    while node.isValid():
-        cache.setNode(node)
-        result, x = coordinates.getNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, componentsCount)
-        result, d1 = coordinates.getNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS1, 1, componentsCount)
-        result, d2 = coordinates.getNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS2, 1, componentsCount)
-        result, d3 = coordinates.getNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS3, 1, componentsCount)
-        for c in range(componentsCount, 3):
-            x.append(0.0)
-            d1.append(0.0)
-            d2.append(0.0)
-            d3.append(0.0)
-        cx.append(x)
-        cd1.append(d1)
-        cd2.append(d2)
-        cd3.append(d3)
-        node = nodeIter.next()
-    return cx, cd1, cd2, cd3
-
 
 def extractPathParametersFromRegion(region):
     '''
