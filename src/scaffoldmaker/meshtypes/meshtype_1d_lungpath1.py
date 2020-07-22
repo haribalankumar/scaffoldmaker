@@ -9,7 +9,7 @@ from opencmiss.zinc.element import Element, Elementbasis
 from opencmiss.zinc.field import Field
 from opencmiss.zinc.node import Node
 from scaffoldmaker.meshtypes.scaffold_base import Scaffold_base
-from scaffoldmaker.utils.eft_utils import remapEftNodeValueLabel, setEftScaleFactorIds
+from scaffoldmaker.utils.eft_utils import remapEftNodeValueLabel, setEftScaleFactorIds, remapEftNodeValueLabelWithNodes
 
 class MeshType_1d_lungpath1(Scaffold_base):
     '''
@@ -99,9 +99,10 @@ class MeshType_1d_lungpath1(Scaffold_base):
         result = elementtemplate.defineField(coordinates, -1, eft)
 
         eft1 = mesh.createElementfieldtemplate(cubicHermiteBasis)
-        setEftScaleFactorIds(eft1, [1], [])
+        # setEftScaleFactorIds(eft1, [1], [])
         elementtemplateX = mesh.createElementtemplate()
         elementtemplateX.setElementShapeType(Element.SHAPE_TYPE_LINE)
+        result2 = elementtemplateX.defineField(coordinates, -1, eft1)
 
         elementIdentifier = 1
 
@@ -120,13 +121,14 @@ class MeshType_1d_lungpath1(Scaffold_base):
                 elementtemplateX.defineField(coordinates, -1, eft1)
                 elementtemplate = elementtemplateX
                 element = mesh.createElement(elementIdentifier, elementtemplate)
-                result2 = element.setNodesByIdentifier(eft1, [e+1,e+2])
+                element.setNodesByIdentifier(eft1, [e+1,e+2])
                 elementIdentifier = elementIdentifier + 1
 
-            #accessory
+
             elementtemplate = mesh.createElementtemplate()
             elementtemplate.setElementShapeType(Element.SHAPE_TYPE_LINE)
-            result = elementtemplate.defineField(coordinates, -1, eft)
+            elementtemplate.defineField(coordinates, -1, eft)
+            #accessory
             element = mesh.createElement(elementIdentifier, elementtemplate)
             element.setNodesByIdentifier(eft, [ 3, 10])
             elementIdentifier = elementIdentifier + 1
@@ -143,16 +145,32 @@ class MeshType_1d_lungpath1(Scaffold_base):
             element.setNodesByIdentifier(eft, [ 12, 7])
             elementIdentifier = elementIdentifier + 1
 
-            #lateral smooth curve
+            ###lateral smooth curve
+            # result2 = elementtemplateX.defineField(coordinates, -1, eft1)
+            eft1 = mesh.createElementfieldtemplate(cubicHermiteBasis)
+            setEftScaleFactorIds(eft1, [1], [])
             d2Map = (-1, 0, 0)
             remapEftNodeValueLabel(eft1, [1], Node.VALUE_LABEL_D_DS1,
                                        derivativeSignsToExpressionTerms(
-                                           (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3), d2Map))
+                                           (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3),
+                                           d2Map))
+            d2Map = (1, 0, 0)
+            remapEftNodeValueLabel(eft1, [2], Node.VALUE_LABEL_D_DS1,
+                                       derivativeSignsToExpressionTerms(
+                                           (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3),
+                                           d2Map))
+            elementtemplateX = mesh.createElementtemplate()
+            elementtemplateX.setElementShapeType(Element.SHAPE_TYPE_LINE)
             elementtemplateX.defineField(coordinates, -1, eft1)
             elementtemplate = elementtemplateX
             element = mesh.createElement(elementIdentifier, elementtemplate)
             result2 = element.setNodesByIdentifier(eft1, [ 3, 13])
+            element.setScaleFactors(eft1, [-1.0])
             elementIdentifier = elementIdentifier + 1
+
+            # element = mesh.createElement(elementIdentifier, elementtemplate)
+            # element.setNodesByIdentifier(eft, [ 3, 13])
+            # elementIdentifier = elementIdentifier + 1
 
             elementtemplate = mesh.createElementtemplate()
             elementtemplate.setElementShapeType(Element.SHAPE_TYPE_LINE)
@@ -165,14 +183,25 @@ class MeshType_1d_lungpath1(Scaffold_base):
             element.setNodesByIdentifier(eft, [ 14, 15])
             elementIdentifier = elementIdentifier + 1
 
-            d2Map = (-1, 0, 0)
+            eft1 = mesh.createElementfieldtemplate(cubicHermiteBasis)
+            setEftScaleFactorIds(eft1, [1], [])
+            d2Map = (1, 0, 0)
+            remapEftNodeValueLabel(eft1, [1], Node.VALUE_LABEL_D_DS1,
+                                   derivativeSignsToExpressionTerms(
+                                       (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3),
+                                       d2Map))
+            d2Map = (0, 0, 1)
             remapEftNodeValueLabel(eft1, [2], Node.VALUE_LABEL_D_DS1,
                                    derivativeSignsToExpressionTerms(
-                                       (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3), d2Map))
+                                       (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3),
+                                       d2Map))
+            elementtemplateX = mesh.createElementtemplate()
+            elementtemplateX.setElementShapeType(Element.SHAPE_TYPE_LINE)
             elementtemplateX.defineField(coordinates, -1, eft1)
             elementtemplate = elementtemplateX
             element = mesh.createElement(elementIdentifier, elementtemplate)
             result2 = element.setNodesByIdentifier(eft1, [ 15, 7])
+            element.setScaleFactors(eft1, [-1.0])
             elementIdentifier = elementIdentifier + 1
 
             #Diaphragm medial
@@ -195,15 +224,24 @@ class MeshType_1d_lungpath1(Scaffold_base):
             element.setNodesByIdentifier(eft, [ 18, 9])
             elementIdentifier = elementIdentifier + 1
 
-            #Diaphragm lateral
-            d2Map = (-1, 0, 0)
-            remapEftNodeValueLabel(eft1, [1], Node.VALUE_LABEL_D_DS1,
-                                       derivativeSignsToExpressionTerms(
-                                           (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3), d2Map))
+            ##Diaphragm lateral
+            eft1 = mesh.createElementfieldtemplate(cubicHermiteBasis)
+            setEftScaleFactorIds(eft1, [1], [])
+            d2Map = (0, 0, -1)
+            remapEftNodeValueLabel(eft1, [1], Node.VALUE_LABEL_D_DS1, [( Node.VALUE_LABEL_D_DS3, [1])])
+                                       # derivativeSignsToExpressionTerms(
+                                       #     (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3),
+                                       #     d2Map))
+            # d2Map = (1, 0, 0)
+            # remapEftNodeValueLabel(eft1, [2], Node.VALUE_LABEL_D_DS1,
+            #                            derivativeSignsToExpressionTerms(
+            #                                (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3),
+            #                                d2Map))
             elementtemplateX.defineField(coordinates, -1, eft1)
             elementtemplate = elementtemplateX
             element = mesh.createElement(elementIdentifier, elementtemplate)
             result2 = element.setNodesByIdentifier(eft1, [ 1, 19])
+            element.setScaleFactors(eft1, [-1.0])
             elementIdentifier = elementIdentifier + 1
 
             elementtemplate = mesh.createElementtemplate()
@@ -217,14 +255,18 @@ class MeshType_1d_lungpath1(Scaffold_base):
             element.setNodesByIdentifier(eft, [ 20, 21])
             elementIdentifier = elementIdentifier + 1
 
-            d2Map = (-1, 0, 0)
-            remapEftNodeValueLabel(eft1, [1], Node.VALUE_LABEL_D_DS1,
+            eft1 = mesh.createElementfieldtemplate(cubicHermiteBasis)
+            setEftScaleFactorIds(eft1, [1], [])
+            d2Map = (0, 0, 1)
+            remapEftNodeValueLabel(eft1, [2], Node.VALUE_LABEL_D_DS1,
                                        derivativeSignsToExpressionTerms(
-                                           (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3), d2Map))
+                                           (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3),
+                                           d2Map))
             elementtemplateX.defineField(coordinates, -1, eft1)
             elementtemplate = elementtemplateX
             element = mesh.createElement(elementIdentifier, elementtemplate)
-            element.setNodesByIdentifier(eft1, [ 21, 9])
+            result2 = element.setNodesByIdentifier(eft1, [ 21, 9])
+            element.setScaleFactors(eft1, [-1.0])
             elementIdentifier = elementIdentifier + 1
 
         fm.endChange()
@@ -267,6 +309,7 @@ def extractxyzPathParametersFromRegion(region):
         cd3.append(d3)
         node = nodeIter.next()
     return cx, cd1, cd2, cd3
+
 
 def derivativeSignsToExpressionTerms(valueLabels, signs):
     '''
