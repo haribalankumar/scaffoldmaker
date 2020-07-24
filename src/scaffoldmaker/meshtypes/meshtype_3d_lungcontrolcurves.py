@@ -142,7 +142,7 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
         else:
             centralPathOption = cls.centralPathDefaultScaffoldPackages['Mouse 1']
         options = {
-            'Central path' : copy.deepcopy(centralPathOption),
+            'Control curves' : copy.deepcopy(centralPathOption),
             'Number of segments': 20,
             'Refine' : False,
             'Refine number of elements around' : 1,
@@ -158,7 +158,7 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
     @staticmethod
     def getOrderedOptionNames():
         return [
-            'Central path',
+            'Control curves',
             'Number of segments',
             'Refine',
             'Refine number of elements around',
@@ -167,13 +167,13 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
 
     @classmethod
     def getOptionValidScaffoldTypes(cls, optionName):
-        if optionName == 'Central path':
+        if optionName == 'Control curves':
             return [ MeshType_1d_lungpath1 ]
         return []
 
     @classmethod
     def getOptionScaffoldTypeParameterSetNames(cls, optionName, scaffoldType):
-        if optionName == 'Central path':
+        if optionName == 'Control curves':
             return list(cls.centralPathDefaultScaffoldPackages.keys())
         assert scaffoldType in cls.getOptionValidScaffoldTypes(optionName), \
             cls.__name__ + '.getOptionScaffoldTypeParameterSetNames.  ' + \
@@ -190,7 +190,7 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
             assert parameterSetName in cls.getOptionScaffoldTypeParameterSetNames(optionName, scaffoldType), \
                 'Invalid parameter set ' + str(parameterSetName) + ' for scaffold ' + str(scaffoldType.getName()) + \
                 ' in option ' + str(optionName) + ' of scaffold ' + cls.getName()
-        if optionName == 'Central path':
+        if optionName == 'Control curves':
             if not parameterSetName:
                 parameterSetName = list(cls.centralPathDefaultScaffoldPackages.keys())[0]
             return copy.deepcopy(cls.centralPathDefaultScaffoldPackages[parameterSetName])
@@ -198,8 +198,8 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
 
     @classmethod
     def checkOptions(cls, options):
-        if not options['Central path'].getScaffoldType() in cls.getOptionValidScaffoldTypes('Central path'):
-            options['Central path'] = cls.getOptionScaffoldPackage('Central path', MeshType_1d_lungpath1)
+        if not options['Control curves'].getScaffoldType() in cls.getOptionValidScaffoldTypes('Control curves'):
+            options['Control curves'] = cls.getOptionScaffoldPackage('Control curves', MeshType_1d_lungpath1)
         for key in [
             'Number of segments',
             'Refine number of elements around',
@@ -216,7 +216,7 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
         :param options: Dict containing options. See getDefaultOptions().
         :return: annotationGroups
         """
-        centralPath = options['Central path']
+        centralPath = options['Control curves']
 
         elementsCountAlong = 4
         useCrossDerivatives = True
