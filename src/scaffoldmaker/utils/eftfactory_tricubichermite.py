@@ -279,6 +279,139 @@ class eftfactory_tricubichermite:
         assert eft.validate(), 'eftfactory_tricubichermite.createEftWedgeRadial:  Failed to validate eft'
         return eft
 
+
+    def createEftWedgeXi3Zero(self, nodeScaleFactorOffset0, nodeScaleFactorOffset1):
+        '''
+        Create a tricubic hermite element field for a solid
+        with xi3=0 collapsed, xi2 up and xi1 out .
+        Each collapsed node has 3 scale factors giving the cos, sin coefficients
+        of the radial line from global derivatives, plus the arc subtended by
+        the element in radians, so the circumferential direction is rounded.
+        Need to create a new template for each sector around axis giving common
+        nodeScaleFactorOffset values on common faces. Suggestion is to start at 0 and
+        add 100 for each radial line around axis.
+        :param nodeScaleFactorOffset0: offset of node scale factors at axis on xi1=0
+        :param nodeScaleFactorOffset1: offset of node scale factors at axis on xi1=1
+        :return: Element field template
+        '''
+        # start with full tricubic
+        eft = self._mesh.createElementfieldtemplate(self._tricubicHermiteBasis)
+        if not self._useCrossDerivatives:
+            for n in [ 4, 5, 6, 7 ]:
+                eft.setFunctionNumberOfTerms(n*8 + 4, 0)
+                eft.setFunctionNumberOfTerms(n*8 + 6, 0)
+                eft.setFunctionNumberOfTerms(n*8 + 7, 0)
+                eft.setFunctionNumberOfTerms(n*8 + 8, 0)
+
+        # GRC: allow scale factor identifier for global -1.0 to be prescribed
+        setEftScaleFactorIds(eft, [1], [
+            nodeScaleFactorOffset0 + 1, nodeScaleFactorOffset0 + 2, nodeScaleFactorOffset0 + 3,
+            nodeScaleFactorOffset1 + 1, nodeScaleFactorOffset1 + 2, nodeScaleFactorOffset1 + 3,
+            nodeScaleFactorOffset0 + 1, nodeScaleFactorOffset0 + 2, nodeScaleFactorOffset0 + 3,
+            nodeScaleFactorOffset1 + 1, nodeScaleFactorOffset1 + 2, nodeScaleFactorOffset1 + 3 ])
+
+        # remap parameters before collapsing nodes
+        remapEftNodeValueLabel(eft, [ 1, 3, 5, 7 ], Node.VALUE_LABEL_D_DS3, [])
+        for layer in range(2):
+            so = layer*6 + 1
+            ln = layer*4 + 1
+            # 2 terms for d/dxi1 via general linear map:
+            remapEftNodeValueLabel(eft, [ ln ], Node.VALUE_LABEL_D_DS1, [ (Node.VALUE_LABEL_D_DS1, [so + 1]), (Node.VALUE_LABEL_D_DS3, [so + 2]) ])
+
+            # 2 terms for cross derivative 1 2 to correct circular apex: -sin(theta).phi, cos(theta).phi
+            remapEftNodeValueLabel(eft, [ ln ], Node.VALUE_LABEL_D2_DS1DS2, [ (Node.VALUE_LABEL_D_DS1, [1, so + 2, so + 3]), (Node.VALUE_LABEL_D_DS3, [so + 1, so + 3]) ])
+
+            # zero other cross derivative parameters
+            remapEftNodeValueLabel(eft, [ ln ], Node.VALUE_LABEL_D2_DS1DS3, [])
+            remapEftNodeValueLabel(eft, [ ln ], Node.VALUE_LABEL_D2_DS2DS3, [])
+            remapEftNodeValueLabel(eft, [ ln ], Node.VALUE_LABEL_D3_DS1DS2DS3, [])
+
+            ln = layer*4 + 3
+            # 2 terms for d/dxi3 via general linear map:
+            remapEftNodeValueLabel(eft, [ ln ], Node.VALUE_LABEL_D_DS1, [ (Node.VALUE_LABEL_D_DS3, so + 4), (Node.VALUE_LABEL_D_DS1, so + 5) ])
+
+            # 2 terms for cross derivative 1 2 to correct circular apex: -sin(theta).phi, cos(theta).phi
+            remapEftNodeValueLabel(eft, [ ln ], Node.VALUE_LABEL_D2_DS1DS2, [ (Node.VALUE_LABEL_D_DS1, [1, so + 5, so + 6]), (Node.VALUE_LABEL_D_DS3, [so + 4, so + 6]) ])
+
+            # zero other cross derivative parameters
+            remapEftNodeValueLabel(eft, [ ln ], Node.VALUE_LABEL_D2_DS1DS3, [])
+            remapEftNodeValueLabel(eft, [ ln ], Node.VALUE_LABEL_D2_DS2DS3, [])
+            remapEftNodeValueLabel(eft, [ ln ], Node.VALUE_LABEL_D3_DS1DS2DS3, [])
+
+        ln_map = [ 1, 2, 3, 4, 1, 5, 3, 6]
+        remapEftLocalNodes(eft, 6, ln_map)
+
+        assert eft.validate(), 'eftfactory_tricubichermite.createEftWedgeXi3Zero:  Failed to validate eft'
+        return eft
+
+    def createEftWedgeXi3One(self, nodeScaleFactorOffset0, nodeScaleFactorOffset1):
+        '''
+        Create a tricubic hermite element field for a solid
+        with xi3=1 collapsed, xi2 up and xi1 In .
+        Each collapsed node has 3 scale factors giving the cos, sin coefficients
+        of the radial line from global derivatives, plus the arc subtended by
+        the element in radians, so the circumferential direction is rounded.
+        Need to create a new template for each sector around axis giving common
+        nodeScaleFactorOffset values on common faces. Suggestion is to start at 0 and
+        add 100 for each radial line around axis.
+        :param nodeScaleFactorOffset0: offset of node scale factors at axis on xi1=0
+        :param nodeScaleFactorOffset1: offset of node scale factors at axis on xi1=1
+        :return: Element field template
+        '''
+        # start with full tricubic
+        eft = self._mesh.createElementfieldtemplate(self._tricubicHermiteBasis)
+        if not self._useCrossDerivatives:
+            for n in [4, 5, 6, 7]:
+                eft.setFunctionNumberOfTerms(n * 8 + 4, 0)
+                eft.setFunctionNumberOfTerms(n * 8 + 6, 0)
+                eft.setFunctionNumberOfTerms(n * 8 + 7, 0)
+                eft.setFunctionNumberOfTerms(n * 8 + 8, 0)
+
+        # GRC: allow scale factor identifier for global -1.0 to be prescribed
+        setEftScaleFactorIds(eft, [1], [
+            nodeScaleFactorOffset0 + 1, nodeScaleFactorOffset0 + 2, nodeScaleFactorOffset0 + 3,
+            nodeScaleFactorOffset1 + 1, nodeScaleFactorOffset1 + 2, nodeScaleFactorOffset1 + 3,
+            nodeScaleFactorOffset0 + 1, nodeScaleFactorOffset0 + 2, nodeScaleFactorOffset0 + 3,
+            nodeScaleFactorOffset1 + 1, nodeScaleFactorOffset1 + 2, nodeScaleFactorOffset1 + 3])
+
+        # remap parameters before collapsing nodes
+        remapEftNodeValueLabel(eft, [2, 4, 6, 8], Node.VALUE_LABEL_D_DS3, [])
+        for layer in range(2):
+            so = layer * 6 + 1
+            ln = layer * 4 + 2
+            # 2 terms for d/dxi3 via general linear map:
+            remapEftNodeValueLabel(eft, [ln], Node.VALUE_LABEL_D_DS1,
+                                   [(Node.VALUE_LABEL_D_DS1, [so + 1]), (Node.VALUE_LABEL_D_DS3, [so + 2])])
+
+            # 2 terms for cross derivative 1 2 to correct circular apex: -sin(theta).phi, cos(theta).phi
+            remapEftNodeValueLabel(eft, [ln], Node.VALUE_LABEL_D2_DS1DS2,
+                                   [(Node.VALUE_LABEL_D_DS1, [1, so + 2, so + 3]),
+                                    (Node.VALUE_LABEL_D_DS3, [so + 1, so + 3])])
+
+            # zero other cross derivative parameters
+            remapEftNodeValueLabel(eft, [ln], Node.VALUE_LABEL_D2_DS1DS3, [])
+            remapEftNodeValueLabel(eft, [ln], Node.VALUE_LABEL_D2_DS2DS3, [])
+            remapEftNodeValueLabel(eft, [ln], Node.VALUE_LABEL_D3_DS1DS2DS3, [])
+
+            ln = layer * 4 + 4
+            # 2 terms for d/dxi3 via general linear map:
+            remapEftNodeValueLabel(eft, [ln], Node.VALUE_LABEL_D_DS1,
+                                   [(Node.VALUE_LABEL_D_DS3, so + 4), (Node.VALUE_LABEL_D_DS1, so + 5)])
+            # 2 terms for cross derivative 1 2 to correct circular apex: -sin(theta).phi, cos(theta).phi
+            remapEftNodeValueLabel(eft, [ln], Node.VALUE_LABEL_D2_DS1DS2,
+                                   [(Node.VALUE_LABEL_D_DS1, [1, so + 5, so + 6]),
+                                    (Node.VALUE_LABEL_D_DS3, [so + 4, so + 6])])
+            # zero other cross derivative parameters
+            remapEftNodeValueLabel(eft, [ln], Node.VALUE_LABEL_D2_DS1DS3, [])
+            remapEftNodeValueLabel(eft, [ln], Node.VALUE_LABEL_D2_DS2DS3, [])
+            remapEftNodeValueLabel(eft, [ln], Node.VALUE_LABEL_D3_DS1DS2DS3, [])
+
+        ln_map = [1, 2, 3, 4, 5, 2, 6, 4]
+        remapEftLocalNodes(eft, 6, ln_map)
+
+        assert eft.validate(), 'eftfactory_tricubichermite.createEftWedgeXi3One:  Failed to validate eft'
+        return eft
+
     def createEftTetrahedronBottom(self, nodeScaleFactorOffset0, nodeScaleFactorOffset1, nodeScaleFactorOffsetUp):
         '''
         Create a tricubic hermite element field for a solid tetrahedron for the axis of a
