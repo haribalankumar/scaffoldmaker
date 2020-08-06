@@ -28,69 +28,47 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
             'scaffoldSettings' : {
                 'Coordinate dimensions' : 3,
                 'Length' : 1.0,
-                'Number of elements' : 20,
+                'Number of elements per curve' : 20,
                 'Species' : 'Human'
                 },
             'meshEdits' : exnodeStringFromNodeValues(
                 [ Node.VALUE_LABEL_VALUE, Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3], [
                     [[-2.4, -11, 1.72], [-2.0, -4.0, -8.0], [-0.2, -0.45, 2.5], [1, 1, 0]],
-                    [[-3, -12.7, 7], [-1.0, 2.0, 8.0], [0.017, -0.15, 2.20], [1, 0, 0]],
                     [[-3.9, -12.7, 11.4], [-5.0, 4.0, 29.0], [-0.15, 0.8, 2.15], [1, 1, 0]],
-                    [[-3.8, -11.4, 14.9], [-2.0, 10.0, 22.0], [-0.067, 2.06, 0.37], [1, 0, 0]],
                     [[-4, -8.7, 17.5], [-22.0, -4.0, -8.0], [0.03, -1.37, 0.85], [1, 0, 0]],
-                    [[-3.3, -5.1, 16], [-10.0, 20.0, 8.0],[0.4, -1.04, 0.6],  [1, 0, 0]],
                     [[-4.4, -3.3, 13.1],  [-5.0, 4.0, 29.0], [0.252, -0.61, 0.62],[1, 0, 0]],
-                    [[-5.7, -2.7, 11.2], [-2.0, 10.0, 22.0], [0.45, -0.6, 1.12], [1, 0, 0]],
                     [[-6.2, -3.2, 9.82],  [-22.0, -4.0, -8.0], [-0.13, 1.16, 0.55], [1, 0, 0]],
-                    [[-1.6, -10.2, 11.7], [-0.46, 0.86, 0.5], [-10.0, 20.0, 8.0], [1, 0, 0]],
-                    [[-1.8, -8.4, 13], [-0.68, 1.15, 0.613], [-5.0, 4.0, 29.0], [1, 0, 0]],
-                    [[-4, -5.54, 13], [-0.68, 1.15, 0.613], [-5.0, 4.0, 29.0], [1, 0, 0]],
-                    [[-6.6, -10.3, 13.4], [21.2, -8.1, 0.3], [-22.0, -4.0, -8.0], [1, 0, 0]],
-                    [[-6.5, -6.6, 13.3], [11, -30, -3], [-10.0, 20.0, 8.0], [1, 0, 0]],
-                    [[-5.4, -4.6, 13.2], [-5.9, -27.8, 0.66], [-5.0, 4.0, 29.0], [1, 0, 0]],
                     [[-1, -9.2, 4.6], [-0.51, 1.22, 2.75], [-22.0, -4.0, -8.0], [1, 0, 0]],
-                    [[-3.8, -8.1, 6.9], [-0.6, 1.1, 1.63], [-10.0, 20.0, 8.0], [1, 0, 0]],
-                    [[-5.6, -5.6, 9], [-0.34, 1.26, 1.3], [-5.0, 4.0, 29.0], [1, 0, 0]],
                     [[-5.5, -10.3, 1.5], [-0.73, 1.1, 1.38], [-22.0, -4.0, -8.0], [1, 0, 0]],
-                    [[-7.65, -7.8, 3.8], [0.2, 1.05, 1.3], [-10.0, 20.0, 8.0], [0, 0, 0]],
-                    [[-8, -5.3, 6.8], [1.1, 0.93, 1.35], [-5.0, 4.0, 29.0], [0, 0, 0]]])
+                    [[-1.6, -10.2, 11.7], [-0.46, 0.86, 0.5], [-10.0, 20.0, 8.0], [1, 0, 0]],
+                    [[-6.6, -10.3, 13.4], [21.2, -8.1, 0.3], [-22.0, -4.0, -8.0], [1, 0, 0]]
+                    ])
         } ),
         'Mouse 1' : ScaffoldPackage(MeshType_1d_lungpath1, {
             'scaffoldSettings' : {
                 'Coordinate dimensions' : 3,
                 'Length' : 1.0,
-                'Number of elements' : 20,
+                'Number of elements per curve' : 4,
                 'Species' : 'Mouse'
                 },
             'meshEdits' : exnodeStringFromNodeValues(
                 [ Node.VALUE_LABEL_VALUE, Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3 ], [
                     [[-2.4, -11, 1.72], [2.8, 1.17, 2.1], [-0.1, -0.16, 2.1], [3, 0.7, 2]],
-                    [[-3, -12.7, 7], [1.0, 1.7, 1.3], [-0.2, -0.2, 1.70], [1, 0, 0]],
                     [[-3.9, -12.7, 11.4], [1.8, 1.0, 0.2], [-0.15, 0.8, 2.15], [1, 0, 0]],
-                    [[-3.8, -11.4, 15], [1.1, 1.8, 0.1], [-0.2, 1.1, 2.5], [1, 0, 0]],
                     [[-3.5, -8.8, 17], [-3.0, 2.0, 1.2], [0.18, 2.9, 1.07], [1, 0, 0]],
-                    [[-3.5, -5.1, 16.1], [-1.0, 2.0, 1.0], [-0.6, 2.2, -1.6], [1, 0, 0]],
-                    [[-4.4, -3.3, 13.1], [-0.08, 1.1, 0.2], [-0.12, 0.61, -1.2], [1, 0, 0]],
-                    [[-5.7, -2.7, 11.2], [0.1, 1.6, 0.6], [-0.45, -0.01, -1.12], [1, 0, 0]],
-                    [[-6.2, -3.2, 9.82], [-0.7, 2, 0.2], [-0.3, 0.16, -1.3], [1, 0.8, 0.54]],
-                    [[-1.6, -10.2, 11.7], [0.43, 1.1, 1.0], [-1.1, 0.42, 2.5], [1, 0, 0]],
-                    [[-1.8, -8.3, 12.5], [-0.68, 1.15, 0.613], [-1.0, -0.3, 1.4], [1, 0, 0]],
-                    [[-4, -5.5, 13], [-1.0, 2.0, 0.5], [-0.2, -0.5, 2.0], [1, 0, 0]],
-                    [[-6.6, -11, 12.5], [-0.7, 2.5, 0.74], [0.7, -0.1, 1.8], [1, 0, 0]],
-                    [[-6.6, -7.7, 13.3], [0.7, 2.2, 0.3], [0.7, -0.4, 1.3], [1, 0, 0]],
-                    [[-5.4, -4.6, 13.2], [1.1, 1.6, -0.15], [0.9, -0.9, 1.8], [1, 0, 0]],
+                    [[-4.4, -3.3, 13.1], [-0.08, 1.1, 0.2], [0.12, -0.61, 1.2], [1, 0, 0]],
+                    [[-6.2, -3.2, 9.82], [-0.7, 2, 0.2], [0.3, -0.16, 1.3], [1, 0.8, 0.54]],
                     [[-1, -9.2, 4.6], [-1.01, 0.83, 2.45], [-0.8, -0.8, 3.5], [1.1, 0.06, 1]],
-                    [[-3.8, -8.1, 6.9], [-1.16, 1.0, 1.7], [0.4, -0.7, 2.0], [1.4, 0.41, 1]],
-                    [[-5.6, -5.6, 9], [-0.38, 1.8, 0.7], [0.4, 0.2, 2.0], [1.4, 0.53, 1]],
                     [[-6, -10.3, 1.6], [-2.4, 1.6, 1.0], [-0.07, -2.0, 2.7], [1.4, 0.41, 1.2]],
-                    [[-8, -7.1, 4.4], [-0.74, 1.35, 1.9], [0.05, -1.2, 2.0], [1.8, -0.2, 1]],
-                    [[-7.6, -4.53, 7.7], [0.86, 1.3, 2.7], [0.5, -0.8, 2.7], [1.32, -0.8, 0.83]]])
+                    [[-1.6, -10.2, 11.7], [0.43, 1.1, 1.0], [-1.1, 0.42, 2.5], [1, 0, 0]],
+                    [[-6.6, -11, 12.5], [-0.7, 2.5, 0.74], [0.7, -0.1, 1.8], [1, 0, 0]]
+                ])
         } ),
         'Pig 1' : ScaffoldPackage(MeshType_1d_lungpath1, {
             'scaffoldSettings' : {
                 'Coordinate dimensions' : 3,
                 'Length' : 1.0,
-                'Number of elements' : 20,
+                'Number of elements per curve' : 20,
                 'Species' : 'Pig'
                 },
             'meshEdits' : exnodeStringFromNodeValues(
@@ -143,7 +121,9 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
             centralPathOption = cls.centralPathDefaultScaffoldPackages['Mouse 1']
         options = {
             'Control curves' : copy.deepcopy(centralPathOption),
+            'Species' : 'Mouse',
             'Number of segments': 20,
+            'Number of elements along': 4,
             'Refine' : False,
             'Refine number of elements around' : 1,
             'Refine number of elements along' : 1,
@@ -151,15 +131,19 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
             }
         if 'Mouse' in parameterSetName:
             options['Number of segments'] = 20
+            options['Species'] = 'Mouse'
         elif 'Pig 1' in parameterSetName:
             options['Number of segments'] = 20
+            options['Species'] = 'Pig'
         return options
 
     @staticmethod
     def getOrderedOptionNames():
         return [
             'Control curves',
+            'Species',
             'Number of segments',
+            'Number of elements along',
             'Refine',
             'Refine number of elements around',
             'Refine number of elements along',
@@ -201,7 +185,9 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
         if not options['Control curves'].getScaffoldType() in cls.getOptionValidScaffoldTypes('Control curves'):
             options['Control curves'] = cls.getOptionScaffoldPackage('Control curves', MeshType_1d_lungpath1)
         for key in [
+            'Species',
             'Number of segments',
+            'Number of elements along'
             'Refine number of elements around',
             'Refine number of elements along',
             'Refine number of elements through wall']:
@@ -217,8 +203,10 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
         :return: annotationGroups
         """
         centralPath = options['Control curves']
+        speciestype = options['Species']
+        # elementsCountcurve = options['Number of elements per curve']
 
-        elementsCountAlong = 4
+        elementsCountAlong = options['Number of elements along']
         useCrossDerivatives = True
         firstNodeIdentifier = 1
         firstElementIdentifier = 1
@@ -255,220 +243,205 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
 
         mesh = fm.findMeshByDimension(3)
 
-        #Assign nodes to groups
-        posterioredgecx = []
-        posterioredgecd1 = []
-        posterioredgecd2 = []
-        posterioredgecd3 = []
+        if speciestype == 'Mouse':  #6 curves for left lobe
+        ###-----------------------
+            ##Assign nodes to groups
+            accessoryedgecx = []
+            accessoryedgecd1 = []
+            accessoryedgecd2 = []
+            accessoryedgecd3 = []
 
-        anterioredgecx = []
-        anterioredgecd1 = []
-        anterioredgecd2 = []
-        anterioredgecd3 = []
+            posteriorlateralcx = []
+            posteriorlateralcd1 = []
+            posteriorlateralcd2 = []
+            posteriorlateralcd3 = []
 
-        accessoryedgecx = []
-        accessoryedgecd1 = []
-        accessoryedgecd2 = []
-        accessoryedgecd3 = []
+            basemedialcx = []
+            basemedialcd1 = []
+            basemedialcd2 = []
+            basemedialcd3 = []
 
-        posteriorlateralcx = []
-        posteriorlateralcd1 = []
-        posteriorlateralcd2 = []
-        posteriorlateralcd3 = []
+            baselateralcx = []
+            baselateralcd1 = []
+            baselateralcd2 = []
+            baselateralcd3 = []
 
-        basemedialcx = []
-        basemedialcd1 = []
-        basemedialcd2 = []
-        basemedialcd3 = []
+            midmedialcx = []
+            midmedialcd1 = []
+            midmedialcd2 = []
+            midmedialcd3 = []
 
-        baselateralcx = []
-        baselateralcd1 = []
-        baselateralcd2 = []
-        baselateralcd3 = []
+            midlateralcx = []
+            midlateralcd1 = []
+            midlateralcd2 = []
+            midlateralcd3 = []
 
-        midmedialcx = []
-        midmedialcd1 = []
-        midmedialcd2 = []
-        midmedialcd3 = []
+            apicaledgecx = []
+            apicaledgecd1 = []
+            apicaledgecd2 = []
 
-        midlateralcx = []
-        midlateralcd1 = []
-        midlateralcd2 = []
-        midlateralcd3 = []
+            midmedialapicalcx = []
+            midmedialapicalcd1 = []
+            midmedialapicalcd2 = []
+            midmedialapicalcd3 = []
 
-        apicaledgecx = []
-        apicaledgecd1 = []
-        apicaledgecd2 = []
+            midlateralapicalcx = []
+            midlateralapicalcd1 = []
+            midlateralapicalcd2 = []
+            midlateralapicalcd3 = []
 
-        midmedialapicalcx = []
-        midmedialapicalcd1 = []
-        midmedialapicalcd2 = []
-        midmedialapicalcd3 = []
+            # accessory edge
+            accessoryedgecx.append(cx[2])
+            accessoryedgecd1.append(cd1[2])
+            accessoryedgecd2.append(cd2[2])
+            accessoryedgecd3.append(cd3[2])
+            for n in range(1, elementsCountAlong):
+                accessoryedgecx.append(cx[n+8])
+                accessoryedgecd1.append(cd1[n+8])
+                accessoryedgecd2.append(cd2[n+8])
+                accessoryedgecd3.append(cd3[n+8])
+            accessoryedgecx.append(cx[6])
+            accessoryedgecd1.append(cd1[6])
+            accessoryedgecd2.append(cd2[6])
+            accessoryedgecd3.append(cd3[6])
+            accessoryedgecx, accessoryedgecd1, _, _, _ = \
+                interp.sampleCubicHermiteCurves(accessoryedgecx, accessoryedgecd1, elementsCountOut=elementsCountAlong)
+            accessoryedgecd1 = interp.smoothCubicHermiteDerivativesLine(accessoryedgecx, accessoryedgecd1,
+                                                fixAllDirections=False,
+                                                fixStartDerivative=True, fixEndDerivative=True,
+                                                magnitudeScalingMode = interp.DerivativeScalingMode.HARMONIC_MEAN)
 
-        midlateralapicalcx = []
-        midlateralapicalcd1 = []
-        midlateralapicalcd2 = []
-        midlateralapicalcd3 = []
+            # Posterior Lateral
+            #------------------
+            posteriorlateralcx.append(cx[2])
+            posteriorlateralcd1.append(cd1[2])
+            posteriorlateralcd2.append(cd2[2])
+            posteriorlateralcd3.append(cd3[2])
+            for n in range(1, 4):
+                posteriorlateralcx.append(cx[n+11])
+                posteriorlateralcd1.append(cd1[n+11])
+                posteriorlateralcd2.append(cd2[n+11])
+                posteriorlateralcd3.append(cd3[n+11])
+            posteriorlateralcx.append(cx[6])
+            posteriorlateralcd1.append(cd1[6])
+            posteriorlateralcd2.append(cd2[6])
+            posteriorlateralcd3.append(cd3[6])
+            posteriorlateralcx, posteriorlateralcd1, _, _, _ = \
+               interp.sampleCubicHermiteCurves(posteriorlateralcx, posteriorlateralcd1, elementsCountOut=elementsCountAlong)
+            posteriorlateralcd1 = interp.smoothCubicHermiteDerivativesLine(posteriorlateralcx, posteriorlateralcd1,
+                                                                    fixAllDirections=False,
+                                                                    fixStartDerivative=True, fixEndDerivative=True,
+                                                                    magnitudeScalingMode=interp.DerivativeScalingMode.HARMONIC_MEAN)
 
-        # for n in range(5):
-        #     posterioredgecx[n] = cx[n]
-        #     posterioredgecd1[n] = cd1[n]
-        #     posterioredgecd2[n] = cd2[n]
-        #     posterioredgecd3[n] = cd3[n]
+            ## base medial
+            ## -----------
+            basemedialcx.append(cx[0])
+            basemedialcd1.append(cd1[0])
+            basemedialcd2.append(cd2[0])
+            basemedialcd3.append(cd3[0])
+            for n in range(1, 4):
+                basemedialcx.append(cx[n+14])
+                basemedialcd1.append(cd1[n+14])
+                basemedialcd2.append(cd2[n+14])
+                basemedialcd3.append(cd3[n+14])
+            basemedialcx.append(cx[8])
+            basemedialcd1.append(cd1[8])
+            basemedialcd2.append(cd2[8])
+            basemedialcd3.append(cd3[8])
+            basemedialcx, basemedialcd1, _, _, _ = \
+            interp.sampleCubicHermiteCurves(basemedialcx, basemedialcd1,
+                                            elementsCountOut=elementsCountAlong)
+            basemedialcd1 = interp.smoothCubicHermiteDerivativesLine(basemedialcx, basemedialcd1,
+                                                                       fixAllDirections=False,
+                                                                       fixStartDerivative=True, fixEndDerivative=True,
+                                                                       magnitudeScalingMode=interp.DerivativeScalingMode.HARMONIC_MEAN)
 
-        # anterioredgecx[0] = cx[4]
-        # anterioredgecd1[0] = cd1[4]
-        # anterioredgecd2[0] = cd2[4]
-        # anterioredgecd3[0] = cd3[4]
-        # for n in range(1,4):
-        #     anterioredgecx[n] = cx[n+4]
-        #     anterioredgecd1[n] = cd1[n+4]
-        #     anterioredgecd2[n] = cd2[n+4]
-        #     anterioredgecd3[n] = cd3[n+4]
+            ### base lateral
+            ### ------------
+            baselateralcx.append(cx[0])
+            baselateralcd1.append(cd1[0])
+            baselateralcd2.append(cd2[0])
+            baselateralcd3.append(cd3[0])
+            for n in range(1, 4):
+                baselateralcx.append(cx[n+17])
+                baselateralcd1.append(cd1[n+17])
+                baselateralcd2.append(cd2[n+17])
+                baselateralcd3.append(cd3[n + 17])
+            baselateralcx.append(cx[8])
+            baselateralcd1.append(cd1[8])
+            baselateralcd2.append(cd2[8])
+            baselateralcd3.append(cd3[8])
+            interp.sampleCubicHermiteCurves(baselateralcx, baselateralcd1,
+                                        elementsCountOut=elementsCountAlong)
+            baselateralcd1 = interp.smoothCubicHermiteDerivativesLine(baselateralcx, baselateralcd1,
+                                                                 fixAllDirections=False,
+                                                                 fixStartDerivative=True, fixEndDerivative=True,
+                                                                 magnitudeScalingMode=interp.DerivativeScalingMode.HARMONIC_MEAN)
 
-        accessoryedgecx.append(cx[2])
-        accessoryedgecd1.append(cd1[2])
-        accessoryedgecd2.append(cd2[2])
-        accessoryedgecd3.append(cd3[2])
-        for n in range(1, 4):
-            accessoryedgecx.append(cx[n+8])
-            accessoryedgecd1.append(cd1[n+8])
-            accessoryedgecd2.append(cd2[n+8])
-            accessoryedgecd3.append(cd3[n+8])
-        accessoryedgecx.append(cx[6])
-        accessoryedgecd1.append(cd1[6])
-        tempcd2 = [(-1.0*cd2[6][c]) for c in range(3)]
-        accessoryedgecd2.append(tempcd2)
-        accessoryedgecd3.append(cd3[6])
+            #Apical edge
+            for n in range(3):
+                apicaledgecx.append(cx[n+3])
+                apicaledgecd1.append(cd1[n+3])
+                apicaledgecd2.append(cd2[n+3])
 
-        temp = []
-        posteriorlateralcx.append(cx[2])
-        posteriorlateralcd1.append(cd1[2])
-        posteriorlateralcd2.append(cd2[2])
-        posteriorlateralcd3.append(cd3[2])
-        for n in range(1, 4):
-            posteriorlateralcx.append(cx[n+11])
-            posteriorlateralcd1.append(cd1[n+11])
-            posteriorlateralcd2.append(cd2[n+11])
-            posteriorlateralcd3.append(cd3[n+11])
-        tempcd2 = [(-1.0*cd2[6][c]) for c in range(3)]
-        posteriorlateralcx.append(cx[6])
-        posteriorlateralcd1.append(cd1[6])
-        posteriorlateralcd2.append(tempcd2)
-        posteriorlateralcd3.append(cd3[6])
+            # Create additional nodes
+            ###########################
+            temp = []
+            for i in range(int(elementsCountAlong/2)//2):
+                print('looping index for mid medial=',i)
+                for n in range(elementsCountAlong+1):
+                    print('looping index for elems=', n)
+                    xfrac = 1.0/float(i+2)
+                    temp = [(accessoryedgecx[n][c]+basemedialcx[n][c])*xfrac for c in range(3)]
+                    midmedialcx.append(temp)
+                    midmedialcd1.append(basemedialcd1[n])
+                    midmedialcd2.append(basemedialcd2[n])
+                    midmedialcd3.append(basemedialcd3[n])
 
-        ## base medial
-        ## -----------
-        basemedialcx.append(cx[0])
-        basemedialcd1.append(cd1[0])
-        basemedialcd2.append(cd2[0])
-        basemedialcd3.append(cd3[0])
-        for n in range(1, 4):
-            basemedialcx.append(cx[n+14])
-            basemedialcd1.append(cd1[n+14])
-            basemedialcd2.append(cd2[n+14])
-            basemedialcd3.append(cd3[n+14])
-        tempcd2 = [(-1.0*cd2[8][c]) for c in range(3)]
-        basemedialcx.append(cx[8])
-        basemedialcd1.append(cd1[8])
-        basemedialcd2.append(tempcd2)
-        basemedialcd3.append(cd3[8])
+                    temp = [(posteriorlateralcx[n][c]+baselateralcx[n][c])*xfrac for c in range(3)]
+                    midlateralcx.append(temp)
+                    midlateralcd1.append(baselateralcd1[n])
+                    midlateralcd2.append(baselateralcd2[n])
+                    midlateralcd3.append(baselateralcd3[n])
 
-        ### base lateral
-        ### ------------
-        baselateralcx.append(cx[0])
-        baselateralcd1.append(cd1[0])
-        baselateralcd2.append(cd2[0])
-        baselateralcd3.append(cd3[0])
-        for n in range(1, 4):
-            baselateralcx.append(cx[n+17])
-            baselateralcd1.append(cd1[n+17])
-            baselateralcd2.append(cd2[n+17])
-            baselateralcd3.append(cd3[n + 17])
-        tempcd2 = [(-1.0*cd2[8][c]) for c in range(3)]
-        baselateralcx.append(cx[8])
-        baselateralcd1.append(cd1[8])
-        baselateralcd2.append(tempcd2)
-        baselateralcd3.append(cd3[8])
+            # #smooth vertically (apical-basally)
+            # for n in range(1,4):
+            #     tempmidcx = []
+            #     tempmidcd2 = []
+            #     tempmidcx.append(baselateralcx[n])
+            #     tempmidcd2.append(baselateralcd2[n])
+            #     tempmidcx.append(posteriorlateralcx[n])
+            #     tempmidcd2.append(posteriorlateralcd2[n])
+            #     tempmidcx.append(apicaledgecx[n-1])
+            #     tempmidcd2.append(apicaledgecd2[n-1])
+            #     tempmidcx, tempmidcd2, _, _, _ = \
+            #         interp.sampleCubicHermiteCurves(tempmidcx, tempmidcd2, elementsCountOut=elementsCountAlong)
+            #     midlateralcx.append(tempmidcx[1])
+            #     midlateralcd2.append(tempmidcd2[1])
+            #     midlateralcd1.append(baselateralcd1[n])
+            #     midlateralcd3.append(baselateralcd3[n])
+            # midlateralcx.append(cx[7])
+            # midlateralcd1.append(cd1[7])
+            # midlateralcd2.append(cd2[7])
+            # midlateralcd3.append(cd3[7])
 
-        for n in range(3):
-            apicaledgecx.append(cx[n+3])
-            apicaledgecd1.append(cd1[n+3])
-            if (n==2):
-                tempcd2 = [(-1.0 * cd2[n+3][c]) for c in range(3)]
-            apicaledgecd2.append(tempcd2)
+            temp = []
+            for n in range(elementsCountAlong-1):
+                temp = [(cx[n+9][c]+cx[n+3][c])*0.5 for c in range(3)]
+                if(n==0):
+                    temp = [(cx[n+9][c]+cx[n+3][c]+cx[n+4][c]+cx[n+10][c])*0.25 for c in range(3)]
+                if (n == elementsCountAlong-2):
+                    temp = [(cx[n+9][c] + cx[n+3][c] + cx[n+2][c] + cx[n+8][c])*0.25 for c in range(3)]
+                midmedialapicalcx.append(temp)
+                midmedialapicalcd1.append(accessoryedgecd1[n+1])
+                midmedialapicalcd2.append(accessoryedgecd2[n+1])
+                midmedialapicalcd3.append(accessoryedgecd3[n+1])
 
-        # Create additional nodes
-        ###########################
-        temp = []
-        midmedialcx.append(cx[1])
-        midmedialcd1.append(cd1[1])
-        midmedialcd2.append(cd2[1])
-        midmedialcd3.append(cd3[1])
-        for n in range(1, 4):
-            temp = [(cx[n+8][c]+cx[n+14][c])/2 for c in range(3)]
-            midmedialcx.append(temp)
-            midmedialcd1.append(basemedialcd1[n])
-            midmedialcd2.append(basemedialcd2[n])
-            midmedialcd3.append(basemedialcd3[n])
-        tempcd2 = [(-1.0*cd2[7][c]) for c in range(3)]
-        midmedialcx.append(cx[7])
-        midmedialcd1.append(cd1[7])
-        midmedialcd2.append(tempcd2)
-        midmedialcd3.append(cd3[7])
-        midmedialcx, midmedialcd1, _, _, _ = \
-            interp.sampleCubicHermiteCurves(midmedialcx, midmedialcd1, elementsCountOut=elementsCountAlong)
-
-        midlateralcx.append(cx[1])
-        midlateralcd1.append(cd1[1])
-        midlateralcd2.append(cd2[1])
-        midlateralcd3.append(cd3[1])
-        # for n in range(1, 4):
-        #     temp = [(cx[n+11][c]+cx[n+17][c])/2 for c in range(3)]
-        #     midlateralcx.append(temp)
-        #     midlateralcd1.append(baselateralcd1[n])
-        #     midlateralcd2.append(baselateralcd2[n])
-        #     midlateralcd3.append(baselateralcd3[n])
-        #smooth vertically (apical-basally)
-        for n in range(1,4):
-            tempmidcx = []
-            tempmidcd2 = []
-            tempmidcx.append(baselateralcx[n])
-            tempmidcd2.append(baselateralcd2[n])
-            tempmidcx.append(posteriorlateralcx[n])
-            tempmidcd2.append(posteriorlateralcd2[n])
-            tempmidcx.append(apicaledgecx[n-1])
-            tempmidcd2.append(apicaledgecd2[n-1])
-            tempmidcx, tempmidcd2, _, _, _ = \
-                interp.sampleCubicHermiteCurves(tempmidcx, tempmidcd2, elementsCountOut=elementsCountAlong)
-            midlateralcx.append(tempmidcx[1])
-            midlateralcd2.append(tempmidcd2[1])
-            midlateralcd1.append(baselateralcd1[n])
-            midlateralcd3.append(baselateralcd3[n])
-        tempcd2 = [(-1.0*cd2[7][c]) for c in range(3)]
-        midlateralcx.append(cx[7])
-        midlateralcd1.append(cd1[7])
-        midlateralcd2.append(tempcd2)
-        midlateralcd3.append(cd3[7])
-
-
-        temp = []
-        for n in range(elementsCountAlong-1):
-            temp = [(cx[n+9][c]+cx[n+3][c])*0.5 for c in range(3)]
-            if(n==0):
-                temp = [(cx[n+9][c]+cx[n+3][c]+cx[n+4][c]+cx[n+10][c])*0.25 for c in range(3)]
-            if (n == elementsCountAlong-2):
-                temp = [(cx[n+9][c] + cx[n+3][c] + cx[n+2][c] + cx[n+8][c])*0.25 for c in range(3)]
-            midmedialapicalcx.append(temp)
-            midmedialapicalcd1.append(accessoryedgecd1[n+1])
-            midmedialapicalcd2.append(accessoryedgecd2[n+1])
-            midmedialapicalcd3.append(accessoryedgecd3[n+1])
-
-            temp = [(cx[n+12][c]+cx[n+3][c])/2 for c in range(3)]
-            midlateralapicalcx.append(temp)
-            midlateralapicalcd1.append(posteriorlateralcd1[n+1])
-            midlateralapicalcd2.append(posteriorlateralcd2[n+1])
-            midlateralapicalcd3.append(posteriorlateralcd3[n+1])
+                temp = [(cx[n+12][c]+cx[n+3][c])/2 for c in range(3)]
+                midlateralapicalcx.append(temp)
+                midlateralapicalcd1.append(posteriorlateralcd1[n+1])
+                midlateralapicalcd2.append(posteriorlateralcd2[n+1])
+                midlateralapicalcd3.append(posteriorlateralcd3[n+1])
 
 
         # # Create nodes
@@ -634,7 +607,8 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
         elementtemplateX = mesh.createElementtemplate()
         elementtemplateX.setElementShapeType(Element.SHAPE_TYPE_CUBE)
 
-        for n in range(elementsCountAlong*2):
+        #elements between accessory edge and base(medial/lateral)
+        for n in range(elementsCountAlong*int(elementsCountAlong/2)):
             if((n)%4==0):  #wedge elements xi3zero
                 va = n%4
                 vb = (n%4 + 1)%elementsCountAlong
@@ -651,9 +625,9 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
                 print('nodes xi3=0:', bni1, bni2, bni3, bni4, bni1+1, bni3+1)
                 element = mesh.createElement(elementIdentifier, elementtemplateX)
                 result = element.setNodesByIdentifier(eft1, nodeIdentifiers)
-                result2 = element.setScaleFactors(eft1, [-1])
+                # result2 = element.setScaleFactors(eft1, [-1])
                 elementIdentifier = elementIdentifier + 1
-            elif (n>0 and (n+1)%4==0): #wedge elements
+            elif (n>0 and (n+1)%4==0): #wedge elements xi3One
                 va = n%4
                 vb = (n%4 + 1)%elementsCountAlong
                 eft2 = eftfactory.createEftWedgeXi3One(va*100, vb*100)
@@ -669,7 +643,7 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
                 print('xi3=1 elem',bni1, bni2, bni3, bni4, bni2-1, bni4-1)
                 element = mesh.createElement(elementIdentifier, elementtemplateX)
                 result = element.setNodesByIdentifier(eft2, nodeIdentifiers)
-                result2 = element.setScaleFactors(eft2, [-1])
+                # result2 = element.setScaleFactors(eft2, [-1])
                 elementIdentifier = elementIdentifier + 1
             else:
                 eft = eftfactory.createEftBasic()
@@ -682,6 +656,7 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
                 print('normal elems=',bni1,bni1+1,bni2,bni2+1,bni3,bni3+1,bni4,bni4+1)
                 element = mesh.createElement(elementIdentifier, elementtemplate)
                 result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+                # result2 = element.setScaleFactors(eft, [-1])
                 elementIdentifier = elementIdentifier + 1
 
 
@@ -701,14 +676,14 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
             #     result2 = element.setScaleFactors(eft1, [-1])
             #     elementIdentifier = elementIdentifier + 1
 
-
+        #elements between accessory edge and Apex
         eft1 = eftfactory.createEftWedgeXi3Zero(1 * 100, 2 * 100)
         # setEftScaleFactorIds(eft1, [1], [])
         elementtemplateX.defineField(coordinates, -1, eft1)
         nodeIdentifiers = [17, 22, 31, 28, 18, 25]
         element = mesh.createElement(elementIdentifier, elementtemplateX)
         result = element.setNodesByIdentifier(eft1, nodeIdentifiers)
-        result2 = element.setScaleFactors(eft1, [-1])
+        # result2 = element.setScaleFactors(eft1, [-1])
         elementIdentifier = elementIdentifier + 1
 
         eft = eftfactory.createEftBasic()
@@ -723,32 +698,39 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
         result = element.setNodesByIdentifier(eft, nodeIdentifiers)
         elementIdentifier = elementIdentifier + 1
 
-        eft2 = eftfactory.createEftWedgeXi3One(1 * 100, 2 * 100)
+        eft2 = eftfactory.createEftWedgeXi3One(0 * 100, 1 * 100)
+        # setEftScaleFactorIds(eft2, [1], [])
         elementtemplateX.defineField(coordinates, -1, eft2)
         nodeIdentifiers = [24, 21, 30, 33, 20, 27]
         element = mesh.createElement(elementIdentifier, elementtemplateX)
         result = element.setNodesByIdentifier(eft2, nodeIdentifiers)
-        result2 = element.setScaleFactors(eft2, [-1])
+        # result2 = element.setScaleFactors(eft2, [-1])
         elementIdentifier = elementIdentifier + 1
 
-
-        eft1 = eftfactory.createEftWedgeXi3Zero(1 * 100, 2 * 100)
+        eft1 = eftfactory.createEftWedgeXi3One(1 * 100, 2 * 100)
+        # setEftScaleFactorIds(eft1, [1], [])
         for n in range(2):
-            remapEftNodeValueLabel(eft1, [(n+1)*2], Node.VALUE_LABEL_D_DS2, [(Node.VALUE_LABEL_D_DS1, [])])
-            remapEftNodeValueLabel(eft1, [(n+1)*4], Node.VALUE_LABEL_D_DS2, [(Node.VALUE_LABEL_D_DS1, [])])
+            d2Map = (0,-1,0)
+            remapEftNodeValueLabel(eft1, [(n+1)*2], Node.VALUE_LABEL_D_DS1,  derivativeSignsToExpressionTerms(
+                                       (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3),
+                                       d2Map))
+            remapEftNodeValueLabel(eft1, [(n+1)*4], Node.VALUE_LABEL_D_DS1, [(Node.VALUE_LABEL_D_DS1, [])])
         elementtemplateX.defineField(coordinates, -1, eft1)
-        nodeIdentifiers = [31,28,32,29,25,26]
+        # nodeIdentifiers = [31,28,32,29,25,26]
+        nodeIdentifiers = [28, 29, 31, 32, 25, 26]
         element = mesh.createElement(elementIdentifier, elementtemplateX)
         result = element.setNodesByIdentifier(eft1, nodeIdentifiers)
-        result2 = element.setScaleFactors(eft1, [-1])
+        # result2 = element.setScaleFactors(eft1, [-1])
         elementIdentifier = elementIdentifier + 1
 
-        eft1 = eftfactory.createEftWedgeXi3Zero(1 * 100, 2 * 100)
+        eft1 = eftfactory.createEftWedgeXi3One(1 * 100, 2 * 100)
+        # setEftScaleFactorIds(eft1, [1], [])
         elementtemplateX.defineField(coordinates, -1, eft1)
-        nodeIdentifiers = [33,30,32,29,27,26]
+        # nodeIdentifiers = [33,30,32,29,27,26]
+        nodeIdentifiers = [29, 30, 32, 33, 26, 27]
         element = mesh.createElement(elementIdentifier, elementtemplateX)
         result = element.setNodesByIdentifier(eft1, nodeIdentifiers)
-        result2 = element.setScaleFactors(eft1, [-1])
+        # result2 = element.setScaleFactors(eft1, [-1])
         elementIdentifier = elementIdentifier + 1
 
         fm.endChange()
@@ -769,3 +751,41 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
         meshrefinement.refineAllElementsCubeStandard3d(refineElementsCountAround, refineElementsCountAlong,
                                                        refineElementsCountThroughWall)
         return
+
+
+def derivativeSignsToExpressionTerms(valueLabels, signs):
+    '''
+    Return remap expression terms for summing derivative[i]*sign[i]
+    :param valueLabels: List of node value labels to possibly include.
+    :param signs: List of 1 (no scaling), -1 (scale by scale factor 1) or 0 (no term).
+    '''
+    expressionTerms = []
+    for i in range(len(valueLabels)):
+        if signs[i] is 1:
+            expressionTerms.append((valueLabels[i], []))
+        elif signs[i] is -1:
+            expressionTerms.append((valueLabels[i], [1]))
+    return expressionTerms
+
+
+# [[-2.4, -11, 1.72], [2.8, 1.17, 2.1], [-0.1, -0.16, 2.1], [3, 0.7, 2]],
+# [[-3, -12.7, 7], [1.0, 1.7, 1.3], [-0.2, -0.2, 1.70], [1, 0, 0]],
+# [[-3.9, -12.7, 11.4], [1.8, 1.0, 0.2], [-0.15, 0.8, 2.15], [1, 0, 0]],
+# [[-3.8, -11.4, 15], [1.1, 1.8, 0.1], [-0.2, 1.1, 2.5], [1, 0, 0]],
+# [[-3.5, -8.8, 17], [-3.0, 2.0, 1.2], [0.18, 2.9, 1.07], [1, 0, 0]],
+# [[-3.5, -5.1, 16.1], [-1.0, 2.0, 1.0], [0.6, -2.2, 1.6], [1, 0, 0]],
+# [[-4.4, -3.3, 13.1], [-0.08, 1.1, 0.2], [0.12, -0.61, 1.2], [1, 0, 0]],
+# [[-5.7, -2.7, 11.2], [0.1, 1.6, 0.6], [0.45, 0.01, 1.12], [1, 0, 0]],
+# [[-6.2, -3.2, 9.82], [-0.7, 2, 0.2], [0.3, -0.16, 1.3], [1, 0.8, 0.54]],
+# [[-1.6, -10.2, 11.7], [0.43, 1.1, 1.0], [-1.1, 0.42, 2.5], [1, 0, 0]],
+# [[-1.8, -8.3, 12.5], [-0.68, 1.15, 0.613], [-1.0, -0.3, 1.4], [1, 0, 0]],
+# [[-4, -5.5, 13], [-1.0, 2.0, 0.5], [-0.2, -0.5, 2.0], [1, 0, 0]],
+# [[-6.6, -11, 12.5], [-0.7, 2.5, 0.74], [0.7, -0.1, 1.8], [1, 0, 0]],
+# [[-6.6, -7.7, 13.3], [0.7, 2.2, 0.3], [0.7, -0.4, 1.3], [1, 0, 0]],
+# [[-5.4, -4.6, 13.2], [1.1, 1.6, -0.15], [0.9, -0.9, 1.8], [1, 0, 0]],
+# [[-1, -9.2, 4.6], [-1.01, 0.83, 2.45], [-0.8, -0.8, 3.5], [1.1, 0.06, 1]],
+# [[-3.8, -8.1, 6.9], [-1.16, 1.0, 1.7], [0.4, -0.7, 2.0], [1.4, 0.41, 1]],
+# [[-5.6, -5.6, 9], [-0.38, 1.8, 0.7], [0.4, 0.2, 2.0], [1.4, 0.53, 1]],
+# [[-6, -10.3, 1.6], [-2.4, 1.6, 1.0], [-0.07, -2.0, 2.7], [1.4, 0.41, 1.2]],
+# [[-8, -7.1, 4.4], [-0.74, 1.35, 1.9], [0.05, -1.2, 2.0], [1.8, -0.2, 1]],
+# [[-7.6, -4.53, 7.7], [0.86, 1.3, 2.7], [0.5, -0.8, 2.7], [1.32, -0.8, 0.83]]])
