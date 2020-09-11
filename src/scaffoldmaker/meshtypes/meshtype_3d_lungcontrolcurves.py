@@ -11,6 +11,10 @@ from scaffoldmaker.utils.meshrefinement import MeshRefinement
 from scaffoldmaker.utils import interpolation as interp
 from scaffoldmaker.utils.eftfactory_tricubichermite import eftfactory_tricubichermite
 from scaffoldmaker.utils.zinc_utils import exnodeStringFromNodeValues
+from opencmiss.utils.zinc.general import ChangeManager
+from opencmiss.zinc.context import Context
+from opencmiss.zinc.fieldmodule import Fieldmodule
+
 from opencmiss.zinc.node import Node
 from opencmiss.utils.zinc.field import findOrCreateFieldCoordinates
 from opencmiss.zinc.element import Element, Elementbasis
@@ -28,7 +32,7 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
             'scaffoldSettings' : {
                 'Coordinate dimensions' : 3,
                 'Length' : 1.0,
-                'Number of elements per curve' : 20,
+                'Number of elements per curve' : 2,
                 'Species' : 'Human'
                 },
             'meshEdits' : exnodeStringFromNodeValues(
@@ -48,7 +52,7 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
             'scaffoldSettings' : {
                 'Coordinate dimensions' : 3,
                 'Length' : 1.0,
-                'Number of elements per curve' : 4,
+                'Number of elements per curve' : 2,
                 'Species' : 'Mouse'
                 },
             'meshEdits' : exnodeStringFromNodeValues(
@@ -61,14 +65,13 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
                     [[-1, -9.2, 4.6], [-1.01, 0.83, 2.45], [-0.8, -0.8, 3.5], [1.1, 0.06, 1]],
                     [[-6, -10.3, 1.6], [-2.4, 1.6, 1.0], [-0.07, -2.0, 2.7], [1.4, 0.41, 1.2]],
                     [[-1.6, -10.2, 11.7], [0.43, 1.1, 1.0], [-1.1, 0.42, 2.5], [1, 0, 0]],
-                    [[-6.6, -11, 12.5], [-0.7, 2.5, 0.74], [0.7, -0.1, 1.8], [1, 0, 0]]
-                ])
+                    [[-6.6, -11, 12.5], [-0.7, 2.5, 0.74], [0.7, -0.1, 1.8], [1, 0, 0]]])
         } ),
         'Pig 1' : ScaffoldPackage(MeshType_1d_lungpath1, {
             'scaffoldSettings' : {
                 'Coordinate dimensions' : 3,
                 'Length' : 1.0,
-                'Number of elements per curve' : 20,
+                'Number of elements per curve' : 4,
                 'Species' : 'Pig'
                 },
             'meshEdits' : exnodeStringFromNodeValues(

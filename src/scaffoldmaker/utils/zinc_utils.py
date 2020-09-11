@@ -95,6 +95,7 @@ def exnodeStringFromNodeValues(nodeValueLabels = [ Node.VALUE_LABEL_VALUE, Node.
     coordinate values and their labels. Works in a private zinc context.
     '''
     # following requires at least one value label and node, assumes consistent values and components counts
+    print('exnode in zinc utils called')
     nodeValueLabelsCount = len(nodeValueLabels)
     nodesCount = len(nodeValues)
     componentsCount = len(nodeValues[0][0])
