@@ -74,12 +74,17 @@ def updateEllipseAngleByArcLength(a, b, inAngleRadians, arcLength):
     angle = inAngleRadians
     lengthMoved = 0.0
     lengthTol = (a + b)*1.0E-4  # broader tolerance due to reliance on inexact getEllipseArcLength()
+    counter=0
     #print('updateEllipseAngleByArcLength', a, b, 'inAngleRadians', inAngleRadians, ', arcLength', arcLength)
     while math.fabs(arcLength - lengthMoved) > lengthTol:
+        angleOld = angle
         t = ( -a*math.sin(angle), b*math.cos(angle) )
         dlength_dangle = math.sqrt(t[0]*t[0] + t[1]*t[1])
         angle += (arcLength - lengthMoved)/dlength_dangle
+        if counter >= 100:
+            angle=(angle+angleOld)/2
         lengthMoved = getEllipseArcLength(a, b, inAngleRadians, angle)
+        counter+=1
         #print('lengthMoved', lengthMoved)
     #print('updateEllipseAngleByArcLength a', a, 'b', b, ', angle', inAngleRadians, ', arcLength', arcLength, ' -> ', angle)
     return angle
@@ -134,6 +139,48 @@ def createCirclePoints(cx, axis1, axis2, elementsCountAround, startRadians = 0.0
         pd1.append([ radiansPerElementAround*(-sinRadiansAround*axis1[c] + cosRadiansAround*axis2[c]) for c in range(3) ])
         radiansAround += radiansPerElementAround
     return px, pd1
+
+def createEllipsoidPoints(centre, poleAxis, sideAxis, elementsCountAround, elementsCountUp, height):
+    '''
+    Generate a set of points and derivatives for circle of revolution of an ellipse
+    starting at pole poleAxis from centre.
+    :param centre: Centre of full ellipsoid.
+    :param poleAxis: Vector in direction of starting pole, magnitude is ellipse axis length.
+    :param sideAxis: Vector normal to poleAxis, magnitude is ellipse side axis length.
+    :param height: Height of arc of ellipsoid from starting pole along poleAxis.
+    :return: Lists nx, nd1, nd2. Ordered fastest around, starting at pole. Suitable for passing to TrackSurface.
+    '''
+    nx  = []
+    nd1 = []
+    nd2 = []
+    magPoleAxis = vector.magnitude(poleAxis)
+    magSideAxis = vector.magnitude(sideAxis)
+    unitPoleAxis = vector.normalise(poleAxis)
+    unitSideAxis1 = vector.normalise(sideAxis)
+    unitSideAxis2 = vector.normalise(vector.crossproduct3(sideAxis, poleAxis))
+    useHeight = min(max(0.0, height), 2.0*magPoleAxis)
+    totalRadiansUp = getEllipseRadiansToX(magPoleAxis, 0.0, magPoleAxis - useHeight, initialTheta = 0.5*math.pi*useHeight/magPoleAxis)
+    radiansUp = 0.0
+    lengthUp = getEllipseArcLength(magPoleAxis, magSideAxis, radiansUp, totalRadiansUp)
+    elementLengthUp = lengthUp/elementsCountUp
+    radiansPerElementAround = 2.0*math.pi/elementsCountAround
+    for n2 in range(elementsCountUp + 1):
+        cosRadiansUp = math.cos(radiansUp)
+        sinRadiansUp = math.sin(radiansUp)
+        radius = sinRadiansUp*magSideAxis
+        d2r, d2z = vector.setMagnitude([ cosRadiansUp*magSideAxis, sinRadiansUp*magPoleAxis ], elementLengthUp)
+        cx = [ (centre[c] + cosRadiansUp*poleAxis[c]) for c in range(3) ]
+        elementLengthAround = radius*radiansPerElementAround
+        radiansAround = 0.0
+        for n in range(elementsCountAround):
+            cosRadiansAround = math.cos(radiansAround)
+            sinRadiansAround = math.sin(radiansAround)
+            nx .append([ (cx[c] + radius*(cosRadiansAround*unitSideAxis1[c] + sinRadiansAround*unitSideAxis2[c])) for c in range(3) ])
+            nd1.append([ (elementLengthAround*(-sinRadiansAround*unitSideAxis1[c] + cosRadiansAround*unitSideAxis2[c])) for c in range(3) ])
+            nd2.append([ (d2r*(cosRadiansAround*unitSideAxis1[c] + sinRadiansAround*unitSideAxis2[c]) - d2z*unitPoleAxis[c]) for c in range(3) ])
+            radiansAround += radiansPerElementAround
+        radiansUp = updateEllipseAngleByArcLength(magPoleAxis, magSideAxis, radiansUp, elementLengthUp)
+    return nx, nd1, nd2
 
 def getCircleProjectionAxes(ax, ad1, ad2, ad3, length, angle1radians, angle2radians, angle3radians = None):
     '''
