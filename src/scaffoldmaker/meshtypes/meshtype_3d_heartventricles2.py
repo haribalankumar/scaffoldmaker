@@ -123,7 +123,7 @@ class MeshType_3d_heartventricles2(Scaffold_base):
     @classmethod
     def generateBaseMesh(cls, region, options):
         """
-        Generate the base tricubic Hermite mesh. See also generateMesh().
+        Generate the base tricubic Hermite mesh.
         :param region: Zinc region to define model in. Must be empty.
         :param options: Dict containing options. See getDefaultOptions().
         :return: list of AnnotationGroup
@@ -749,10 +749,7 @@ class MeshType_3d_heartventricles2(Scaffold_base):
 
                 element = mesh.createElement(elementIdentifier, elementtemplate1)
                 result2 = element.setNodesByIdentifier(eft1, nids)
-                if eft1.getNumberOfLocalScaleFactors() > 0:
-                    result3 = element.setScaleFactors(eft1, scalefactors)
-                else:
-                    result3 = 7
+                result3 = element.setScaleFactors(eft1, scalefactors) if scalefactors else None
                 #print('create element lv', elementIdentifier, result, result2, result3, nids)
                 elementIdentifier = elementIdentifier + 1
 
@@ -847,10 +844,7 @@ class MeshType_3d_heartventricles2(Scaffold_base):
 
                 element = mesh.createElement(elementIdentifier, elementtemplate1)
                 result2 = element.setNodesByIdentifier(eft1, nids)
-                if eft1.getNumberOfLocalScaleFactors() > 0:
-                    result3 = element.setScaleFactors(eft1, scalefactors)
-                else:
-                    result3 = 7
+                result3 = element.setScaleFactors(eft1, scalefactors) if scalefactors else None
                 #print('create element rv', elementIdentifier, result, result2, result3, nids)
                 elementIdentifier = elementIdentifier + 1
 
@@ -897,22 +891,6 @@ class MeshType_3d_heartventricles2(Scaffold_base):
             if elementId == (limitRvElementIdentifier - 1):
                 return  # finish on last so can continue in ventriclesbase
             element = meshrefinement._sourceElementiterator.next()
-
-    @classmethod
-    def generateMesh(cls, region, options):
-        """
-        Generate base or refined mesh.
-        :param region: Zinc region to create mesh in. Must be empty.
-        :param options: Dict containing options. See getDefaultOptions().
-        :return: list of AnnotationGroup for mesh.
-        """
-        if not options['Refine']:
-            return cls.generateBaseMesh(region, options)
-        baseRegion = region.createRegion()
-        baseAnnotationGroups = cls.generateBaseMesh(baseRegion, options)
-        meshrefinement = MeshRefinement(baseRegion, region, baseAnnotationGroups)
-        cls.refineMesh(meshrefinement, options)
-        return meshrefinement.getAnnotationGroups()
 
 
 def getSeptumPoints(septumArcRadians, lvRadius, radialDisplacement, elementsCountAroundLVFreeWall, elementsCountAroundVSeptum, z, n3):
