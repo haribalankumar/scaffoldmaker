@@ -399,12 +399,20 @@ class MeshType_3d_lungmesh(Scaffold_base):
         ## Posterior path
         tmpRegion = region.createRegion()
         posteriorPath.generate(tmpRegion)
-        cx, cd1, cd2, cd12 = extractPathParametersFromRegion(tmpRegion)
+        cx, cd1, cd2, cd12 = \
+            (tmpRegion)
         del tmpRegion
 
         tmpRegion = region.createRegion()
         anteriorPath.generate(tmpRegion)
         cxAnterior, cd1Anterior, cd2, cd12 = extractPathParametersFromRegion(tmpRegion)
+
+        # cx_bladder, cd1_bladder, cd2_bladder, cd12_bladder = extractPathParametersFromRegion(tmpRegion,
+        #     [Node.VALUE_LABEL_VALUE, Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D2_DS1DS2], groupName='urinary bladder')
+        # # for i in range(len(cx_bladder)):
+        # cx, cd1, cd2, cd12 = extractPathParametersFromRegion(tmpRegion,
+        #                                                      [Node.VALUE_LABEL_VALUE, Node.VALUE_LABEL_D_DS1,
+        #                                                       Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D2_DS1DS2])
         del tmpRegion
 
         tmpRegion = region.createRegion()
