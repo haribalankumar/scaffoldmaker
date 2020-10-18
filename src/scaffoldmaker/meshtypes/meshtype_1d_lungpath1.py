@@ -24,7 +24,8 @@ class MeshType_1d_lungpath1(Scaffold_base):
         return {
             'Coordinate dimensions' : 3,
             'Length' : 1.0,
-            'Number of elements per curve' : 2
+            'Number of elements per curve' : 2,
+            'Species' : 'Mouse'
         }
 
     @staticmethod
@@ -32,7 +33,8 @@ class MeshType_1d_lungpath1(Scaffold_base):
         return [
             'Coordinate dimensions',
             'Length',
-            'Number of elements per curve'
+            'Number of elements per curve',
+            'Species'
         ]
 
     @staticmethod
@@ -66,7 +68,6 @@ class MeshType_1d_lungpath1(Scaffold_base):
         # cx, cd1, cd2, cd3 = extractxyzPathParametersFromRegion(tmpRegion)
         # del tmpRegion
 
-
         fm = region.getFieldmodule()
         fm.beginChange()
         coordinates = findOrCreateFieldCoordinates(fm, components_count=coordinateDimensions)
@@ -86,31 +87,31 @@ class MeshType_1d_lungpath1(Scaffold_base):
         nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_D_DS2, 1)
         nodetemplate.setValueNumberOfVersions(coordinates, -1, Node.VALUE_LABEL_D_DS3, 1)
 
-        nodeIdentifier = 1
-        zero = [ 0.0, 0.0, 0.0 ]
-        for n in range(elementsCount + 1):
-            node = nodes.createNode(nodeIdentifier, nodetemplate)
-            cache.setNode(node)
-            # coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, zero)
-            # coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS1, 1, zero)
-            # coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS2, 1, zero)
-            # coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS3, 1, zero)
-            nodeIdentifier = nodeIdentifier + 1
-
         # nodeIdentifier = 1
-        # x = [ 0.0, 0.0, 0.0 ]
-        # dx_ds1 = [ length/elementsCount, 0.0, 0.0 ]
-        # dx_ds2 = [ 0.0, 1.0, 0.0 ]
-        # d2x_ds1ds2 = [ 0.0, 0.0, 0.0 ]
+        # zero = [ 0.0, 0.0, 0.0 ]
         # for n in range(elementsCount + 1):
-        #     x[0] = length*n/elementsCount
         #     node = nodes.createNode(nodeIdentifier, nodetemplate)
         #     cache.setNode(node)
-        #     coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, x)
-        #     coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS1, 1, dx_ds1)
-        #     coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS2, 1, dx_ds2)
-        #     coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS3, 1, d2x_ds1ds2)
+        #     coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, zero)
+        #     coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS1, 1, zero)
+        #     coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS2, 1, zero)
+        #     coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS3, 1, zero)
         #     nodeIdentifier = nodeIdentifier + 1
+
+        nodeIdentifier = 1
+        x = [ 0.0, 0.0, 0.0 ]
+        dx_ds1 = [ length/elementsCount, 0.0, 0.0 ]
+        dx_ds2 = [ 0.0, 1.0, 0.0 ]
+        d2x_ds1ds2 = [ 0.0, 0.0, 0.0 ]
+        for n in range(elementsCount + 1):
+            x[0] = length*n/elementsCount
+            node = nodes.createNode(nodeIdentifier, nodetemplate)
+            cache.setNode(node)
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_VALUE, 1, x)
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS1, 1, dx_ds1)
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS2, 1, dx_ds2)
+            coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS3, 1, d2x_ds1ds2)
+            nodeIdentifier = nodeIdentifier + 1
 
         # nodeIdentifier = 1
         # for n in range(elementsCount + 1):
@@ -423,7 +424,7 @@ class MeshType_1d_lungpath1(Scaffold_base):
             elementIdentifier = elementIdentifier + 1
 
         fm.endChange()
-
+        return []
 
 def extractxyzPathParametersFromRegion(region):
     '''

@@ -294,157 +294,161 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
             midlateralapicalcd3 = []
 
             # accessory edge
-            accessoryedgecx.append(cx[2])
-            accessoryedgecd1.append(cd1[2])
-            accessoryedgecd2.append(cd2[2])
-            accessoryedgecd3.append(cd3[2])
-            for n in range(1, elementsCountAlong):
-                accessoryedgecx.append(cx[n+8])
-                accessoryedgecd1.append(cd1[n+8])
-                accessoryedgecd2.append(cd2[n+8])
-                accessoryedgecd3.append(cd3[n+8])
-            accessoryedgecx.append(cx[6])
-            accessoryedgecd1.append(cd1[6])
-            accessoryedgecd2.append(cd2[6])
-            accessoryedgecd3.append(cd3[6])
-            accessoryedgecx, accessoryedgecd1, _, _, _ = \
-                interp.sampleCubicHermiteCurves(accessoryedgecx, accessoryedgecd1, elementsCountOut=elementsCountAlong)
-            accessoryedgecd1 = interp.smoothCubicHermiteDerivativesLine(accessoryedgecx, accessoryedgecd1,
+            accessoryedgecx.append(cx[1])
+            accessoryedgecd1.append(cd1[1])
+            accessoryedgecx.append(cx[7])
+            accessoryedgecd1.append(cd1[7])
+            accessoryedgecx.append(cx[3])
+            accessoryedgecd1.append(cd1[3])
+            if(elementsCountAlong>2):
+                accessoryedgecx, accessoryedgecd1, _, _, _ = \
+                    interp.sampleCubicHermiteCurves(accessoryedgecx, accessoryedgecd1, elementsCountOut=elementsCountAlong)
+                accessoryedgecd1 = interp.smoothCubicHermiteDerivativesLine(accessoryedgecx, accessoryedgecd1,
                                                 fixAllDirections=False,
                                                 fixStartDerivative=True, fixEndDerivative=True,
                                                 magnitudeScalingMode = interp.DerivativeScalingMode.HARMONIC_MEAN)
+            for n in range(elementsCountAlong):
+                if(n==0):
+                    accessoryedgecd2.append(cd2[1])
+                    accessoryedgecd3.append(cd3[1])
+                if (n == elementsCountAlong - 1):
+                    accessoryedgecd2.append(cd2[3])
+                    accessoryedgecd3.append(cd3[3])
+                else:
+                    accessoryedgecd2.append(cd2[7])
+                    accessoryedgecd3.append(cd3[7])
 
             # Posterior Lateral
             #------------------
-            posteriorlateralcx.append(cx[2])
-            posteriorlateralcd1.append(cd1[2])
-            posteriorlateralcd2.append(cd2[2])
-            posteriorlateralcd3.append(cd3[2])
-            for n in range(1, 4):
-                posteriorlateralcx.append(cx[n+11])
-                posteriorlateralcd1.append(cd1[n+11])
-                posteriorlateralcd2.append(cd2[n+11])
-                posteriorlateralcd3.append(cd3[n+11])
-            posteriorlateralcx.append(cx[6])
-            posteriorlateralcd1.append(cd1[6])
-            posteriorlateralcd2.append(cd2[6])
-            posteriorlateralcd3.append(cd3[6])
-            posteriorlateralcx, posteriorlateralcd1, _, _, _ = \
-               interp.sampleCubicHermiteCurves(posteriorlateralcx, posteriorlateralcd1, elementsCountOut=elementsCountAlong)
-            posteriorlateralcd1 = interp.smoothCubicHermiteDerivativesLine(posteriorlateralcx, posteriorlateralcd1,
+            tempcx=[]
+            tempcd1=[]
+            tempcx.append(cx[1])
+            tempcd1.append(cd1[1])
+            tempcx.append(cx[8])
+            tempcd1.append(cd1[8])
+            tempcx.append(cx[3])
+            tempcd1.append(cd1[3])
+            if(elementsCountAlong>2):
+                posteriorlateralcx, posteriorlateralcd1, _, _, _ = \
+                   interp.sampleCubicHermiteCurves(tempcx, tempcd1, elementsCountOut=elementsCountAlong)
+                posteriorlateralcd1 = interp.smoothCubicHermiteDerivativesLine(posteriorlateralcx, posteriorlateralcd1,
                                                                     fixAllDirections=False,
                                                                     fixStartDerivative=True, fixEndDerivative=True,
                                                                     magnitudeScalingMode=interp.DerivativeScalingMode.HARMONIC_MEAN)
+            for n in range(elementsCountAlong):
+                if(n==0):
+                    posteriorlateralcd2.append(cd2[1])
+                    posteriorlateralcd3.append(cd3[1])
+                if (n == elementsCountAlong - 1):
+                    posteriorlateralcd2.append(cd2[3])
+                    posteriorlateralcd3.append(cd3[3])
+                else:
+                    posteriorlateralcd2.append(cd2[8])
+                    posteriorlateralcd3.append(cd3[8])
+
 
             ## base medial
             ## -----------
-            basemedialcx.append(cx[0])
-            basemedialcd1.append(cd1[0])
-            basemedialcd2.append(cd2[0])
-            basemedialcd3.append(cd3[0])
-            for n in range(1, 4):
-                basemedialcx.append(cx[n+14])
-                basemedialcd1.append(cd1[n+14])
-                basemedialcd2.append(cd2[n+14])
-                basemedialcd3.append(cd3[n+14])
-            basemedialcx.append(cx[8])
-            basemedialcd1.append(cd1[8])
-            basemedialcd2.append(cd2[8])
-            basemedialcd3.append(cd3[8])
-            basemedialcx, basemedialcd1, _, _, _ = \
-            interp.sampleCubicHermiteCurves(basemedialcx, basemedialcd1,
-                                            elementsCountOut=elementsCountAlong)
-            basemedialcd1 = interp.smoothCubicHermiteDerivativesLine(basemedialcx, basemedialcd1,
+            tempcx=[]
+            tempcd1=[]
+            tempcx.append(cx[0])
+            tempcd1.append(cd1[0])
+            tempcx.append(cx[5])
+            tempcd1.append(cd1[5])
+            tempcx.append(cx[4])
+            tempcd1.append(cd1[4])
+            if(elementsCountAlong>2):
+                basemedialcx, basemedialcd1, _, _, _ = \
+                interp.sampleCubicHermiteCurves(tempcx, tempcd1,
+                                                elementsCountOut=elementsCountAlong)
+                basemedialcd1 = interp.smoothCubicHermiteDerivativesLine(basemedialcx, basemedialcd1,
                                                                        fixAllDirections=False,
                                                                        fixStartDerivative=True, fixEndDerivative=True,
                                                                        magnitudeScalingMode=interp.DerivativeScalingMode.HARMONIC_MEAN)
+            for n in range(elementsCountAlong):
+                if(n==0):
+                    basemedialcd2.append(cd2[0])
+                    basemedialcd3.append(cd3[0])
+                if (n == elementsCountAlong - 1):
+                    basemedialcd2.append(cd2[4])
+                    basemedialcd3.append(cd3[4])
+                else:
+                    basemedialcd2.append(cd2[5])
+                    basemedialcd3.append(cd3[5])
+
 
             ### base lateral
             ### ------------
-            baselateralcx.append(cx[0])
-            baselateralcd1.append(cd1[0])
-            baselateralcd2.append(cd2[0])
-            baselateralcd3.append(cd3[0])
-            for n in range(1, 4):
-                baselateralcx.append(cx[n+17])
-                baselateralcd1.append(cd1[n+17])
-                baselateralcd2.append(cd2[n+17])
-                baselateralcd3.append(cd3[n + 17])
-            baselateralcx.append(cx[8])
-            baselateralcd1.append(cd1[8])
-            baselateralcd2.append(cd2[8])
-            baselateralcd3.append(cd3[8])
-            interp.sampleCubicHermiteCurves(baselateralcx, baselateralcd1,
-                                        elementsCountOut=elementsCountAlong)
-            baselateralcd1 = interp.smoothCubicHermiteDerivativesLine(baselateralcx, baselateralcd1,
+            tempcx=[]
+            tempcd1=[]
+            tempcx.append(cx[0])
+            tempcd1.append(cd1[0])
+            tempcx.append(cx[6])
+            tempcd1.append(cd1[6])
+            tempcx.append(cx[4])
+            tempcd1.append(cd1[4])
+            if(elementsCountAlong>2):
+                baselateralcx, baselateralcd1, _, _, _ = interp.sampleCubicHermiteCurves(tempcx, tempcd1,
+                                                            elementsCountOut=elementsCountAlong)
+                baselateralcd1 = interp.smoothCubicHermiteDerivativesLine(baselateralcx, baselateralcd1,
                                                                  fixAllDirections=False,
                                                                  fixStartDerivative=True, fixEndDerivative=True,
                                                                  magnitudeScalingMode=interp.DerivativeScalingMode.HARMONIC_MEAN)
+                for n in range(elementsCountAlong):
+                    if (n == 0):
+                        baselateralcd2.append(cd2[0])
+                        baselateralcd3.append(cd3[0])
+                    if (n == elementsCountAlong - 1):
+                        baselateralcd2.append(cd2[4])
+                        baselateralcd3.append(cd3[4])
+                    else:
+                        baselateralcd2.append(cd2[6])
+                        baselateralcd3.append(cd3[6])
 
-            #Apical edge
-            for n in range(3):
-                apicaledgecx.append(cx[n+3])
-                apicaledgecd1.append(cd1[n+3])
-                apicaledgecd2.append(cd2[n+3])
+            # if(elementsCountAlong>2):
+            # #Apical edge
+            # for n in range(3):
+            #     apicaledgecx.append(cx[n+3])
+            #     apicaledgecd1.append(cd1[n+3])
+            #     apicaledgecd2.append(cd2[n+3])
 
             # Create additional nodes
             ###########################
-            temp = []
-            for i in range(int(elementsCountAlong/2)//2):
-                print('looping index for mid medial=',i)
-                for n in range(elementsCountAlong+1):
-                    print('looping index for elems=', n)
-                    xfrac = 1.0/float(i+2)
-                    temp = [(accessoryedgecx[n][c]+basemedialcx[n][c])*xfrac for c in range(3)]
-                    midmedialcx.append(temp)
-                    midmedialcd1.append(basemedialcd1[n])
-                    midmedialcd2.append(basemedialcd2[n])
-                    midmedialcd3.append(basemedialcd3[n])
+            if(elementsCountAlong>2):
+                temp = []
+                for i in range(int(elementsCountAlong/2)//2):
+                    for n in range(elementsCountAlong+1):
+                        xfrac = 1.0/float(i+2)
+                        temp = [(accessoryedgecx[n][c]+basemedialcx[n][c])*xfrac for c in range(3)]
+                        midmedialcx.append(temp)
+                        midmedialcd1.append(basemedialcd1[n])
+                        midmedialcd2.append(basemedialcd2[n])
+                        midmedialcd3.append(basemedialcd3[n])
 
-                    temp = [(posteriorlateralcx[n][c]+baselateralcx[n][c])*xfrac for c in range(3)]
-                    midlateralcx.append(temp)
-                    midlateralcd1.append(baselateralcd1[n])
-                    midlateralcd2.append(baselateralcd2[n])
-                    midlateralcd3.append(baselateralcd3[n])
+                        temp = [(posteriorlateralcx[n][c]+baselateralcx[n][c])*xfrac for c in range(3)]
+                        midlateralcx.append(temp)
+                        midlateralcd1.append(baselateralcd1[n])
+                        midlateralcd2.append(baselateralcd2[n])
+                        midlateralcd3.append(baselateralcd3[n])
 
-            # #smooth vertically (apical-basally)
-            # for n in range(1,4):
-            #     tempmidcx = []
-            #     tempmidcd2 = []
-            #     tempmidcx.append(baselateralcx[n])
-            #     tempmidcd2.append(baselateralcd2[n])
-            #     tempmidcx.append(posteriorlateralcx[n])
-            #     tempmidcd2.append(posteriorlateralcd2[n])
-            #     tempmidcx.append(apicaledgecx[n-1])
-            #     tempmidcd2.append(apicaledgecd2[n-1])
-            #     tempmidcx, tempmidcd2, _, _, _ = \
-            #         interp.sampleCubicHermiteCurves(tempmidcx, tempmidcd2, elementsCountOut=elementsCountAlong)
-            #     midlateralcx.append(tempmidcx[1])
-            #     midlateralcd2.append(tempmidcd2[1])
-            #     midlateralcd1.append(baselateralcd1[n])
-            #     midlateralcd3.append(baselateralcd3[n])
-            # midlateralcx.append(cx[7])
-            # midlateralcd1.append(cd1[7])
-            # midlateralcd2.append(cd2[7])
-            # midlateralcd3.append(cd3[7])
-
-            temp = []
-            for n in range(elementsCountAlong-1):
-                temp = [(cx[n+9][c]+cx[n+3][c])*0.5 for c in range(3)]
-                if(n==0):
-                    temp = [(cx[n+9][c]+cx[n+3][c]+cx[n+4][c]+cx[n+10][c])*0.25 for c in range(3)]
-                if (n == elementsCountAlong-2):
-                    temp = [(cx[n+9][c] + cx[n+3][c] + cx[n+2][c] + cx[n+8][c])*0.25 for c in range(3)]
-                midmedialapicalcx.append(temp)
-                midmedialapicalcd1.append(accessoryedgecd1[n+1])
-                midmedialapicalcd2.append(accessoryedgecd2[n+1])
-                midmedialapicalcd3.append(accessoryedgecd3[n+1])
-
-                temp = [(cx[n+12][c]+cx[n+3][c])/2 for c in range(3)]
-                midlateralapicalcx.append(temp)
-                midlateralapicalcd1.append(posteriorlateralcd1[n+1])
-                midlateralapicalcd2.append(posteriorlateralcd2[n+1])
-                midlateralapicalcd3.append(posteriorlateralcd3[n+1])
+            # if(elementsCountAlong>3):
+            # temp = []
+            # for n in range(elementsCountAlong-1):
+            #     temp = [(cx[n+9][c]+cx[n+3][c])*0.5 for c in range(3)]
+            #     if(n==0):
+            #         temp = [(cx[n+9][c]+cx[n+3][c]+cx[n+4][c]+cx[n+10][c])*0.25 for c in range(3)]
+            #     if (n == elementsCountAlong-2):
+            #         temp = [(cx[n+9][c] + cx[n+3][c] + cx[n+2][c] + cx[n+8][c])*0.25 for c in range(3)]
+            #     midmedialapicalcx.append(temp)
+            #     midmedialapicalcd1.append(accessoryedgecd1[n+1])
+            #     midmedialapicalcd2.append(accessoryedgecd2[n+1])
+            #     midmedialapicalcd3.append(accessoryedgecd3[n+1])
+            #
+            #     temp = [(cx[n+12][c]+cx[n+3][c])/2 for c in range(3)]
+            #     midlateralapicalcx.append(temp)
+            #     midlateralapicalcd1.append(posteriorlateralcd1[n+1])
+            #     midlateralapicalcd2.append(posteriorlateralcd2[n+1])
+            #     midlateralapicalcd3.append(posteriorlateralcd3[n+1])
 
 
         # # Create nodes
@@ -595,146 +599,146 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
                 coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D2_DS2DS3, 1, zero)
                 coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D3_DS1DS2DS3, 1, zero)
             nodeIdentifier = nodeIdentifier + 1
-
-        ##########################
-        # Create elements
-        ##########################
-        elementIdentifier = 1
-
-        eftfactory = eftfactory_tricubichermite(mesh, useCrossDerivatives)
-        eft = eftfactory.createEftBasic()
-
-        elementtemplate = mesh.createElementtemplate()
-        elementtemplate.setElementShapeType(Element.SHAPE_TYPE_CUBE)
-        elementtemplate.defineField(coordinates, -1, eft)
-        elementtemplateX = mesh.createElementtemplate()
-        elementtemplateX.setElementShapeType(Element.SHAPE_TYPE_CUBE)
-
-        #elements between accessory edge and base(medial/lateral)
-        for n in range(elementsCountAlong*int(elementsCountAlong/2)):
-            if((n)%4==0):  #wedge elements xi3zero
-                va = n%4
-                vb = (n%4 + 1)%elementsCountAlong
-                eft1 = eftfactory.createEftWedgeXi3Zero(va*100, vb*100)
-                # setEftScaleFactorIds(eft1, [1], [])
-                elementtemplateX.defineField(coordinates, -1, eft1)
-                # nodeIdentifiers = [1, 6, 9, 14, 1, 2, 9, 10]
-                bni1 = 1 + (2*elementsCountAlong)*(n//4)
-                bni2 = bni1 + elementsCountAlong + 1
-                bni3 = bni1 + 2*elementsCountAlong
-                bni4 = bni3 + (elementsCountAlong + 1)
-                # nodeIdentifiers = [1, 6, 9, 14, 2, 10]
-                nodeIdentifiers = [bni1, bni2, bni3, bni4, bni1+1, bni3+1]
-                print('nodes xi3=0:', bni1, bni2, bni3, bni4, bni1+1, bni3+1)
-                element = mesh.createElement(elementIdentifier, elementtemplateX)
-                result = element.setNodesByIdentifier(eft1, nodeIdentifiers)
-                # result2 = element.setScaleFactors(eft1, [-1])
-                elementIdentifier = elementIdentifier + 1
-            elif (n>0 and (n+1)%4==0): #wedge elements xi3One
-                va = n%4
-                vb = (n%4 + 1)%elementsCountAlong
-                eft2 = eftfactory.createEftWedgeXi3One(va*100, vb*100)
-                # setEftScaleFactorIds(eft2, [1], [])
-                elementtemplateX.defineField(coordinates, -1, eft2)
-
-                bni1 = (2*elementsCountAlong)*((n+1)//4)
-                bni2 = (elementsCountAlong+1)+(2*elementsCountAlong)*((n)//4)
-                bni3 = bni1 + 2*elementsCountAlong
-                bni4 = bni1 + (elementsCountAlong + 1)
-                # nodeIdentifiers = [1, 6, 9, 14, 2, 10]
-                nodeIdentifiers = [bni1, bni2, bni3, bni4, bni2-1, bni4-1]
-                print('xi3=1 elem',bni1, bni2, bni3, bni4, bni2-1, bni4-1)
-                element = mesh.createElement(elementIdentifier, elementtemplateX)
-                result = element.setNodesByIdentifier(eft2, nodeIdentifiers)
-                # result2 = element.setScaleFactors(eft2, [-1])
-                elementIdentifier = elementIdentifier + 1
-            else:
-                eft = eftfactory.createEftBasic()
-                bni1 = n + (elementsCountAlong)*(n//elementsCountAlong+1)+1
-                bni2 = bni1 + 2*(elementsCountAlong)
-                bni3 = bni1 - elementsCountAlong
-                bni4 = bni1 + (elementsCountAlong)
-                # nodeIdentifiers = [6, 7, 14, 15, 2, 3, 10, 11]
-                nodeIdentifiers = [bni1,bni1+1,bni2,bni2+1,bni3,bni3+1,bni4,bni4+1]
-                print('normal elems=',bni1,bni1+1,bni2,bni2+1,bni3,bni3+1,bni4,bni4+1)
-                element = mesh.createElement(elementIdentifier, elementtemplate)
-                result = element.setNodesByIdentifier(eft, nodeIdentifiers)
-                # result2 = element.setScaleFactors(eft, [-1])
-                elementIdentifier = elementIdentifier + 1
-
-
-            # nodeIdentifiers = [7, 8, 15, 16, 3, 4, 11, 12]
-            # element = mesh.createElement(elementIdentifier, elementtemplate)
-            # result = element.setNodesByIdentifier(eft, nodeIdentifiers)
-            # elementIdentifier = elementIdentifier + 1
-
-            # if(n>0 and (n+1)%4==0):  #wedge elements
-            #     eft1 = eftfactory.createEftNoCrossDerivatives()
-            #     setEftScaleFactorIds(eft1, [1], [])
-            #     # nodeIdentifiers = [1, 6, 9, 14, 1, 2, 9, 10]
-            #     nodeIdentifiers = [1, 6, 9, 14, 2, 10]
-            #     elementtemplateX.defineField(coordinates, -1, eft1)
-            #     element = mesh.createElement(elementIdentifier, elementtemplateX)
-            #     result = element.setNodesByIdentifier(eft1, nodeIdentifiers)
-            #     result2 = element.setScaleFactors(eft1, [-1])
-            #     elementIdentifier = elementIdentifier + 1
-
-        #elements between accessory edge and Apex
-        eft1 = eftfactory.createEftWedgeXi3Zero(1 * 100, 2 * 100)
-        # setEftScaleFactorIds(eft1, [1], [])
-        elementtemplateX.defineField(coordinates, -1, eft1)
-        nodeIdentifiers = [17, 22, 31, 28, 18, 25]
-        element = mesh.createElement(elementIdentifier, elementtemplateX)
-        result = element.setNodesByIdentifier(eft1, nodeIdentifiers)
-        # result2 = element.setScaleFactors(eft1, [-1])
-        elementIdentifier = elementIdentifier + 1
-
-        eft = eftfactory.createEftBasic()
-        nodeIdentifiers = [22, 23, 28, 29, 18, 19, 25, 26]
-        element = mesh.createElement(elementIdentifier, elementtemplate)
-        result = element.setNodesByIdentifier(eft, nodeIdentifiers)
-        elementIdentifier = elementIdentifier + 1
-
-        eft = eftfactory.createEftBasic()
-        nodeIdentifiers = [23, 24, 29, 30, 19, 20, 26, 27]
-        element = mesh.createElement(elementIdentifier, elementtemplate)
-        result = element.setNodesByIdentifier(eft, nodeIdentifiers)
-        elementIdentifier = elementIdentifier + 1
-
-        eft2 = eftfactory.createEftWedgeXi3One(0 * 100, 1 * 100)
-        # setEftScaleFactorIds(eft2, [1], [])
-        elementtemplateX.defineField(coordinates, -1, eft2)
-        nodeIdentifiers = [24, 21, 30, 33, 20, 27]
-        element = mesh.createElement(elementIdentifier, elementtemplateX)
-        result = element.setNodesByIdentifier(eft2, nodeIdentifiers)
-        # result2 = element.setScaleFactors(eft2, [-1])
-        elementIdentifier = elementIdentifier + 1
-
-        eft1 = eftfactory.createEftWedgeXi3One(1 * 100, 2 * 100)
-        # setEftScaleFactorIds(eft1, [1], [])
-        for n in range(2):
-            d2Map = (0,-1,0)
-            remapEftNodeValueLabel(eft1, [(n+1)*2], Node.VALUE_LABEL_D_DS1,  derivativeSignsToExpressionTerms(
-                                       (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3),
-                                       d2Map))
-            remapEftNodeValueLabel(eft1, [(n+1)*4], Node.VALUE_LABEL_D_DS1, [(Node.VALUE_LABEL_D_DS1, [])])
-        elementtemplateX.defineField(coordinates, -1, eft1)
-        # nodeIdentifiers = [31,28,32,29,25,26]
-        nodeIdentifiers = [28, 29, 31, 32, 25, 26]
-        element = mesh.createElement(elementIdentifier, elementtemplateX)
-        result = element.setNodesByIdentifier(eft1, nodeIdentifiers)
-        # result2 = element.setScaleFactors(eft1, [-1])
-        elementIdentifier = elementIdentifier + 1
-
-        eft1 = eftfactory.createEftWedgeXi3One(1 * 100, 2 * 100)
-        # setEftScaleFactorIds(eft1, [1], [])
-        elementtemplateX.defineField(coordinates, -1, eft1)
-        # nodeIdentifiers = [33,30,32,29,27,26]
-        nodeIdentifiers = [29, 30, 32, 33, 26, 27]
-        element = mesh.createElement(elementIdentifier, elementtemplateX)
-        result = element.setNodesByIdentifier(eft1, nodeIdentifiers)
-        # result2 = element.setScaleFactors(eft1, [-1])
-        elementIdentifier = elementIdentifier + 1
+        #
+        # ##########################
+        # # Create elements
+        # ##########################
+        # elementIdentifier = 1
+        #
+        # eftfactory = eftfactory_tricubichermite(mesh, useCrossDerivatives)
+        # eft = eftfactory.createEftBasic()
+        #
+        # elementtemplate = mesh.createElementtemplate()
+        # elementtemplate.setElementShapeType(Element.SHAPE_TYPE_CUBE)
+        # elementtemplate.defineField(coordinates, -1, eft)
+        # elementtemplateX = mesh.createElementtemplate()
+        # elementtemplateX.setElementShapeType(Element.SHAPE_TYPE_CUBE)
+        #
+        # #elements between accessory edge and base(medial/lateral)
+        # for n in range(elementsCountAlong*int(elementsCountAlong/2)):
+        #     if((n)%4==0):  #wedge elements xi3zero
+        #         va = n%4
+        #         vb = (n%4 + 1)%elementsCountAlong
+        #         eft1 = eftfactory.createEftWedgeXi3Zero(va*100, vb*100)
+        #         # setEftScaleFactorIds(eft1, [1], [])
+        #         elementtemplateX.defineField(coordinates, -1, eft1)
+        #         # nodeIdentifiers = [1, 6, 9, 14, 1, 2, 9, 10]
+        #         bni1 = 1 + (2*elementsCountAlong)*(n//4)
+        #         bni2 = bni1 + elementsCountAlong + 1
+        #         bni3 = bni1 + 2*elementsCountAlong
+        #         bni4 = bni3 + (elementsCountAlong + 1)
+        #         # nodeIdentifiers = [1, 6, 9, 14, 2, 10]
+        #         nodeIdentifiers = [bni1, bni2, bni3, bni4, bni1+1, bni3+1]
+        #         print('nodes xi3=0:', bni1, bni2, bni3, bni4, bni1+1, bni3+1)
+        #         element = mesh.createElement(elementIdentifier, elementtemplateX)
+        #         result = element.setNodesByIdentifier(eft1, nodeIdentifiers)
+        #         # result2 = element.setScaleFactors(eft1, [-1])
+        #         elementIdentifier = elementIdentifier + 1
+        #     elif (n>0 and (n+1)%4==0): #wedge elements xi3One
+        #         va = n%4
+        #         vb = (n%4 + 1)%elementsCountAlong
+        #         eft2 = eftfactory.createEftWedgeXi3One(va*100, vb*100)
+        #         # setEftScaleFactorIds(eft2, [1], [])
+        #         elementtemplateX.defineField(coordinates, -1, eft2)
+        #
+        #         bni1 = (2*elementsCountAlong)*((n+1)//4)
+        #         bni2 = (elementsCountAlong+1)+(2*elementsCountAlong)*((n)//4)
+        #         bni3 = bni1 + 2*elementsCountAlong
+        #         bni4 = bni1 + (elementsCountAlong + 1)
+        #         # nodeIdentifiers = [1, 6, 9, 14, 2, 10]
+        #         nodeIdentifiers = [bni1, bni2, bni3, bni4, bni2-1, bni4-1]
+        #         print('xi3=1 elem',bni1, bni2, bni3, bni4, bni2-1, bni4-1)
+        #         element = mesh.createElement(elementIdentifier, elementtemplateX)
+        #         result = element.setNodesByIdentifier(eft2, nodeIdentifiers)
+        #         # result2 = element.setScaleFactors(eft2, [-1])
+        #         elementIdentifier = elementIdentifier + 1
+        #     else:
+        #         eft = eftfactory.createEftBasic()
+        #         bni1 = n + (elementsCountAlong)*(n//elementsCountAlong+1)+1
+        #         bni2 = bni1 + 2*(elementsCountAlong)
+        #         bni3 = bni1 - elementsCountAlong
+        #         bni4 = bni1 + (elementsCountAlong)
+        #         # nodeIdentifiers = [6, 7, 14, 15, 2, 3, 10, 11]
+        #         nodeIdentifiers = [bni1,bni1+1,bni2,bni2+1,bni3,bni3+1,bni4,bni4+1]
+        #         print('normal elems=',bni1,bni1+1,bni2,bni2+1,bni3,bni3+1,bni4,bni4+1)
+        #         element = mesh.createElement(elementIdentifier, elementtemplate)
+        #         result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+        #         # result2 = element.setScaleFactors(eft, [-1])
+        #         elementIdentifier = elementIdentifier + 1
+        #
+        #
+        #     # nodeIdentifiers = [7, 8, 15, 16, 3, 4, 11, 12]
+        #     # element = mesh.createElement(elementIdentifier, elementtemplate)
+        #     # result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+        #     # elementIdentifier = elementIdentifier + 1
+        #
+        #     # if(n>0 and (n+1)%4==0):  #wedge elements
+        #     #     eft1 = eftfactory.createEftNoCrossDerivatives()
+        #     #     setEftScaleFactorIds(eft1, [1], [])
+        #     #     # nodeIdentifiers = [1, 6, 9, 14, 1, 2, 9, 10]
+        #     #     nodeIdentifiers = [1, 6, 9, 14, 2, 10]
+        #     #     elementtemplateX.defineField(coordinates, -1, eft1)
+        #     #     element = mesh.createElement(elementIdentifier, elementtemplateX)
+        #     #     result = element.setNodesByIdentifier(eft1, nodeIdentifiers)
+        #     #     result2 = element.setScaleFactors(eft1, [-1])
+        #     #     elementIdentifier = elementIdentifier + 1
+        #
+        # #elements between accessory edge and Apex
+        # eft1 = eftfactory.createEftWedgeXi3Zero(1 * 100, 2 * 100)
+        # # setEftScaleFactorIds(eft1, [1], [])
+        # elementtemplateX.defineField(coordinates, -1, eft1)
+        # nodeIdentifiers = [17, 22, 31, 28, 18, 25]
+        # element = mesh.createElement(elementIdentifier, elementtemplateX)
+        # result = element.setNodesByIdentifier(eft1, nodeIdentifiers)
+        # # result2 = element.setScaleFactors(eft1, [-1])
+        # elementIdentifier = elementIdentifier + 1
+        #
+        # eft = eftfactory.createEftBasic()
+        # nodeIdentifiers = [22, 23, 28, 29, 18, 19, 25, 26]
+        # element = mesh.createElement(elementIdentifier, elementtemplate)
+        # result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+        # elementIdentifier = elementIdentifier + 1
+        #
+        # eft = eftfactory.createEftBasic()
+        # nodeIdentifiers = [23, 24, 29, 30, 19, 20, 26, 27]
+        # element = mesh.createElement(elementIdentifier, elementtemplate)
+        # result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+        # elementIdentifier = elementIdentifier + 1
+        #
+        # eft2 = eftfactory.createEftWedgeXi3One(0 * 100, 1 * 100)
+        # # setEftScaleFactorIds(eft2, [1], [])
+        # elementtemplateX.defineField(coordinates, -1, eft2)
+        # nodeIdentifiers = [24, 21, 30, 33, 20, 27]
+        # element = mesh.createElement(elementIdentifier, elementtemplateX)
+        # result = element.setNodesByIdentifier(eft2, nodeIdentifiers)
+        # # result2 = element.setScaleFactors(eft2, [-1])
+        # elementIdentifier = elementIdentifier + 1
+        #
+        # eft1 = eftfactory.createEftWedgeXi3One(1 * 100, 2 * 100)
+        # # setEftScaleFactorIds(eft1, [1], [])
+        # for n in range(2):
+        #     d2Map = (0,-1,0)
+        #     remapEftNodeValueLabel(eft1, [(n+1)*2], Node.VALUE_LABEL_D_DS1,  derivativeSignsToExpressionTerms(
+        #                                (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3),
+        #                                d2Map))
+        #     remapEftNodeValueLabel(eft1, [(n+1)*4], Node.VALUE_LABEL_D_DS1, [(Node.VALUE_LABEL_D_DS1, [])])
+        # elementtemplateX.defineField(coordinates, -1, eft1)
+        # # nodeIdentifiers = [31,28,32,29,25,26]
+        # nodeIdentifiers = [28, 29, 31, 32, 25, 26]
+        # element = mesh.createElement(elementIdentifier, elementtemplateX)
+        # result = element.setNodesByIdentifier(eft1, nodeIdentifiers)
+        # # result2 = element.setScaleFactors(eft1, [-1])
+        # elementIdentifier = elementIdentifier + 1
+        #
+        # eft1 = eftfactory.createEftWedgeXi3One(1 * 100, 2 * 100)
+        # # setEftScaleFactorIds(eft1, [1], [])
+        # elementtemplateX.defineField(coordinates, -1, eft1)
+        # # nodeIdentifiers = [33,30,32,29,27,26]
+        # nodeIdentifiers = [29, 30, 32, 33, 26, 27]
+        # element = mesh.createElement(elementIdentifier, elementtemplateX)
+        # result = element.setNodesByIdentifier(eft1, nodeIdentifiers)
+        # # result2 = element.setScaleFactors(eft1, [-1])
+        # elementIdentifier = elementIdentifier + 1
 
         fm.endChange()
         return []
