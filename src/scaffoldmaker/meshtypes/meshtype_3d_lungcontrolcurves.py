@@ -188,9 +188,8 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
         if not options['Control curves'].getScaffoldType() in cls.getOptionValidScaffoldTypes('Control curves'):
             options['Control curves'] = cls.getOptionScaffoldPackage('Control curves', MeshType_1d_lungpath1)
         for key in [
-            'Species',
             'Number of segments',
-            'Number of elements along'
+            'Number of elements along',
             'Refine number of elements around',
             'Refine number of elements along',
             'Refine number of elements through wall']:
@@ -405,12 +404,44 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
                         baselateralcd2.append(cd2[6])
                         baselateralcd3.append(cd3[6])
 
-            # if(elementsCountAlong>2):
-            # #Apical edge
-            # for n in range(3):
-            #     apicaledgecx.append(cx[n+3])
-            #     apicaledgecd1.append(cd1[n+3])
-            #     apicaledgecd2.append(cd2[n+3])
+            ### Apical
+            ### ----------
+            if(elementsCountAlong<4):
+                apicaledgecx.append(cx[2])
+                apicaledgecd1.append(cd1[2])
+                apicaledgecd2.append(cd2[2])
+            else:
+                tempcx=[]
+                tempcd1=[]
+                tempcx.append(cx[0])
+                tempcd1.append(cd2[0])
+                tempcx.append(cx[1])
+                tempcd1.append(cd2[1])
+                tempcx.append(cx[2])
+                tempcd1.append(cd2[2])
+                tempapicalcx, tempapicalcd2, _, _, _ = interp.sampleCubicHermiteCurves(tempcx, tempcd1,
+                                                               elementsCountOut=elementsCountAlong)
+
+                apicaledgecx.append(tempapicalcx[3])
+                apicaledgecd2.append(tempapicalcd2[3])
+                apicaledgecd1.append(cd1[1])
+                apicaledgecx.append(cx[2])
+                apicaledgecd2.append(cd2[2])
+                apicaledgecd1.append(cd1[2])
+
+                tempcx=[]
+                tempcd1=[]
+                tempcx.append(cx[2])
+                tempcd1.append(cd2[2])
+                tempcx.append(cx[3])
+                tempcd1.append(cd2[3])
+                tempcx.append(cx[4])
+                tempcd1.append(cd2[4])
+                tempapicalcx, tempapicalcd2, _, _, _ = interp.sampleCubicHermiteCurves(tempcx, tempcd1,
+                                                               elementsCountOut=elementsCountAlong)
+                apicaledgecx.append(tempapicalcx[1])
+                apicaledgecd2.append(tempapicalcd2[1])
+                apicaledgecd1.append(cd1[3])
 
             # Create additional nodes
             ###########################
