@@ -65,7 +65,21 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
                     [[-1, -9.2, 4.6], [-1.01, 0.83, 2.45], [-0.8, -0.8, 3.5], [1.1, 0.06, 1]],
                     [[-6, -10.3, 1.6], [-2.4, 1.6, 1.0], [-0.07, -2.0, 2.7], [1.4, 0.41, 1.2]],
                     [[-1.6, -10.2, 11.7], [0.43, 1.1, 1.0], [-1.1, 0.42, 2.5], [1, 0, 0]],
-                    [[-6.6, -11, 12.5], [-0.7, 2.5, 0.74], [0.7, -0.1, 1.8], [1, 0, 0]]])
+                    [[-6.6, -11, 12.5], [-0.7, 2.5, 0.74], [0.7, -0.1, 1.8], [1, 0, 0]],
+                    [[5.2, -14.4, 3.2], [-1, 2, -2], [-3, -4, 1], [-2, 0, 0]],
+                    [[5.6, -14, 7.1], [-1, 2, -2], [-3, -4, 1], [-2, 0, 0]],
+                    [[6, -14, 11], [-1, 2, -2], [-3, -4, 1], [-2, 0, 0]],
+                    [[2.8, -6.6, 19], [-1, 2, -2], [-3, -4, 1], [-2, 0, 0]],
+                    [[2.7, -3.2, 16], [-1, 2, -2], [-3, -4, 1], [-2, 0, 0]],
+                    [[0.4, -1.5, 11], [1, -1, 1], [-2, 2, 2], [2, 2, 0]],
+                    [[4, -1.6, 11], [-1, 2, -2], [-3, -4, 1], [-2, 0, 0]],
+                    [[8, -5.7, 10], [-1, 2, -2], [-3, -4, 1], [-2, 0, 0]],
+                    [[-0.5, -5, 11.5], [-1, 2, -2], [-3, -4, 1], [-2, 0, 0]],
+                    [[-1.6, -8, 12], [-1, 2, -2], [-3, -4, 1], [-2, 0, 0]],
+                    [[8.5, -9.1, 11.2], [-1, 2, -2], [-3, -4, 1], [-2, 0, 0]],
+                    [[7.2, -11.5, 11.1], [-1, 2, -2], [-3, -4, 1], [-2, 0, 0]],
+                    [[1, -12.1, 12.9], [-1, 2, -2], [-3, -4, 1], [-2, 0, 0]],
+                    [[3.5, -13, 12], [-1, 2, -2], [-3, -4, 1], [-2, 0, 0]]])
         } ),
         'Pig 1' : ScaffoldPackage(MeshType_1d_lungpath1, {
             'scaffoldSettings' : {
@@ -125,7 +139,6 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
         options = {
             'Control curves' : copy.deepcopy(centralPathOption),
             'Species' : 'Mouse',
-            'Number of segments': 20,
             'Number of elements along': 4,
             'Refine' : False,
             'Refine number of elements around' : 1,
@@ -133,10 +146,8 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
             'Refine number of elements through wall' : 1
             }
         if 'Mouse' in parameterSetName:
-            options['Number of segments'] = 20
             options['Species'] = 'Mouse'
         elif 'Pig 1' in parameterSetName:
-            options['Number of segments'] = 20
             options['Species'] = 'Pig'
         return options
 
@@ -145,7 +156,6 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
         return [
             'Control curves',
             'Species',
-            'Number of segments',
             'Number of elements along',
             'Refine',
             'Refine number of elements around',
@@ -188,7 +198,6 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
         if not options['Control curves'].getScaffoldType() in cls.getOptionValidScaffoldTypes('Control curves'):
             options['Control curves'] = cls.getOptionScaffoldPackage('Control curves', MeshType_1d_lungpath1)
         for key in [
-            'Number of segments',
             'Number of elements along',
             'Refine number of elements around',
             'Refine number of elements along',
@@ -344,7 +353,6 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
                 else:
                     posteriorlateralcd2.append(cd2[8])
                     posteriorlateralcd3.append(cd3[8])
-
 
             ## base medial
             ## -----------
@@ -631,145 +639,145 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
                 coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D3_DS1DS2DS3, 1, zero)
             nodeIdentifier = nodeIdentifier + 1
         #
-        # ##########################
-        # # Create elements
-        # ##########################
-        # elementIdentifier = 1
-        #
-        # eftfactory = eftfactory_tricubichermite(mesh, useCrossDerivatives)
-        # eft = eftfactory.createEftBasic()
-        #
-        # elementtemplate = mesh.createElementtemplate()
-        # elementtemplate.setElementShapeType(Element.SHAPE_TYPE_CUBE)
-        # elementtemplate.defineField(coordinates, -1, eft)
-        # elementtemplateX = mesh.createElementtemplate()
-        # elementtemplateX.setElementShapeType(Element.SHAPE_TYPE_CUBE)
-        #
-        # #elements between accessory edge and base(medial/lateral)
-        # for n in range(elementsCountAlong*int(elementsCountAlong/2)):
-        #     if((n)%4==0):  #wedge elements xi3zero
-        #         va = n%4
-        #         vb = (n%4 + 1)%elementsCountAlong
-        #         eft1 = eftfactory.createEftWedgeXi3Zero(va*100, vb*100)
-        #         # setEftScaleFactorIds(eft1, [1], [])
-        #         elementtemplateX.defineField(coordinates, -1, eft1)
-        #         # nodeIdentifiers = [1, 6, 9, 14, 1, 2, 9, 10]
-        #         bni1 = 1 + (2*elementsCountAlong)*(n//4)
-        #         bni2 = bni1 + elementsCountAlong + 1
-        #         bni3 = bni1 + 2*elementsCountAlong
-        #         bni4 = bni3 + (elementsCountAlong + 1)
-        #         # nodeIdentifiers = [1, 6, 9, 14, 2, 10]
-        #         nodeIdentifiers = [bni1, bni2, bni3, bni4, bni1+1, bni3+1]
-        #         print('nodes xi3=0:', bni1, bni2, bni3, bni4, bni1+1, bni3+1)
-        #         element = mesh.createElement(elementIdentifier, elementtemplateX)
-        #         result = element.setNodesByIdentifier(eft1, nodeIdentifiers)
-        #         # result2 = element.setScaleFactors(eft1, [-1])
-        #         elementIdentifier = elementIdentifier + 1
-        #     elif (n>0 and (n+1)%4==0): #wedge elements xi3One
-        #         va = n%4
-        #         vb = (n%4 + 1)%elementsCountAlong
-        #         eft2 = eftfactory.createEftWedgeXi3One(va*100, vb*100)
-        #         # setEftScaleFactorIds(eft2, [1], [])
-        #         elementtemplateX.defineField(coordinates, -1, eft2)
-        #
-        #         bni1 = (2*elementsCountAlong)*((n+1)//4)
-        #         bni2 = (elementsCountAlong+1)+(2*elementsCountAlong)*((n)//4)
-        #         bni3 = bni1 + 2*elementsCountAlong
-        #         bni4 = bni1 + (elementsCountAlong + 1)
-        #         # nodeIdentifiers = [1, 6, 9, 14, 2, 10]
-        #         nodeIdentifiers = [bni1, bni2, bni3, bni4, bni2-1, bni4-1]
-        #         print('xi3=1 elem',bni1, bni2, bni3, bni4, bni2-1, bni4-1)
-        #         element = mesh.createElement(elementIdentifier, elementtemplateX)
-        #         result = element.setNodesByIdentifier(eft2, nodeIdentifiers)
-        #         # result2 = element.setScaleFactors(eft2, [-1])
-        #         elementIdentifier = elementIdentifier + 1
-        #     else:
-        #         eft = eftfactory.createEftBasic()
-        #         bni1 = n + (elementsCountAlong)*(n//elementsCountAlong+1)+1
-        #         bni2 = bni1 + 2*(elementsCountAlong)
-        #         bni3 = bni1 - elementsCountAlong
-        #         bni4 = bni1 + (elementsCountAlong)
-        #         # nodeIdentifiers = [6, 7, 14, 15, 2, 3, 10, 11]
-        #         nodeIdentifiers = [bni1,bni1+1,bni2,bni2+1,bni3,bni3+1,bni4,bni4+1]
-        #         print('normal elems=',bni1,bni1+1,bni2,bni2+1,bni3,bni3+1,bni4,bni4+1)
-        #         element = mesh.createElement(elementIdentifier, elementtemplate)
-        #         result = element.setNodesByIdentifier(eft, nodeIdentifiers)
-        #         # result2 = element.setScaleFactors(eft, [-1])
-        #         elementIdentifier = elementIdentifier + 1
-        #
-        #
-        #     # nodeIdentifiers = [7, 8, 15, 16, 3, 4, 11, 12]
-        #     # element = mesh.createElement(elementIdentifier, elementtemplate)
-        #     # result = element.setNodesByIdentifier(eft, nodeIdentifiers)
-        #     # elementIdentifier = elementIdentifier + 1
-        #
-        #     # if(n>0 and (n+1)%4==0):  #wedge elements
-        #     #     eft1 = eftfactory.createEftNoCrossDerivatives()
-        #     #     setEftScaleFactorIds(eft1, [1], [])
-        #     #     # nodeIdentifiers = [1, 6, 9, 14, 1, 2, 9, 10]
-        #     #     nodeIdentifiers = [1, 6, 9, 14, 2, 10]
-        #     #     elementtemplateX.defineField(coordinates, -1, eft1)
-        #     #     element = mesh.createElement(elementIdentifier, elementtemplateX)
-        #     #     result = element.setNodesByIdentifier(eft1, nodeIdentifiers)
-        #     #     result2 = element.setScaleFactors(eft1, [-1])
-        #     #     elementIdentifier = elementIdentifier + 1
-        #
-        # #elements between accessory edge and Apex
-        # eft1 = eftfactory.createEftWedgeXi3Zero(1 * 100, 2 * 100)
-        # # setEftScaleFactorIds(eft1, [1], [])
-        # elementtemplateX.defineField(coordinates, -1, eft1)
-        # nodeIdentifiers = [17, 22, 31, 28, 18, 25]
-        # element = mesh.createElement(elementIdentifier, elementtemplateX)
-        # result = element.setNodesByIdentifier(eft1, nodeIdentifiers)
-        # # result2 = element.setScaleFactors(eft1, [-1])
-        # elementIdentifier = elementIdentifier + 1
-        #
-        # eft = eftfactory.createEftBasic()
-        # nodeIdentifiers = [22, 23, 28, 29, 18, 19, 25, 26]
-        # element = mesh.createElement(elementIdentifier, elementtemplate)
-        # result = element.setNodesByIdentifier(eft, nodeIdentifiers)
-        # elementIdentifier = elementIdentifier + 1
-        #
-        # eft = eftfactory.createEftBasic()
-        # nodeIdentifiers = [23, 24, 29, 30, 19, 20, 26, 27]
-        # element = mesh.createElement(elementIdentifier, elementtemplate)
-        # result = element.setNodesByIdentifier(eft, nodeIdentifiers)
-        # elementIdentifier = elementIdentifier + 1
-        #
-        # eft2 = eftfactory.createEftWedgeXi3One(0 * 100, 1 * 100)
-        # # setEftScaleFactorIds(eft2, [1], [])
-        # elementtemplateX.defineField(coordinates, -1, eft2)
-        # nodeIdentifiers = [24, 21, 30, 33, 20, 27]
-        # element = mesh.createElement(elementIdentifier, elementtemplateX)
-        # result = element.setNodesByIdentifier(eft2, nodeIdentifiers)
-        # # result2 = element.setScaleFactors(eft2, [-1])
-        # elementIdentifier = elementIdentifier + 1
-        #
-        # eft1 = eftfactory.createEftWedgeXi3One(1 * 100, 2 * 100)
-        # # setEftScaleFactorIds(eft1, [1], [])
-        # for n in range(2):
-        #     d2Map = (0,-1,0)
-        #     remapEftNodeValueLabel(eft1, [(n+1)*2], Node.VALUE_LABEL_D_DS1,  derivativeSignsToExpressionTerms(
-        #                                (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3),
-        #                                d2Map))
-        #     remapEftNodeValueLabel(eft1, [(n+1)*4], Node.VALUE_LABEL_D_DS1, [(Node.VALUE_LABEL_D_DS1, [])])
-        # elementtemplateX.defineField(coordinates, -1, eft1)
-        # # nodeIdentifiers = [31,28,32,29,25,26]
-        # nodeIdentifiers = [28, 29, 31, 32, 25, 26]
-        # element = mesh.createElement(elementIdentifier, elementtemplateX)
-        # result = element.setNodesByIdentifier(eft1, nodeIdentifiers)
-        # # result2 = element.setScaleFactors(eft1, [-1])
-        # elementIdentifier = elementIdentifier + 1
-        #
-        # eft1 = eftfactory.createEftWedgeXi3One(1 * 100, 2 * 100)
-        # # setEftScaleFactorIds(eft1, [1], [])
-        # elementtemplateX.defineField(coordinates, -1, eft1)
-        # # nodeIdentifiers = [33,30,32,29,27,26]
-        # nodeIdentifiers = [29, 30, 32, 33, 26, 27]
-        # element = mesh.createElement(elementIdentifier, elementtemplateX)
-        # result = element.setNodesByIdentifier(eft1, nodeIdentifiers)
-        # # result2 = element.setScaleFactors(eft1, [-1])
-        # elementIdentifier = elementIdentifier + 1
+        ##########################
+        # Create elements
+        ##########################
+        elementIdentifier = 1
+
+        eftfactory = eftfactory_tricubichermite(mesh, useCrossDerivatives)
+        eft = eftfactory.createEftBasic()
+
+        elementtemplate = mesh.createElementtemplate()
+        elementtemplate.setElementShapeType(Element.SHAPE_TYPE_CUBE)
+        elementtemplate.defineField(coordinates, -1, eft)
+        elementtemplateX = mesh.createElementtemplate()
+        elementtemplateX.setElementShapeType(Element.SHAPE_TYPE_CUBE)
+
+        #elements between accessory edge and base(medial/lateral)
+        for n in range(elementsCountAlong*int(elementsCountAlong/2)):
+            if((n)%4==0):  #wedge elements xi3zero
+                va = n%4
+                vb = (n%4 + 1)%elementsCountAlong
+                eft1 = eftfactory.createEftWedgeXi3Zero(va*100, vb*100)
+                # setEftScaleFactorIds(eft1, [1], [])
+                elementtemplateX.defineField(coordinates, -1, eft1)
+                # nodeIdentifiers = [1, 6, 9, 14, 1, 2, 9, 10]
+                bni1 = 1 + (2*elementsCountAlong)*(n//4)
+                bni2 = bni1 + elementsCountAlong + 1
+                bni3 = bni1 + 2*elementsCountAlong
+                bni4 = bni3 + (elementsCountAlong + 1)
+                # nodeIdentifiers = [1, 6, 9, 14, 2, 10]
+                nodeIdentifiers = [bni1, bni2, bni3, bni4, bni1+1, bni3+1]
+                print('nodes xi3=0:', bni1, bni2, bni3, bni4, bni1+1, bni3+1)
+                element = mesh.createElement(elementIdentifier, elementtemplateX)
+                result = element.setNodesByIdentifier(eft1, nodeIdentifiers)
+                # result2 = element.setScaleFactors(eft1, [-1])
+                elementIdentifier = elementIdentifier + 1
+            elif (n>0 and (n+1)%4==0): #wedge elements xi3One
+                va = n%4
+                vb = (n%4 + 1)%elementsCountAlong
+                eft2 = eftfactory.createEftWedgeXi3One(va*100, vb*100)
+                # setEftScaleFactorIds(eft2, [1], [])
+                elementtemplateX.defineField(coordinates, -1, eft2)
+
+                bni1 = (2*elementsCountAlong)*((n+1)//4)
+                bni2 = (elementsCountAlong+1)+(2*elementsCountAlong)*((n)//4)
+                bni3 = bni1 + 2*elementsCountAlong
+                bni4 = bni1 + (elementsCountAlong + 1)
+                # nodeIdentifiers = [1, 6, 9, 14, 2, 10]
+                nodeIdentifiers = [bni1, bni2, bni3, bni4, bni2-1, bni4-1]
+                print('xi3=1 elem',bni1, bni2, bni3, bni4, bni2-1, bni4-1)
+                element = mesh.createElement(elementIdentifier, elementtemplateX)
+                result = element.setNodesByIdentifier(eft2, nodeIdentifiers)
+                # result2 = element.setScaleFactors(eft2, [-1])
+                elementIdentifier = elementIdentifier + 1
+            else:
+                eft = eftfactory.createEftBasic()
+                bni1 = n + (elementsCountAlong)*(n//elementsCountAlong+1)+1
+                bni2 = bni1 + 2*(elementsCountAlong)
+                bni3 = bni1 - elementsCountAlong
+                bni4 = bni1 + (elementsCountAlong)
+                # nodeIdentifiers = [6, 7, 14, 15, 2, 3, 10, 11]
+                nodeIdentifiers = [bni1,bni1+1,bni2,bni2+1,bni3,bni3+1,bni4,bni4+1]
+                print('normal elems=',bni1,bni1+1,bni2,bni2+1,bni3,bni3+1,bni4,bni4+1)
+                element = mesh.createElement(elementIdentifier, elementtemplate)
+                result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+                # result2 = element.setScaleFactors(eft, [-1])
+                elementIdentifier = elementIdentifier + 1
+
+
+            # nodeIdentifiers = [7, 8, 15, 16, 3, 4, 11, 12]
+            # element = mesh.createElement(elementIdentifier, elementtemplate)
+            # result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+            # elementIdentifier = elementIdentifier + 1
+
+            # if(n>0 and (n+1)%4==0):  #wedge elements
+            #     eft1 = eftfactory.createEftNoCrossDerivatives()
+            #     setEftScaleFactorIds(eft1, [1], [])
+            #     # nodeIdentifiers = [1, 6, 9, 14, 1, 2, 9, 10]
+            #     nodeIdentifiers = [1, 6, 9, 14, 2, 10]
+            #     elementtemplateX.defineField(coordinates, -1, eft1)
+            #     element = mesh.createElement(elementIdentifier, elementtemplateX)
+            #     result = element.setNodesByIdentifier(eft1, nodeIdentifiers)
+            #     result2 = element.setScaleFactors(eft1, [-1])
+            #     elementIdentifier = elementIdentifier + 1
+
+        #elements between accessory edge and Apex
+        eft1 = eftfactory.createEftWedgeXi3Zero(1 * 100, 2 * 100)
+        # setEftScaleFactorIds(eft1, [1], [])
+        elementtemplateX.defineField(coordinates, -1, eft1)
+        nodeIdentifiers = [17, 22, 31, 28, 18, 25]
+        element = mesh.createElement(elementIdentifier, elementtemplateX)
+        result = element.setNodesByIdentifier(eft1, nodeIdentifiers)
+        # result2 = element.setScaleFactors(eft1, [-1])
+        elementIdentifier = elementIdentifier + 1
+
+        eft = eftfactory.createEftBasic()
+        nodeIdentifiers = [22, 23, 28, 29, 18, 19, 25, 26]
+        element = mesh.createElement(elementIdentifier, elementtemplate)
+        result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+        elementIdentifier = elementIdentifier + 1
+
+        eft = eftfactory.createEftBasic()
+        nodeIdentifiers = [23, 24, 29, 30, 19, 20, 26, 27]
+        element = mesh.createElement(elementIdentifier, elementtemplate)
+        result = element.setNodesByIdentifier(eft, nodeIdentifiers)
+        elementIdentifier = elementIdentifier + 1
+
+        eft2 = eftfactory.createEftWedgeXi3One(0 * 100, 1 * 100)
+        # setEftScaleFactorIds(eft2, [1], [])
+        elementtemplateX.defineField(coordinates, -1, eft2)
+        nodeIdentifiers = [24, 21, 30, 33, 20, 27]
+        element = mesh.createElement(elementIdentifier, elementtemplateX)
+        result = element.setNodesByIdentifier(eft2, nodeIdentifiers)
+        # result2 = element.setScaleFactors(eft2, [-1])
+        elementIdentifier = elementIdentifier + 1
+
+        eft1 = eftfactory.createEftWedgeXi3One(1 * 100, 2 * 100)
+        # setEftScaleFactorIds(eft1, [1], [])
+        for n in range(2):
+            d2Map = (0,-1,0)
+            remapEftNodeValueLabel(eft1, [(n+1)*2], Node.VALUE_LABEL_D_DS1,  derivativeSignsToExpressionTerms(
+                                       (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3),
+                                       d2Map))
+            remapEftNodeValueLabel(eft1, [(n+1)*4], Node.VALUE_LABEL_D_DS1, [(Node.VALUE_LABEL_D_DS1, [])])
+        elementtemplateX.defineField(coordinates, -1, eft1)
+        # nodeIdentifiers = [31,28,32,29,25,26]
+        nodeIdentifiers = [28, 29, 31, 32, 25, 26]
+        element = mesh.createElement(elementIdentifier, elementtemplateX)
+        result = element.setNodesByIdentifier(eft1, nodeIdentifiers)
+        # result2 = element.setScaleFactors(eft1, [-1])
+        elementIdentifier = elementIdentifier + 1
+
+        eft1 = eftfactory.createEftWedgeXi3One(1 * 100, 2 * 100)
+        # setEftScaleFactorIds(eft1, [1], [])
+        elementtemplateX.defineField(coordinates, -1, eft1)
+        # nodeIdentifiers = [33,30,32,29,27,26]
+        nodeIdentifiers = [29, 30, 32, 33, 26, 27]
+        element = mesh.createElement(elementIdentifier, elementtemplateX)
+        result = element.setNodesByIdentifier(eft1, nodeIdentifiers)
+        # result2 = element.setScaleFactors(eft1, [-1])
+        elementIdentifier = elementIdentifier + 1
 
         fm.endChange()
         return []

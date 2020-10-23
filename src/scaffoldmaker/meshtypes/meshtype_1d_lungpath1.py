@@ -76,8 +76,26 @@ class MeshType_1d_lungpath1(Scaffold_base):
         #################
         # Create nodes
         #################
-        if speciestype == 'Mouse':  #6 curves for left lobe
-            elementsCount = (elementsCountpercurve+1)*6 - 10
+        if speciestype == 'Mouse':
+            #Left lung (diaph medial, diaph lateral, accessory edge, posterior lateral, anterior edge, posterior edge)
+            elementsCountLeft = (elementsCountpercurve+1)*6 - 10 #6 curves for left lobe
+
+            #Right lung  using Intersection ∩ operator
+            # posteriorEdge ∩ RML
+            # Apical (aka RUL)
+            # AnteriorEdge ∩ RLL
+            # (basemedial ∩ RML)
+            # (basemedial ∩ RLL)
+            # (baselateral ∩ RML)
+            # (baselateral ∩ RLL)
+            # (ObliqueFissureLateral ∩ RML)
+            # (ObliqueFissureMedial ∩ RML)
+            # (ObliqueFissureMedial ∩ RUL)
+            # (ObliqueFissureLateral ∩ RUL)
+            # (HorizontalFissureLateral)
+            # (HorizontalFissureMedial)
+            elementsCountRight = (elementsCountpercurve)*6 + (elementsCountpercurve-1)*7 - 5 #13 curves for right lung
+            elementsCount = elementsCountLeft + elementsCountRight
 
         nodes = fm.findNodesetByFieldDomainType(Field.DOMAIN_TYPE_NODES)
         nodetemplate = nodes.createNodetemplate()
@@ -143,7 +161,9 @@ class MeshType_1d_lungpath1(Scaffold_base):
 
         if speciestype == 'Mouse':
             # eft1 = eftfactory.createEftNoCrossDerivatives()
-
+            ##############################
+            ##LEFT LUNG
+            ###############################
             if(elementsCountpercurve==4):
                 # anterior and posterior
                 for e in range(4):
@@ -306,122 +326,287 @@ class MeshType_1d_lungpath1(Scaffold_base):
                 element.setScaleFactors(eft1, [-1.0])
                 elementIdentifier = elementIdentifier + 1
 
-        if (elementsCountpercurve == 2):
-            # anterior and posterior
-            for e in range(2):
+            if (elementsCountpercurve == 2):
+                # anterior and posterior
+                #------------------------
+                for e in range(2):
+                    eft1 = mesh.createElementfieldtemplate(cubicHermiteBasis)
+                    setEftScaleFactorIds(eft1, [1], [])
+                    d2Map = (0, 1, 0)
+                    for i in range(2):
+                        remapEftNodeValueLabel(eft1, [i + 1], Node.VALUE_LABEL_D_DS1, derivativeSignsToExpressionTerms(
+                                           (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3),
+                                           d2Map))
+                    elementtemplateX.defineField(coordinates, -1, eft1)
+                    elementtemplate = elementtemplateX
+                    element = mesh.createElement(elementIdentifier, elementtemplate)
+                    element.setNodesByIdentifier(eft1, [e + 1, e + 2])
+                    elementIdentifier = elementIdentifier + 1
+                for e in range(2):
+                    for i in range(2):
+                        if (e > 0):
+                            d2Map = (0, 1, 0)
+                            remapEftNodeValueLabel(eft1, [i + 1], Node.VALUE_LABEL_D_DS1, derivativeSignsToExpressionTerms(
+                                (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3),
+                                d2Map))
+                        else:
+                            d2Map = (0, (-1)*i, 0)
+                            remapEftNodeValueLabel(eft1, [i + 1], Node.VALUE_LABEL_D_DS1, derivativeSignsToExpressionTerms(
+                                (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3),
+                                d2Map))
+                    elementtemplateX.defineField(coordinates, -1, eft1)
+                    elementtemplate = elementtemplateX
+                    element = mesh.createElement(elementIdentifier, elementtemplate)
+                    element.setNodesByIdentifier(eft1, [e + 4, e + 3])
+                    elementIdentifier = elementIdentifier + 1
+
+                # Diaphragm medial
+                #-----------------------
+                elementtemplate = mesh.createElementtemplate()
+                elementtemplate.setElementShapeType(Element.SHAPE_TYPE_LINE)
+                result = elementtemplate.defineField(coordinates, -1, eft)
+
+                element = mesh.createElement(elementIdentifier, elementtemplate)
+                element.setNodesByIdentifier(eft, [1, 6])
+                elementIdentifier = elementIdentifier + 1
+
+                element = mesh.createElement(elementIdentifier, elementtemplate)
+                element.setNodesByIdentifier(eft, [6, 5])
+                elementIdentifier = elementIdentifier + 1
+
+                ##Diaphragm lateral
+                #--------------------------
                 eft1 = mesh.createElementfieldtemplate(cubicHermiteBasis)
                 setEftScaleFactorIds(eft1, [1], [])
-                d2Map = (0, 1, 0)
+                d2Map = (0, 0, -1)
+                remapEftNodeValueLabel(eft1, [1], Node.VALUE_LABEL_D_DS1, [(Node.VALUE_LABEL_D_DS3, [1])])
+                elementtemplateX.defineField(coordinates, -1, eft1)
+                elementtemplate = elementtemplateX
+                element = mesh.createElement(elementIdentifier, elementtemplate)
+                result2 = element.setNodesByIdentifier(eft1, [1, 7])
+                element.setScaleFactors(eft1, [-1.0])
+                elementIdentifier = elementIdentifier + 1
+
+                eft1 = mesh.createElementfieldtemplate(cubicHermiteBasis)
+                setEftScaleFactorIds(eft1, [1], [])
+                remapEftNodeValueLabel(eft1, [2], Node.VALUE_LABEL_D_DS1, [(Node.VALUE_LABEL_D_DS3, [1])])
+                elementtemplateX.defineField(coordinates, -1, eft1)
+                elementtemplate = elementtemplateX
+                element = mesh.createElement(elementIdentifier, elementtemplate)
+                result2 = element.setNodesByIdentifier(eft1, [7, 5])
+                element.setScaleFactors(eft1, [-1.0])
+                elementIdentifier = elementIdentifier + 1
+
+                # accessory edge
+                #------------------
+                elementtemplate = mesh.createElementtemplate()
+                elementtemplate.setElementShapeType(Element.SHAPE_TYPE_LINE)
+                elementtemplate.defineField(coordinates, -1, eft)
+
+                element = mesh.createElement(elementIdentifier, elementtemplate)
+                element.setNodesByIdentifier(eft, [2, 8])
+                elementIdentifier = elementIdentifier + 1
+
+                element = mesh.createElement(elementIdentifier, elementtemplate)
+                element.setNodesByIdentifier(eft, [8, 4])
+                elementIdentifier = elementIdentifier + 1
+
+                ###lateral smooth edge
+                #-----------------------
+                eft1 = mesh.createElementfieldtemplate(cubicHermiteBasis)
+                setEftScaleFactorIds(eft1, [1], [])
+                d2Map = (-1, 0, 0)
+                remapEftNodeValueLabel(eft1, [2], Node.VALUE_LABEL_D_DS1,
+                                       derivativeSignsToExpressionTerms(
+                                           (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3),
+                                           d2Map))
+                elementtemplateX = mesh.createElementtemplate()
+                elementtemplateX.setElementShapeType(Element.SHAPE_TYPE_LINE)
+                elementtemplateX.defineField(coordinates, -1, eft1)
+                elementtemplate = elementtemplateX
+
+                element = mesh.createElement(elementIdentifier, elementtemplate)
+                result2 = element.setNodesByIdentifier(eft1, [2, 9])
+                element.setScaleFactors(eft1, [-1.0])
+                elementIdentifier = elementIdentifier + 1
+
+                eft1 = mesh.createElementfieldtemplate(cubicHermiteBasis)
+                setEftScaleFactorIds(eft1, [1], [])
+                d2Map = (0, 0, 1)
+                remapEftNodeValueLabel(eft1, [2], Node.VALUE_LABEL_D_DS1,
+                                       derivativeSignsToExpressionTerms(
+                                           (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3),
+                                           d2Map))
+                elementtemplateX = mesh.createElementtemplate()
+                elementtemplateX.setElementShapeType(Element.SHAPE_TYPE_LINE)
+                elementtemplateX.defineField(coordinates, -1, eft1)
+                elementtemplate = elementtemplateX
+                element = mesh.createElement(elementIdentifier, elementtemplate)
+                result2 = element.setNodesByIdentifier(eft1, [9, 4])
+                element.setScaleFactors(eft1, [-1.0])
+                elementIdentifier = elementIdentifier + 1
+
+                leftLungendNode = 9
+                ##############################
+                ##RIGHT LUNGS
+                ##############################
+                # anterior and posterior
+                #=========================####
+                elementstart = elementIdentifier
+                for e in range(elementstart,elementstart+2*elementsCountpercurve):
+                    eft1 = mesh.createElementfieldtemplate(cubicHermiteBasis)
+                    setEftScaleFactorIds(eft1, [1], [])
+                    d2Map = (0, 1, 0)
+                    for i in range(2):
+                        remapEftNodeValueLabel(eft1, [i + 1], Node.VALUE_LABEL_D_DS1, derivativeSignsToExpressionTerms(
+                            (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3),
+                            d2Map))
+                    elementtemplateX.defineField(coordinates, -1, eft1)
+                    elementtemplate = elementtemplateX
+                    element = mesh.createElement(elementIdentifier, elementtemplate)
+                    element.setNodesByIdentifier(eft1, [e + 1, e + 2])
+                    print('right lung test', e+1, e+2)
+                    elementIdentifier = elementIdentifier + 1
+
+                elementstart = elementIdentifier
+                for e in range(elementstart,elementstart+elementsCountpercurve-1):
+                    eft1 = mesh.createElementfieldtemplate(cubicHermiteBasis)
+                    setEftScaleFactorIds(eft1, [1], [])
+                    d2Map = (0, -1, 0)
+                    for i in range(2):
+                        remapEftNodeValueLabel(eft1, [i + 1], Node.VALUE_LABEL_D_DS1, derivativeSignsToExpressionTerms(
+                            (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3),
+                            d2Map))
+                    elementtemplateX.defineField(coordinates, -1, eft1)
+                    elementtemplate = elementtemplateX
+                    element = mesh.createElement(elementIdentifier, elementtemplate)
+                    element.setNodesByIdentifier(eft1, [e + 1, e + 2])
+                    print('right lung test', e+1, e+2)
+                    elementIdentifier = elementIdentifier + 1
+
+                # Diaphragm medial
+                #--------------------
+                elementtemplate = mesh.createElementtemplate()
+                elementtemplate.setElementShapeType(Element.SHAPE_TYPE_LINE)
+                result = elementtemplate.defineField(coordinates, -1, eft)
+
+                elementstart = elementIdentifier
+                for e in range(elementstart,elementstart+elementsCountpercurve):
+                    nstart = leftLungendNode if(e==0) else (e)
+                    element = mesh.createElement(elementIdentifier, elementtemplate)
+                    element.setNodesByIdentifier(eft, [nstart, nstart+1])
+                    elementIdentifier = elementIdentifier + 1
+
+                elementstart = elementIdentifier
+                for e in range(elementstart,elementstart+elementsCountpercurve-1):
+                    nstart = (leftLungendNode+3*elementsCountpercurve-1) if(e==elementstart+elementsCountpercurve-1) else (e)
+                    element = mesh.createElement(elementIdentifier, elementtemplate)
+                    element.setNodesByIdentifier(eft, [nstart, nstart+1])
+                    elementIdentifier = elementIdentifier + 1
+
+                ##Diaphragm lateral
+                #-------------------
+                eft1 = mesh.createElementfieldtemplate(cubicHermiteBasis)
+                setEftScaleFactorIds(eft1, [1], [])
+                d2Map = (0, 0, -1)
                 for i in range(2):
                     remapEftNodeValueLabel(eft1, [i + 1], Node.VALUE_LABEL_D_DS1, derivativeSignsToExpressionTerms(
-                                       (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3),
-                                       d2Map))
+                        (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3),
+                        d2Map))
                 elementtemplateX.defineField(coordinates, -1, eft1)
                 elementtemplate = elementtemplateX
                 element = mesh.createElement(elementIdentifier, elementtemplate)
-                element.setNodesByIdentifier(eft1, [e + 1, e + 2])
+                result2 = element.setNodesByIdentifier(eft1, [10, 18])
+                element.setScaleFactors(eft1, [-1.0])
                 elementIdentifier = elementIdentifier + 1
-            for e in range(2):
-                for i in range(2):
-                    if (e > 0):
-                        d2Map = (0, 1, 0)
-                        remapEftNodeValueLabel(eft1, [i + 1], Node.VALUE_LABEL_D_DS1, derivativeSignsToExpressionTerms(
-                            (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3),
-                            d2Map))
-                    else:
-                        d2Map = (0, (-1)*i, 0)
-                        remapEftNodeValueLabel(eft1, [i + 1], Node.VALUE_LABEL_D_DS1, derivativeSignsToExpressionTerms(
-                            (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3),
-                            d2Map))
+
+                elementtemplate = mesh.createElementtemplate()
+                elementtemplate.setElementShapeType(Element.SHAPE_TYPE_LINE)
+                elementtemplate.defineField(coordinates, -1, eft)
+
+                element = mesh.createElement(elementIdentifier, elementtemplate)
+                element.setNodesByIdentifier(eft, [18, 19])
+                elementIdentifier = elementIdentifier + 1
+
+                eft1 = mesh.createElementfieldtemplate(cubicHermiteBasis)
+                setEftScaleFactorIds(eft1, [1], [])
+                remapEftNodeValueLabel(eft1, [2], Node.VALUE_LABEL_D_DS1, [(Node.VALUE_LABEL_D_DS3, [1])])
                 elementtemplateX.defineField(coordinates, -1, eft1)
                 elementtemplate = elementtemplateX
                 element = mesh.createElement(elementIdentifier, elementtemplate)
-                element.setNodesByIdentifier(eft1, [e + 4, e + 3])
+                result2 = element.setNodesByIdentifier(eft1, [19, 15])
+                element.setScaleFactors(eft1, [-1.0])
                 elementIdentifier = elementIdentifier + 1
 
+                # Oblique medial edge
+                #----------------------
+                elementtemplate = mesh.createElementtemplate()
+                elementtemplate.setElementShapeType(Element.SHAPE_TYPE_LINE)
+                elementtemplate.defineField(coordinates, -1, eft)
 
-            # Diaphragm medial
-            elementtemplate = mesh.createElementtemplate()
-            elementtemplate.setElementShapeType(Element.SHAPE_TYPE_LINE)
-            result = elementtemplate.defineField(coordinates, -1, eft)
-            element = mesh.createElement(elementIdentifier, elementtemplate)
-            element.setNodesByIdentifier(eft, [1, 6])
-            elementIdentifier = elementIdentifier + 1
+                element = mesh.createElement(elementIdentifier, elementtemplate)
+                element.setNodesByIdentifier(eft, [17, 20])
+                elementIdentifier = elementIdentifier + 1
 
-            element = mesh.createElement(elementIdentifier, elementtemplate)
-            element.setNodesByIdentifier(eft, [6, 5])
-            elementIdentifier = elementIdentifier + 1
+                element = mesh.createElement(elementIdentifier, elementtemplate)
+                element.setNodesByIdentifier(eft, [20, 21])
+                elementIdentifier = elementIdentifier + 1
 
-            ##Diaphragm lateral
-            eft1 = mesh.createElementfieldtemplate(cubicHermiteBasis)
-            setEftScaleFactorIds(eft1, [1], [])
-            d2Map = (0, 0, -1)
-            remapEftNodeValueLabel(eft1, [1], Node.VALUE_LABEL_D_DS1, [(Node.VALUE_LABEL_D_DS3, [1])])
-            elementtemplateX.defineField(coordinates, -1, eft1)
-            elementtemplate = elementtemplateX
-            element = mesh.createElement(elementIdentifier, elementtemplate)
-            result2 = element.setNodesByIdentifier(eft1, [1, 7])
-            element.setScaleFactors(eft1, [-1.0])
-            elementIdentifier = elementIdentifier + 1
+                element = mesh.createElement(elementIdentifier, elementtemplate)
+                element.setNodesByIdentifier(eft, [21, 12])
+                elementIdentifier = elementIdentifier + 1
 
-            eft1 = mesh.createElementfieldtemplate(cubicHermiteBasis)
-            setEftScaleFactorIds(eft1, [1], [])
-            remapEftNodeValueLabel(eft1, [2], Node.VALUE_LABEL_D_DS1, [(Node.VALUE_LABEL_D_DS3, [1])])
-            elementtemplateX.defineField(coordinates, -1, eft1)
-            elementtemplate = elementtemplateX
-            element = mesh.createElement(elementIdentifier, elementtemplate)
-            result2 = element.setNodesByIdentifier(eft1, [7, 5])
-            element.setScaleFactors(eft1, [-1.0])
-            elementIdentifier = elementIdentifier + 1
+                # Oblique lateral edge
+                #----------------------
+                elementtemplate = mesh.createElementtemplate()
+                elementtemplate.setElementShapeType(Element.SHAPE_TYPE_LINE)
+                elementtemplate.defineField(coordinates, -1, eft)
 
-            # accessory edge
-            elementtemplate = mesh.createElementtemplate()
-            elementtemplate.setElementShapeType(Element.SHAPE_TYPE_LINE)
-            elementtemplate.defineField(coordinates, -1, eft)
+                element = mesh.createElement(elementIdentifier, elementtemplate)
+                element.setNodesByIdentifier(eft, [19, 22])
+                elementIdentifier = elementIdentifier + 1
 
-            element = mesh.createElement(elementIdentifier, elementtemplate)
-            element.setNodesByIdentifier(eft, [2, 8])
-            elementIdentifier = elementIdentifier + 1
+                element = mesh.createElement(elementIdentifier, elementtemplate)
+                element.setNodesByIdentifier(eft, [22, 23])
+                elementIdentifier = elementIdentifier + 1
 
-            element = mesh.createElement(elementIdentifier, elementtemplate)
-            element.setNodesByIdentifier(eft, [8, 4])
-            elementIdentifier = elementIdentifier + 1
+                element = mesh.createElement(elementIdentifier, elementtemplate)
+                element.setNodesByIdentifier(eft, [23, 12])
+                elementIdentifier = elementIdentifier + 1
 
-            ###lateral smooth edge
-            eft1 = mesh.createElementfieldtemplate(cubicHermiteBasis)
-            setEftScaleFactorIds(eft1, [1], [])
-            # d2Map = (-1, 0, 0)
-            # remapEftNodeValueLabel(eft1, [1], Node.VALUE_LABEL_D_DS1,[( Node.VALUE_LABEL_D_DS2, [-1])])
-            d2Map = (-1, 0, 0)
-            remapEftNodeValueLabel(eft1, [2], Node.VALUE_LABEL_D_DS1,
-                                   derivativeSignsToExpressionTerms(
-                                       (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3),
-                                       d2Map))
-            elementtemplateX = mesh.createElementtemplate()
-            elementtemplateX.setElementShapeType(Element.SHAPE_TYPE_LINE)
-            elementtemplateX.defineField(coordinates, -1, eft1)
-            elementtemplate = elementtemplateX
-            element = mesh.createElement(elementIdentifier, elementtemplate)
-            result2 = element.setNodesByIdentifier(eft1, [2, 9])
-            element.setScaleFactors(eft1, [-1.0])
-            elementIdentifier = elementIdentifier + 1
+                ### Medial Horizontal fissure edge
+                #---------------------------------
+                eft1 = mesh.createElementfieldtemplate(cubicHermiteBasis)
+                setEftScaleFactorIds(eft1, [1], [])
+                d2Map = (-1, 0, 0)
+                remapEftNodeValueLabel(eft1, [2], Node.VALUE_LABEL_D_DS1,
+                                       derivativeSignsToExpressionTerms(
+                                           (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3),
+                                           d2Map))
+                elementtemplateX = mesh.createElementtemplate()
+                elementtemplateX.setElementShapeType(Element.SHAPE_TYPE_LINE)
+                elementtemplateX.defineField(coordinates, -1, eft1)
+                elementtemplate = elementtemplateX
+                element = mesh.createElement(elementIdentifier, elementtemplate)
+                result2 = element.setNodesByIdentifier(eft1, [20, 14])
+                element.setScaleFactors(eft1, [-1.0])
+                elementIdentifier = elementIdentifier + 1
 
-            eft1 = mesh.createElementfieldtemplate(cubicHermiteBasis)
-            setEftScaleFactorIds(eft1, [1], [])
-            d2Map = (0, 0, 1)
-            # remapEftNodeValueLabel(eft1, [2], Node.VALUE_LABEL_D_DS1,[( Node.VALUE_LABEL_D_DS3, [1])])
-            remapEftNodeValueLabel(eft1, [2], Node.VALUE_LABEL_D_DS1,
-                                   derivativeSignsToExpressionTerms(
-                                       (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3),
-                                       d2Map))
-            elementtemplateX = mesh.createElementtemplate()
-            elementtemplateX.setElementShapeType(Element.SHAPE_TYPE_LINE)
-            elementtemplateX.defineField(coordinates, -1, eft1)
-            elementtemplate = elementtemplateX
-            element = mesh.createElement(elementIdentifier, elementtemplate)
-            result2 = element.setNodesByIdentifier(eft1, [9, 4])
-            element.setScaleFactors(eft1, [-1.0])
-            elementIdentifier = elementIdentifier + 1
+                eft1 = mesh.createElementfieldtemplate(cubicHermiteBasis)
+                setEftScaleFactorIds(eft1, [1], [])
+                d2Map = (0, 0, 1)
+                remapEftNodeValueLabel(eft1, [2], Node.VALUE_LABEL_D_DS1,
+                                       derivativeSignsToExpressionTerms(
+                                           (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3),
+                                           d2Map))
+                elementtemplateX = mesh.createElementtemplate()
+                elementtemplateX.setElementShapeType(Element.SHAPE_TYPE_LINE)
+                elementtemplateX.defineField(coordinates, -1, eft1)
+                elementtemplate = elementtemplateX
+                element = mesh.createElement(elementIdentifier, elementtemplate)
+                result2 = element.setNodesByIdentifier(eft1, [22, 14])
+                element.setScaleFactors(eft1, [-1.0])
+                elementIdentifier = elementIdentifier + 1
 
         fm.endChange()
         return []
