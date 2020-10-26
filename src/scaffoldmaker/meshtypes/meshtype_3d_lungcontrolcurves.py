@@ -74,7 +74,7 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
                     [[-7, -9.3, 2.6], [-2.0, 5.0, 3.0], [-0.27, -2.0, 3.07], [1.4, 0.41, 1.2]],
                     [[-1.6, -10.2, 11.7], [-0.6, 4.5, 2.5], [-1.1, 0.42, 2.5], [1, 0, 0]],
                     [[-6.6, -11, 12.5], [-0.7, 2.5, 0.74], [0.7, -0.1, 1.8], [1, 0, 0]],
-                    [[5.2, -14.4, 3.2], [12.7, 5.4, 5], [-0.3, 0.6, 8.3], [-2, 0.2, -1]],
+                    [[5.2, -14.4, 3.2], [5.7, 5.4, 5], [-0.3, 0.6, 8.3], [-2, 0.2, -1]],
                     [[5.8, -14, 12], [2.6, 2, -1.26], [-1.6, 2.3, 6.3], [-2, 0, 0]],
                     [[3.8, -7.8, 19], [-1, 2, -2], [-2.8, 3.4, 1.4], [-2, 0, 0]],
                     [[2.7, -3.2, 16], [-3, 0.72, 1.1], [0.3, -4, 3], [-2, 0.1, 1]],
@@ -224,14 +224,12 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
         speciestype = options['Species']
         # elementsCountcurve = options['Number of elements per curve']
 
-        # elementsCountAlong = options['Number of elements along']
+        elementsCountAlong = options['Number of elements along']
         elementsCountAlong = 2
 
         useCrossDerivatives = True
         firstNodeIdentifier = 1
         firstElementIdentifier = 1
-
-        print('elementc cnt along=', elementsCountAlong)
 
         zero = [0,0,0]
 
@@ -363,7 +361,7 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
                 baselateralcd3.append(cd3[nodelateral - 1])
 
             ### Apical
-            ### ----------
+            ## ----------
             for n in range(elementsCountAlong-1):
                 node = (n + elementsCountAlong + 1)
                 apicaledgecx.append(cx[node- 1])
@@ -371,7 +369,26 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
                 apicaledgecd2.append(cd2[node - 1])
                 apicaledgecd3.append(cd3[node - 1])
 
+            ## Create additional nodes
+            # ##-----------------------
+            if(elementsCountAlong>2):  #generate additional nodes b/n accessory and apical
+                tempmidcx=[]
+                tempmidcd1=[]
+                for n in range(elementsCountAlong-1):
+                    if(n==0):
+                        x=[(3*apicaledgecx[n][c]+3*accessoryedgecx[n+1][c]+2*apicaledgecx[n+1][c])/8.0 for c in range(3)]
+                    if (n == elementsCountAlong-2):
+                        x = [(3*apicaledgecx[n][c]+3*accessoryedgecx[n+1][c]+2*apicaledgecx[n-1][c])/8.0 for c in range(3)]
+                    midmedialapicalcx.append(x)
+                    if(n==0):
+                        x=[(3*apicaledgecx[n][c]+3*posteriorlateralcx[n+1][c]+2*apicaledgecx[n+1][c])/8.0 for c in range(3)]
+                    if (n == elementsCountAlong-2):
+                        x = [(3*apicaledgecx[n][c]+3*posteriorlateralcx[n+1][c]+2*apicaledgecx[n-1][c])/8.0 for c in range(3)]
+                    midlateralcx.append(x)
+
             # Create additional nodes - mid medial and lateral
+            #b/n accessory and basemedial
+            #b/n posterior lateral and base lateral
             ###------------------------------------------------
             if(elementsCountAlong>2):
                 for nlayer in range(elementsCountAlong+1):
@@ -447,7 +464,6 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
                             interp.sampleCubicHermiteCurves(tempcx, tempcd1,
                                                             elementsCountOut=(elementsCountAlong))
                         midlateralcd1.append(tempmidcd1[nlayer+1])
-
 
         # # Create nodes
         # ##################
@@ -670,12 +686,12 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
                 elementIdentifier = elementIdentifier + 1
 
         #elements between accessory edge and Apex
-        #TetLeft and TetRight - fails to validate for some reason. to be DEBUGGED
-        if(elementsCountAlong==2):
+        #TetLeft and TetRight - eft fails to validate. to be DEBUGGED
+        # if(elementsCountAlong==2):
             # va = 0
             # vb = (0 + 1) % elementsCountAlong
             # eft1 = eftfactory.createEftTetrahedronLeft(va*100, vb*100, 10000)
-            # # setEftScaleFactorIds(eft1, [1], [])
+            # setEftScaleFactorIds(eft1, [1], [])
             # elementtemplateX2.defineField(coordinates, -1, eft1)
             # element = mesh.createElement(elementIdentifier, elementtemplateX2)
             # bni1 = 2*elementsCountAlong*(elementsCountAlong-1)+1
@@ -685,32 +701,20 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
             # result = element.setNodesByIdentifier(eft1, nodeIdentifiers)
             # elementIdentifier = elementIdentifier + 1
 
-            va = 1
-            vb = (1 + 1) % elementsCountAlong
-            eft3 = eftfactory.createEftTetrahedronRight(va*100, vb*100, 10000)
-            # setEftScaleFactorIds(eft2, [1], [])
-            elementtemplateX3.defineField(coordinates, -1, eft3)
-            bni1 = elementsCountAlong*(2*elementsCountAlong)
-            bni2 = elementsCountAlong*(2*elementsCountAlong-1)+1
-            bni3 = elementsCountAlong*(2*elementsCountAlong-1)+2
-            bni4 = bni3 + 1
-            nodeIdentifiers = [bni1, bni2, bni4, bni2-1]
-            element = mesh.createElement(elementIdentifier, elementtemplateX3)
-            result = element.setNodesByIdentifier(eft3, nodeIdentifiers)
-            # result2 = element.setScaleFactors(eft2, [-1])
-            elementIdentifier = elementIdentifier + 1
-
-        # eft = eftfactory.createEftBasic()
-        # nodeIdentifiers = [22, 23, 28, 29, 18, 19, 25, 26]
-        # element = mesh.createElement(elementIdentifier, elementtemplate)
-        # result = element.setNodesByIdentifier(eft, nodeIdentifiers)
-        # elementIdentifier = elementIdentifier + 1
-        #
-        # eft = eftfactory.createEftBasic()
-        # nodeIdentifiers = [23, 24, 29, 30, 19, 20, 26, 27]
-        # element = mesh.createElement(elementIdentifier, elementtemplate)
-        # result = element.setNodesByIdentifier(eft, nodeIdentifiers)
-        # elementIdentifier = elementIdentifier + 1
+            # va = 1
+            # vb = (1 + 1) % elementsCountAlong
+            # eft3 = eftfactory.createEftTetrahedronRight(va*100, vb*100, 10000)
+            # # setEftScaleFactorIds(eft2, [1], [])
+            # elementtemplateX3.defineField(coordinates, -1, eft3)
+            # bni1 = elementsCountAlong*(2*elementsCountAlong)
+            # bni2 = elementsCountAlong*(2*elementsCountAlong-1)+1
+            # bni3 = elementsCountAlong*(2*elementsCountAlong-1)+2
+            # bni4 = bni3 + 1
+            # nodeIdentifiers = [bni1, bni2, bni4, bni2-1]
+            # element = mesh.createElement(elementIdentifier, elementtemplateX3)
+            # result = element.setNodesByIdentifier(eft3, nodeIdentifiers)
+            # # result2 = element.setScaleFactors(eft2, [-1])
+            # elementIdentifier = elementIdentifier + 1
 
         if(elementsCountAlong>2):
             eft1 = eftfactory.createEftWedgeXi3One(1 * 100, 2 * 100)

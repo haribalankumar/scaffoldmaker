@@ -128,6 +128,7 @@ class MeshType_1d_lungpath1(Scaffold_base):
             coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS2, 1, dx_ds2)
             coordinates.setNodeParameters(cache, -1, Node.VALUE_LABEL_D_DS3, 1, d2x_ds1ds2)
             nodeIdentifier = nodeIdentifier + 1
+
 #print('dofs',Node.VALUE_LABEL_VALUE, Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3)
 #OUTPUT: 1,2,3,5
 
@@ -179,23 +180,26 @@ class MeshType_1d_lungpath1(Scaffold_base):
                     elementtemplate = elementtemplateX
                     element = mesh.createElement(elementIdentifier, elementtemplate)
                     element.setNodesByIdentifier(eft1, [e + 1, e + 2])
+                    element.setScaleFactors(eft1, [-1.0])
                     elementIdentifier = elementIdentifier + 1
+
                 for e in range(2):
+                    eft1 = mesh.createElementfieldtemplate(cubicHermiteBasis)
+                    setEftScaleFactorIds(eft1, [1], [])
                     for i in range(2):
                         if (e > 0):
                             d2Map = (0, 1, 0)
                             remapEftNodeValueLabel(eft1, [i + 1], Node.VALUE_LABEL_D_DS1, derivativeSignsToExpressionTerms(
-                                (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3),
-                                d2Map))
+                                (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3), d2Map))
                         else:
-                            d2Map = (0, (-1)*i, 0)
+                            d2Map = (0, (-1)**i, 0)
                             remapEftNodeValueLabel(eft1, [i + 1], Node.VALUE_LABEL_D_DS1, derivativeSignsToExpressionTerms(
-                                (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3),
-                                d2Map))
+                                (Node.VALUE_LABEL_D_DS1, Node.VALUE_LABEL_D_DS2, Node.VALUE_LABEL_D_DS3), d2Map))
                     elementtemplateX.defineField(coordinates, -1, eft1)
                     elementtemplate = elementtemplateX
                     element = mesh.createElement(elementIdentifier, elementtemplate)
                     element.setNodesByIdentifier(eft1, [e + 4, e + 3])
+                    element.setScaleFactors(eft1, [-1.0])
                     elementIdentifier = elementIdentifier + 1
 
                 # Diaphragm medial
