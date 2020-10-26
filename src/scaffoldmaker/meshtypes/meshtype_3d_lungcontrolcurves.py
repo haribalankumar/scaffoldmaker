@@ -614,6 +614,14 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
         elementtemplateX = mesh.createElementtemplate()
         elementtemplateX.setElementShapeType(Element.SHAPE_TYPE_CUBE)
 
+        # Left tetrahedron elements
+        elementtemplateX2 = mesh.createElementtemplate()
+        elementtemplateX2.setElementShapeType(Element.SHAPE_TYPE_CUBE)
+
+        # Right tetrahedron elements
+        elementtemplateX3 = mesh.createElementtemplate()
+        elementtemplateX3.setElementShapeType(Element.SHAPE_TYPE_CUBE)
+
         #elements between accessory edge and base(medial/lateral)
         for n in range(elementsCountAlong*(elementsCountAlong-1)):
             if(n==0):  #wedge elements xi3zero
@@ -622,14 +630,11 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
                 eft1 = eftfactory.createEftWedgeXi3Zero(va*100, vb*100)
                 # setEftScaleFactorIds(eft1, [1], [])
                 elementtemplateX.defineField(coordinates, -1, eft1)
-                # nodeIdentifiers = [1, 6, 9, 14, 1, 2, 9, 10]
                 bni1 = 1 + (2*elementsCountAlong)*(n//4)
                 bni2 = bni1 + elementsCountAlong + 1
                 bni3 = bni1 + 2*elementsCountAlong
                 bni4 = bni3 + (elementsCountAlong + 1)
-                # nodeIdentifiers = [1, 6, 9, 14, 2, 10]
                 nodeIdentifiers = [bni1, bni2, bni3, bni4, bni1+1, bni3+1]
-                print('nodes xi3=0:', bni1, bni2, bni3, bni4, bni1+1, bni3+1)
                 element = mesh.createElement(elementIdentifier, elementtemplateX)
                 result = element.setNodesByIdentifier(eft1, nodeIdentifiers)
                 # result2 = element.setScaleFactors(eft1, [-1])
@@ -645,9 +650,7 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
                 bni1 = bni2+(elementsCountAlong-1)
                 bni3 = 2*bni1
                 bni4= bni1 + (elementsCountAlong + 1)
-                # nodeIdentifiers = [1, 6, 9, 14, 2, 10]
                 nodeIdentifiers = [bni1, bni2, bni3, bni4, bni2-1, bni4-1]
-                print('xi3=1 elem',bni1, bni2, bni3, bni4, bni2-1, bni4-1)
                 element = mesh.createElement(elementIdentifier, elementtemplateX)
                 result = element.setNodesByIdentifier(eft2, nodeIdentifiers)
                 # result2 = element.setScaleFactors(eft2, [-1])
@@ -666,29 +669,34 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
                 # result2 = element.setScaleFactors(eft, [-1])
                 elementIdentifier = elementIdentifier + 1
 
-       #elements between accessory edge and Apex
+        #elements between accessory edge and Apex
+        #TetLeft and TetRight - fails to validate for some reason. to be DEBUGGED
         if(elementsCountAlong==2):
-            eft1 = eftfactory.createEftTetrahedronXi2One(0 * 10000, 1 * 10000)
-            # setEftScaleFactorIds(eft1, [1], [])
-            elementtemplateX.defineField(coordinates, -1, eft1)
-            bni1 = 2*elementsCountAlong*(elementsCountAlong-1)+1
-            bni3 = elementsCountAlong*(2*elementsCountAlong-1)+2
-            bni4 = bni3 + 1
-            nodeIdentifiers = [bni1, bni3, bni4, bni1+1]
-            element = mesh.createElement(elementIdentifier, elementtemplateX)
-            result = element.setNodesByIdentifier(eft1, nodeIdentifiers)
-            elementIdentifier = elementIdentifier + 1
+            # va = 0
+            # vb = (0 + 1) % elementsCountAlong
+            # eft1 = eftfactory.createEftTetrahedronLeft(va*100, vb*100, 10000)
+            # # setEftScaleFactorIds(eft1, [1], [])
+            # elementtemplateX2.defineField(coordinates, -1, eft1)
+            # element = mesh.createElement(elementIdentifier, elementtemplateX2)
+            # bni1 = 2*elementsCountAlong*(elementsCountAlong-1)+1
+            # bni3 = elementsCountAlong*(2*elementsCountAlong-1)+2
+            # bni4 = bni3 + 1
+            # nodeIdentifiers = [bni1, bni3, bni4, bni1+1]
+            # result = element.setNodesByIdentifier(eft1, nodeIdentifiers)
+            # elementIdentifier = elementIdentifier + 1
 
-            eft2 = eftfactory.createEftTetrahedronXi2Zero(2 * 10000, 3 * 10000)
+            va = 1
+            vb = (1 + 1) % elementsCountAlong
+            eft3 = eftfactory.createEftTetrahedronRight(va*100, vb*100, 10000)
             # setEftScaleFactorIds(eft2, [1], [])
-            elementtemplateX.defineField(coordinates, -1, eft2)
+            elementtemplateX3.defineField(coordinates, -1, eft3)
             bni1 = elementsCountAlong*(2*elementsCountAlong)
             bni2 = elementsCountAlong*(2*elementsCountAlong-1)+1
             bni3 = elementsCountAlong*(2*elementsCountAlong-1)+2
             bni4 = bni3 + 1
             nodeIdentifiers = [bni1, bni2, bni4, bni2-1]
-            element = mesh.createElement(elementIdentifier, elementtemplateX)
-            result = element.setNodesByIdentifier(eft2, nodeIdentifiers)
+            element = mesh.createElement(elementIdentifier, elementtemplateX3)
+            result = element.setNodesByIdentifier(eft3, nodeIdentifiers)
             # result2 = element.setScaleFactors(eft2, [-1])
             elementIdentifier = elementIdentifier + 1
 
