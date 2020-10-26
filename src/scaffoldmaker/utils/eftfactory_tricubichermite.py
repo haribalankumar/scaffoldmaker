@@ -721,6 +721,163 @@ class eftfactory_tricubichermite:
         assert eft.validate(), 'eftfactory_tricubichermite.createEftTetrahedronXi1Zero:  Failed to validate eft'
         return eft
 
+    def createEftTetrahedronXi2One(self, nodeScaleFactorOffset0, nodeScaleFactorOffset1):
+        '''
+        Create a tricubic hermite element field for a solid tetrahedron for the apex of cecum,
+        ========with xi1 and xi3 collapsed on xi2 = 0, and xi3 collapsed on xi1 = 1 and xi2 = 1.
+        with xi2 and xi3 collapsed on xi1 = 0, and xi3 collapsed on xi1 = 1 and xi2 = 1.
+        ======Each collapsed node on xi2 = 0 has 3 scale factors giving the cos, sin coefficients of
+        Each collapsed node on xi1 = 0 has 3 scale factors giving the cos, sin coefficients of
+        the radial line from global derivatives, plus the arc subtended by the element in radians,
+        so the circumferential direction is rounded.
+        Need to create a new template for each sector around axis giving common
+        nodeScaleFactorOffset values on common faces. Suggestion is to start at 0 and
+        add 10000 for each radial line around axis.
+        :param nodeScaleFactorOffset0: offset of node scale factors at axis on xi1=0
+        :param nodeScaleFactorOffset1: offset of node scale factors at axis on xi1=1
+        :return: Element field template
+        '''
+        # start with full tricubic
+        eft = self._mesh.createElementfieldtemplate(self._tricubicHermiteBasis)
+
+        for n in [ 2, 3, 6, 7 ]:
+            eft.setFunctionNumberOfTerms(n * 8 + 4, 0)
+            eft.setFunctionNumberOfTerms(n * 8 + 6, 0)
+            eft.setFunctionNumberOfTerms(n * 8 + 7, 0)
+            eft.setFunctionNumberOfTerms(n * 8 + 8, 0)
+
+        # GRC: allow scale factor identifier for global -1.0 to be prescribed
+        setEftScaleFactorIds(eft, [1], [
+            nodeScaleFactorOffset0 + 1, nodeScaleFactorOffset0 + 2, nodeScaleFactorOffset0 + 3,
+            nodeScaleFactorOffset1 + 1, nodeScaleFactorOffset1 + 2, nodeScaleFactorOffset1 + 3 ] )
+
+        # remap parameters on xi2 = 0 before collapsing nodes
+        remapEftNodeValueLabel(eft, [ 1, 3, 5, 7], Node.VALUE_LABEL_D_DS2, [])
+        remapEftNodeValueLabel(eft, [ 1, 3, 5, 7], Node.VALUE_LABEL_D_DS3, [])
+
+        for layer in range(2):
+            soAround = 1
+            ln = layer * 4 + 1
+            # 2 terms for d/dxi1 via general linear map:
+            remapEftNodeValueLabel(eft, [ln], Node.VALUE_LABEL_D_DS1,
+                                   [(Node.VALUE_LABEL_D_DS1, [soAround + 1]),
+                                   (Node.VALUE_LABEL_D_DS2, [soAround + 2])])
+            # 2 terms for cross derivative 1 2 to correct circular apex: cos(theta).phi, -sin(theta).phi
+            remapEftNodeValueLabel(eft, [ln], Node.VALUE_LABEL_D2_DS1DS2,
+                                   [(Node.VALUE_LABEL_D_DS1, [soAround + 2, soAround + 3]),
+                                   (Node.VALUE_LABEL_D_DS2, [1, soAround + 1, soAround + 3])])
+            # zero other cross derivative parameters
+            remapEftNodeValueLabel(eft, [ ln ], Node.VALUE_LABEL_D2_DS2DS3, [])
+            remapEftNodeValueLabel(eft, [ ln ], Node.VALUE_LABEL_D2_DS1DS3, [])
+            remapEftNodeValueLabel(eft, [ ln ], Node.VALUE_LABEL_D3_DS1DS2DS3, [])
+
+            ln = layer * 4 + 3
+            # 2 terms for d/dxi1 via general linear map:
+            remapEftNodeValueLabel(eft, [ln], Node.VALUE_LABEL_D_DS1,
+                                   [(Node.VALUE_LABEL_D_DS1, [soAround + 4]),
+                                   (Node.VALUE_LABEL_D_DS2, [soAround + 5])])
+            # 2 terms for cross derivative 1 2 to correct circular apex: cos(theta).phi, -sin(theta).phi
+            remapEftNodeValueLabel(eft, [ln], Node.VALUE_LABEL_D2_DS1DS2,
+                                   [(Node.VALUE_LABEL_D_DS1, [soAround + 5, soAround + 6]),
+                                    (Node.VALUE_LABEL_D_DS2, [1, soAround + 4, soAround + 6])])
+            # zero other cross derivative parameters
+            remapEftNodeValueLabel(eft, [ ln ], Node.VALUE_LABEL_D2_DS2DS3, [])
+            remapEftNodeValueLabel(eft, [ ln ], Node.VALUE_LABEL_D2_DS1DS3, [])
+            remapEftNodeValueLabel(eft, [ ln ], Node.VALUE_LABEL_D3_DS1DS2DS3, [])
+
+        remapEftNodeValueLabel(eft, [ 1, 3, 5, 7 ], Node.VALUE_LABEL_D_DS3, [ (Node.VALUE_LABEL_D_DS1), [1]])
+
+        # remap parameters on xi1 = 0, xi2 = 1 before collapsing nodes
+        remapEftNodeValueLabel(eft, [3, 7], Node.VALUE_LABEL_D_DS3, [])
+        remapEftNodeValueLabel(eft, [3, 7], Node.VALUE_LABEL_D2_DS1DS3, [])
+        remapEftNodeValueLabel(eft, [3, 7], Node.VALUE_LABEL_D2_DS2DS3, [])
+        remapEftNodeValueLabel(eft, [3, 7], Node.VALUE_LABEL_D3_DS1DS2DS3, [])
+
+        ln_map = [ 1, 2, 1, 3, 1, 4, 1, 3]
+        remapEftLocalNodes(eft, 4, ln_map)
+
+        assert eft.validate(), 'eftfactory_tricubichermite.createEftTetrahedronXi2One:  Failed to validate eft'
+        return eft
+
+
+    def createEftTetrahedronXi2Zero(self, nodeScaleFactorOffset0, nodeScaleFactorOffset1):
+        '''
+        Create a tricubic hermite element field for a solid tetrahedron for the apex of cecum,
+        ==========with xi1 and xi3 collapsed on xi2 = 0, and xi3 collapsed on xi1 = 0, xi2 = 1.
+        with xi2 and xi3 collapsed on xi1 = 1, and xi3 collapsed on xi1 = 0, xi2 = 1.
+        =======Each collapsed node on xi2 = 0 has 3 scale factors giving the cos, sin coefficients of
+        Each collapsed node on xi1 = 1 has 3 scale factors giving the cos, sin coefficients of
+        the radial line from global derivatives, plus the arc subtended by the element in radians,
+        so the circumferential direction is rounded.
+        Need to create a new template for each sector around axis giving common
+        nodeScaleFactorOffset values on common faces. Suggestion is to start at 0 and
+        add 10000 for each radial line around axis.
+        :param nodeScaleFactorOffset0: offset of node scale factors at axis on xi1=0
+        :param nodeScaleFactorOffset1: offset of node scale factors at axis on xi1=1
+        :return: Element field template
+        '''
+        # start with full tricubic
+        eft = self._mesh.createElementfieldtemplate(self._tricubicHermiteBasis)
+        for n in [ 2, 3, 6, 7 ]:
+            eft.setFunctionNumberOfTerms(n * 8 + 4, 0)
+            eft.setFunctionNumberOfTerms(n * 8 + 6, 0)
+            eft.setFunctionNumberOfTerms(n * 8 + 7, 0)
+            eft.setFunctionNumberOfTerms(n * 8 + 8, 0)
+
+        # GRC: allow scale factor identifier for global -1.0 to be prescribed
+        setEftScaleFactorIds(eft, [1], [
+            nodeScaleFactorOffset0 + 1, nodeScaleFactorOffset0 + 2, nodeScaleFactorOffset0 + 3,
+            nodeScaleFactorOffset1 + 1, nodeScaleFactorOffset1 + 2, nodeScaleFactorOffset1 + 3 ])
+
+        # remap parameters on xi1 = 1 before collapsing nodes
+        remapEftNodeValueLabel(eft, [ 2, 4, 6, 8 ], Node.VALUE_LABEL_D_DS2, [])
+        remapEftNodeValueLabel(eft, [ 2, 4, 6, 8 ], Node.VALUE_LABEL_D_DS3, [])
+
+        for layer in range(2):
+            soAround = 1
+            ln = layer * 4 + 2
+            # 2 terms for d/dxi1 via general linear map:
+            remapEftNodeValueLabel(eft, [ln], Node.VALUE_LABEL_D_DS1,
+                                   [(Node.VALUE_LABEL_D_DS1, [soAround + 1]),
+                                   (Node.VALUE_LABEL_D_DS2, [soAround + 2])])
+            # 2 terms for cross derivative 1 2 to correct circular apex: cos(theta).phi, -sin(theta).phi
+            remapEftNodeValueLabel(eft, [ln], Node.VALUE_LABEL_D2_DS1DS2,
+                                   [(Node.VALUE_LABEL_D_DS1, [soAround + 2, soAround + 3]),
+                                   (Node.VALUE_LABEL_D_DS2, [1, soAround + 1, soAround + 3])])
+            # zero other cross derivative parameters
+            remapEftNodeValueLabel(eft, [ ln ], Node.VALUE_LABEL_D2_DS1DS3, [])
+            remapEftNodeValueLabel(eft, [ ln ], Node.VALUE_LABEL_D2_DS2DS3, [])
+            remapEftNodeValueLabel(eft, [ ln ], Node.VALUE_LABEL_D3_DS1DS2DS3, [])
+
+            ln = layer * 4 + 4
+            # 2 terms for d/dxi1 via general linear map:
+            remapEftNodeValueLabel(eft, [ln], Node.VALUE_LABEL_D_DS1,
+                                   [(Node.VALUE_LABEL_D_DS1, [soAround + 4]),
+                                   (Node.VALUE_LABEL_D_DS2, [soAround + 5])])
+            # 2 terms for cross derivative 1 2 to correct circular apex: cos(theta).phi, -sin(theta).phi
+            remapEftNodeValueLabel(eft, [ln], Node.VALUE_LABEL_D2_DS1DS2,
+                                   [(Node.VALUE_LABEL_D_DS1, [soAround + 5, soAround + 6]),
+                                    (Node.VALUE_LABEL_D_DS2, [1, soAround + 4, soAround + 6])])
+            # zero other cross derivative parameters
+            remapEftNodeValueLabel(eft, [ ln ], Node.VALUE_LABEL_D2_DS1DS3, [])
+            remapEftNodeValueLabel(eft, [ ln ], Node.VALUE_LABEL_D2_DS2DS3, [])
+            remapEftNodeValueLabel(eft, [ ln ], Node.VALUE_LABEL_D3_DS1DS2DS3, [])
+
+        remapEftNodeValueLabel(eft, [ 2, 4, 6, 8 ], Node.VALUE_LABEL_D_DS3, [ (Node.VALUE_LABEL_D_DS1), [1]])
+
+        # remap parameters on xi1 = 0, xi2 = 1 before collapsing nodes
+        remapEftNodeValueLabel(eft, [4, 8], Node.VALUE_LABEL_D_DS3, [])
+        remapEftNodeValueLabel(eft, [4, 8], Node.VALUE_LABEL_D2_DS1DS3, [])
+        remapEftNodeValueLabel(eft, [4, 8], Node.VALUE_LABEL_D2_DS2DS3, [])
+        remapEftNodeValueLabel(eft, [4, 8], Node.VALUE_LABEL_D3_DS1DS2DS3, [])
+
+        ln_map = [ 1, 2, 3, 1, 4, 1, 3, 1]
+        remapEftLocalNodes(eft, 4, ln_map)
+
+        assert eft.validate(), 'eftfactory_tricubichermite.createEftTetrahedronXi2Zero:  Failed to validate eft'
+        return eft
+
+
 
     def createEftPyramidBottom(self, nodeScaleFactorOffset0, nodeScaleFactorOffset1, nodeScaleFactorOffsetUp):
         '''
