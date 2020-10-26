@@ -239,6 +239,8 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
         cx, cd1, cd2, cd3 = extractxyzPathParametersFromRegion(tmpRegion)
         del tmpRegion
 
+
+
         # for i in range(len(cx)):
         #     print(i, '[', cx[i], ',', cd1[i], ',', cd2[i], ',', cd3[i], '],')
 
@@ -464,6 +466,41 @@ class MeshType_3d_lungcontrolcurves(Scaffold_base):
                             interp.sampleCubicHermiteCurves(tempcx, tempcd1,
                                                             elementsCountOut=(elementsCountAlong))
                         midlateralcd1.append(tempmidcd1[nlayer+1])
+
+        # CURVE - REFINING MESHES
+        #---------------------------
+        # for n in range(elementsCountAlong):
+        #     accessoryedgecx, accessoryedgecd1, _, _, _ = \
+        #     interp.sampleCubicHermiteCurves(accessoryedgecx, accessoryedgecd1,
+        #                                     elementsCountOut=elementsCountAlongRefine)
+        #     basemedialcd1 = interp.smoothCubicHermiteDerivativesLine(accessoryedgecx, accessoryedgecd1,
+        #                                                            fixAllDirections=False,
+        #                                                            fixStartDerivative=True, fixEndDerivative=True,
+        #                                                            magnitudeScalingMode=interp.DerivativeScalingMode.HARMONIC_MEAN)
+        #
+        #     posteriorlateralcx, posteriorlateralcd1, _, _, _ = \
+        #     interp.sampleCubicHermiteCurves(posteriorlateralcx, posteriorlateralcd1,
+        #                                     elementsCountOut=elementsCountAlongRefine)
+        #     basemedialcd1 = interp.smoothCubicHermiteDerivativesLine(posteriorlateralcx, posteriorlateralcd1,
+        #                                                            fixAllDirections=False,
+        #                                                            fixStartDerivative=True, fixEndDerivative=True,
+        #                                                            magnitudeScalingMode=interp.DerivativeScalingMode.HARMONIC_MEAN)
+        #
+        #     basemedialcx, basemedialcd1, _, _, _ = \
+        #     interp.sampleCubicHermiteCurves(basemedialcx, basemedialcd1,
+        #                                     elementsCountOut=elementsCountAlongRefine)
+        #     basemedialcd1 = interp.smoothCubicHermiteDerivativesLine(basemedialcx, basemedialcd1,
+        #                                                            fixAllDirections=False,
+        #                                                            fixStartDerivative=True, fixEndDerivative=True,
+        #                                                            magnitudeScalingMode=interp.DerivativeScalingMode.HARMONIC_MEAN)
+        #
+        #     baselateralcx, baselateralcd1, _, _, _ = \
+        #     interp.sampleCubicHermiteCurves(baselateralcx, baselateralcd1,
+        #                                     elementsCountOut=elementsCountAlongRefine)
+        #     basemedialcd1 = interp.smoothCubicHermiteDerivativesLine(baselateralcx, baselateralcd1,
+        #                                                            fixAllDirections=False,
+        #                                                            fixStartDerivative=True, fixEndDerivative=True,
+        #                                                            magnitudeScalingMode=interp.DerivativeScalingMode.HARMONIC_MEAN)
 
         # # Create nodes
         # ##################
